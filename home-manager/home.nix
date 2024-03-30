@@ -80,6 +80,7 @@
     neofetch
     go
     python3
+    firefox
     nodePackages.pnpm
     nodePackages.npm
     (nerdfonts.override { fonts = [ "FiraCode" "JetBrainsMono" ]; })
@@ -380,7 +381,7 @@
         mkSettings [
           {
             name = "Launch Ghostty";
-            command = "/home/mgr8/.local/bin/ghostty";
+            command = "ghostty";
             binding = "<Super>Return";
           }
           {
