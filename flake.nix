@@ -18,12 +18,17 @@
     # Shameless plug: looking for a way to nixify your themes and make
     # everything match nicely? Try nix-colors!
     # nix-colors.url = "github:misterio77/nix-colors";
+
+    ghostty = {
+      url = "git+ssh://git@github.com/mitchellh/ghostty";
+    };
   };
 
   outputs = {
     self,
     nixpkgs,
     home-manager,
+    ghostty,
     ...
   } @ inputs: let
     inherit (self) outputs;
@@ -78,6 +83,9 @@
         modules = [
           # > Our main home-manager configuration file <
           ./home-manager/home.nix
+          {
+            home.packages = [ghostty.packages.x86_64-linux.default];
+          }
         ];
       };
     };
