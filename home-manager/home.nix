@@ -84,6 +84,11 @@
     nodePackages.pnpm
     nodePackages.npm
     (nerdfonts.override { fonts = [ "FiraCode" "JetBrainsMono" ]; })
+    ### LSPs start
+    lua-language-server
+    nodePackages.typescript-language-server
+    nodePackages.pyright
+    ### LSPs end
   ];
 
 
