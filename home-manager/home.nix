@@ -63,7 +63,7 @@
   # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
   home.stateVersion = "23.05";
 
-    home.packages = with pkgs; [
+  home.packages = with pkgs; [
     xsel
     fzf
     less
@@ -83,14 +83,9 @@
     firefox
     nodePackages.pnpm
     nodePackages.npm
-    (nerdfonts.override { fonts = [ "FiraCode" "JetBrainsMono" ]; })
-    ### LSPs start
-    lua-language-server
-    nodePackages.typescript-language-server
-    nodePackages.pyright
-    ### LSPs end
+    pre-commit
+    (nerdfonts.override {fonts = ["FiraCode" "JetBrainsMono"];})
   ];
-
 
   home.sessionVariables = {
     EDITOR = "nvim";
@@ -155,6 +150,20 @@
       viAlias = true;
       vimAlias = true;
       vimdiffAlias = true;
+      extraPackages = with pkgs; [
+        ### LSPs start
+        lua-language-server
+        nodePackages.typescript-language-server
+        nodePackages.bash-language-server
+        nodePackages.pyright
+        gopls
+        prettierd
+        ruff
+        stylua
+        nixd
+        alejandra
+        ### LSPs end
+      ];
     };
     tmux = {
       enable = true;
@@ -214,7 +223,6 @@
         set -g window-status-current-style "fg=$border_active_fg"
         set -g window-status-style "fg=$fg"
       '';
-
     };
     fish = {
       enable = true;
@@ -284,13 +292,13 @@
 
         set -gx EDITOR nvim
         # The WAYLAND_DISPLAY env is not being set in terminals other than GNOME CONSOLE.
-        # This was creating a problem when using helix, as it as not using wayland specific 
+        # This was creating a problem when using helix, as it as not using wayland specific
         # clipboard provider due to this.
         # This function is a workaround for setting the WAYLAND_DISPLAY env
         if not set -q "WAYLAND_DISPLAY"
           if set -q "XDG_SESSION_TYPE"
               echo "XDG_SESSION_TYPE is set"
-              set SESSION_TYPE "$XDG_SESSION_TYPE"      
+              set SESSION_TYPE "$XDG_SESSION_TYPE"
 
               if test "$SESSION_TYPE" = "wayland"
                   echo "Setting WAYLAND_DISPLAY to 'wayland-0'"
@@ -310,6 +318,7 @@
         mkdir = "mkdir -p";
         tmux = "tmux -u";
         ll = "eza -alhtaccessed";
+        docker-compose = "docker compose";
       };
       shellAbbrs = {
         lg = "lazygit";
@@ -347,83 +356,91 @@
     };
   };
 
-
-  dconf.settings =
-    let
-      custom_shortcuts =
-        let
-          inherit (builtins) length head tail listToAttrs genList;
-          range = a: b: if a < b then [ a ] ++ range (a + 1) b else [ ];
-          globalPath = "org/gnome/settings-daemon/plugins/media-keys";
-          path = "${globalPath}/custom-keybindings";
-          mkPath = id: "${globalPath}/custom${toString id}";
-          isEmpty = list: length list == 0;
-          mkSettings = settings:
-            let
-              checkSettings = { name, command, binding }@this: this;
-              aux = i: list:
-                if isEmpty list then [ ] else
-                let
-                  hd = head list;
-                  tl = tail list;
-                  name = mkPath i;
-                in
-                aux (i + 1) tl ++ [{
-                  name = mkPath i;
-                  value = checkSettings hd;
-                }];
-              settingsList = (aux 0 settings);
-            in
-            listToAttrs (settingsList ++ [
+  dconf.settings = let
+    custom_shortcuts = let
+      inherit (builtins) length head tail listToAttrs genList;
+      range = a: b:
+        if a < b
+        then [a] ++ range (a + 1) b
+        else [];
+      globalPath = "org/gnome/settings-daemon/plugins/media-keys";
+      path = "${globalPath}/custom-keybindings";
+      mkPath = id: "${globalPath}/custom${toString id}";
+      isEmpty = list: length list == 0;
+      mkSettings = settings: let
+        checkSettings = {
+          name,
+          command,
+          binding,
+        } @ this:
+          this;
+        aux = i: list:
+          if isEmpty list
+          then []
+          else let
+            hd = head list;
+            tl = tail list;
+            name = mkPath i;
+          in
+            aux (i + 1) tl
+            ++ [
               {
-                name = globalPath;
-                value = {
-                  custom-keybindings = genList (i: "/${mkPath i}/") (length settingsList);
-                };
+                name = mkPath i;
+                value = checkSettings hd;
               }
-            ]);
-        in
-        mkSettings [
-          {
-            name = "Launch Ghostty";
-            command = "ghostty";
-            binding = "<Super>Return";
-          }
-          {
-            name = "Launch Firefox";
-            command = "firefox";
-            binding = "<Super>b";
-          }
-        ];
-
-      wm_keybinds = {
-        "org/gnome/shell/keybindings" = {
-          toggle-message-tray = [ ];
-        };
-        "org/gnome/settings-daemon/plugins/media-keys" = {
-          volume-down = [ "<Control><Alt>minus" "XF86AudioLowerVolume" ];
-          volume-mute = [ "<Control><Alt>0" "XF86AudioMute" ];
-          volume-up = [ "<Control><Alt>equal" "XF86AudioRaiseVolume" ];
-        };
-        "org/gnome/desktop/wm/keybindings" = {
-          close = [ "<Shift><Super>c" ];
-          toggle-maximized = [ "<Super>m" ];
-        };
-      };
-
-      app_menu_config = {
-        "org/gnome/desktop/wm/preferences" = {
-          button-layout = "appmenu:minimize,maximize,close";
-        };
-      };
-
-      extensions = {
-        "org/gnome/shell" = {
-          disable-user-extensions = false;
-          enabled-extensions = [ "dash-to-dock@micxgx.gmail.com" "drive-menu@gnome-shell-extensions.gcampax.github.com" "gnome-shell-screenshot@ttll.de" "clipboard-indicator@tudmotu.com" "appindicatorsupport@rgcjonas.gmail.com" ];
-        };
-      };
+            ];
+        settingsList = aux 0 settings;
+      in
+        listToAttrs (settingsList
+          ++ [
+            {
+              name = globalPath;
+              value = {
+                custom-keybindings = genList (i: "/${mkPath i}/") (length settingsList);
+              };
+            }
+          ]);
     in
-    lib.mkMerge [ custom_shortcuts wm_keybinds extensions app_menu_config ];
+      mkSettings [
+        {
+          name = "Launch Ghostty";
+          command = "ghostty";
+          binding = "<Super>Return";
+        }
+        {
+          name = "Launch Firefox";
+          command = "firefox";
+          binding = "<Super>b";
+        }
+      ];
 
+    wm_keybinds = {
+      "org/gnome/shell/keybindings" = {
+        toggle-message-tray = [];
+      };
+      "org/gnome/settings-daemon/plugins/media-keys" = {
+        volume-down = ["<Control><Alt>minus" "XF86AudioLowerVolume"];
+        volume-mute = ["<Control><Alt>0" "XF86AudioMute"];
+        volume-up = ["<Control><Alt>equal" "XF86AudioRaiseVolume"];
+      };
+      "org/gnome/desktop/wm/keybindings" = {
+        close = ["<Shift><Super>c"];
+        toggle-maximized = ["<Super>m"];
+      };
+    };
+
+    app_menu_config = {
+      "org/gnome/desktop/wm/preferences" = {
+        button-layout = "appmenu:minimize,maximize,close";
+      };
+    };
+
+    extensions = {
+      "org/gnome/shell" = {
+        disable-user-extensions = false;
+        enabled-extensions = ["dash-to-dock@micxgx.gmail.com" "drive-menu@gnome-shell-extensions.gcampax.github.com" "gnome-shell-screenshot@ttll.de" "clipboard-indicator@tudmotu.com" "appindicatorsupport@rgcjonas.gmail.com"];
+      };
+    };
+  in
+    lib.mkMerge [custom_shortcuts wm_keybinds extensions app_menu_config];
 }
