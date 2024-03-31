@@ -121,7 +121,12 @@ vim.opt.rtp:prepend(lazypath)
 --
 -- NOTE: Here is where you install your plugins.
 require('lazy').setup({
-  { 'rcarriga/nvim-notify' },
+  {
+    'rcarriga/nvim-notify',
+    config = function()
+      vim.notify = require 'notify'
+    end,
+  },
   -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
   'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
 
@@ -446,6 +451,8 @@ require('lazy').setup({
         -- But for many setups, the LSP (`tsserver`) will work just fine
         tsserver = {},
         --
+        nixd = {},
+        bashls = {},
 
         lua_ls = {
           -- cmd = {...},
@@ -463,37 +470,21 @@ require('lazy').setup({
         },
       }
 
-      -- Ensure the servers and tools above are installed
-      --  To check the current status of installed tools and/or manually install
-      --  other tools, you can run
-      --    :Mason
-      --
-      --  You can press `g?` for help in this menu.
-      require('mason').setup()
-
-      -- You can add other tools here that you want Mason to install
-      -- for you, so that they are available from within Neovim.
-      local ensure_installed = vim.tbl_keys(servers or {})
-
-      require('mason-lspconfig').setup {
-        handlers = {
-          function(server_name)
-            local server = servers[server_name] or {}
-            -- This handles overriding only values explicitly passed
-            -- by the server configuration above. Useful when disabling
-            -- certain features of an LSP (for example, turning off formatting for tsserver)
-            server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
-            require('lspconfig')[server_name].setup(server)
-          end,
-        },
-      }
+      for server_name, _ in pairs(servers) do
+        local server = servers[server_name] or {}
+        -- This handles overriding only values explicitly passed
+        -- by the server configuration above. Useful when disabling
+        -- certain features of an LSP (for example, turning off formatting for tsserver)
+        server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
+        require('lspconfig')[server_name].setup(server)
+      end
     end,
   },
 
   { -- Autoformat
     'stevearc/conform.nvim',
     opts = {
-      notify_on_error = false,
+      notify_on_error = true,
       format_on_save = function(bufnr)
         -- Disable "format_on_save lsp_fallback" for languages that don't
         -- have a well standardized coding style. You can add additional
@@ -507,12 +498,20 @@ require('lazy').setup({
       formatters_by_ft = {
         lua = { 'stylua' },
         -- Conform can also run multiple formatters sequentially
-        python = { 'isort', 'black' },
+        python = function(bufnr)
+          if require('conform').get_formatter_info('ruff_format', bufnr).available then
+            return { 'ruff_fix', 'ruff_format' }
+          else
+            return { 'isort', 'black' }
+          end
+        end,
         --
         -- You can use a sub-list to tell conform to run *until* a formatter
         -- is found.
         javascript = { { 'prettierd', 'prettier' } },
         typescript = { { 'prettierd', 'prettier' } },
+        nix = { 'alejandra' },
+        go = { 'gofmt' },
       },
     },
   },
