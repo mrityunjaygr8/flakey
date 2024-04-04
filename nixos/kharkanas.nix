@@ -161,7 +161,18 @@
     vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
     wget
     gnome.gnome-tweaks
+    gnomeExtensions.appindicator
+    gnomeExtensions.pano
+    gnomeExtensions.blur-my-shell
+    gnomeExtensions.vitals
+    gnomeExtensions.space-bar
+    gnomeExtensions.just-perfection
+    gnomeExtensions.paperwm
+    gnomeExtensions.forge
+    gnomeExtensions.tiling-assistant
   ];
+
+  services.udev.packages = with pkgs; [gnome.gnome-settings-daemon];
 
   # This setups a SSH server. Very important if you're setting up a headless system.
   # Feel free to remove if you don't need it.
