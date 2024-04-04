@@ -22,7 +22,10 @@
 
     # Import your generated (nixos-generate-config) hardware configuration
     ./kharkanas-hardware-configuration.nix
-    "${builtins.fetchTarball  { url = "https://github.com/nix-community/disko/archive/master.tar.gz"; sha256 = "sha256:0bm2x8zc81vnc4vcqwci0h9s21i8sw93mhsaznf0x70mhhg7j45w";}}/module.nix"
+    "${builtins.fetchTarball {
+      url = "https://github.com/nix-community/disko/archive/master.tar.gz";
+      sha256 = "sha256:0bnbd7afgnf870yqs5grjb4igmvyxd64i7kjjqhhmzcp17wxw45h";
+    }}/module.nix"
     ./kharkanas-disko-config.nix
   ];
 
@@ -87,7 +90,7 @@
   networking.hostName = "kharkanas";
   # Pick only one of the below networking options.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
-  networking.networkmanager.enable = true;  # Easiest to use and most distros use this by default.
+  networking.networkmanager.enable = true; # Easiest to use and most distros use this by default.
 
   # TODO: This is just an example, be sure to use whatever bootloader you prefer
   boot.loader.systemd-boot.enable = true;
@@ -173,10 +176,9 @@
   virtualisation.docker.enable = true;
   virtualisation.docker.storageDriver = "btrfs";
 
-
   # Open ports in the firewall.
-  networking.firewall.allowedTCPPorts = [ 8000 3000 9090 ];
-  networking.firewall.allowedUDPPorts = [ 9090 ];
+  networking.firewall.allowedTCPPorts = [8000 3000 9090];
+  networking.firewall.allowedUDPPorts = [9090];
 
   # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
   system.stateVersion = "23.05";
