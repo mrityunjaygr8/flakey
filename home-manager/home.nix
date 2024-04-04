@@ -78,6 +78,7 @@
     bottom
     tldr
     neofetch
+    toybox
     go
     python3
     firefox
