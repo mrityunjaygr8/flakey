@@ -19,6 +19,9 @@
     # everything match nicely? Try nix-colors!
     # nix-colors.url = "github:misterio77/nix-colors";
 
+    disko.url = "github:nix-community/disko";
+    disko.inputs.nixpkgs.follows = "nixpkgs";
+
     ghostty = {
       url = "git+ssh://git@github.com/mitchellh/ghostty";
     };
@@ -29,6 +32,7 @@
     nixpkgs,
     home-manager,
     ghostty,
+    disko,
     ...
   } @ inputs: let
     inherit (self) outputs;
@@ -69,6 +73,7 @@
         modules = [
           # > Our main nixos configuration file <
           ./nixos/kharkanas.nix
+          disko.nixosModules.disko
         ];
       };
       black-coral = nixpkgs.lib.nixosSystem {
@@ -76,6 +81,7 @@
         modules = [
           # > Our main nixos configuration file <
           ./nixos/black-coral.nix
+          disko.nixosModules.disko
         ];
       };
     };

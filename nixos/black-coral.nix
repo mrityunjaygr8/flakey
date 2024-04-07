@@ -22,10 +22,6 @@
 
     # Import your generated (nixos-generate-config) hardware configuration
     ./black-coral-hardware-configuration.nix
-    "${builtins.fetchTarball {
-      url = "https://github.com/nix-community/disko/archive/refs/tags/v1.5.0.tar.gz";
-      sha256 = "sha256:0bnbd7afgnf870yqs5grjb4igmvyxd64i7kjjqhhmzcp17wxw45h";
-    }}/module.nix"
     ./black-coral-disko-config.nix
   ];
 
