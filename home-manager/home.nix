@@ -435,13 +435,6 @@
         button-layout = "appmenu:minimize,maximize,close";
       };
     };
-
-    extensions = {
-      "org/gnome/shell" = {
-        disable-user-extensions = false;
-        enabled-extensions = ["dash-to-dock@micxgx.gmail.com" "drive-menu@gnome-shell-extensions.gcampax.github.com" "gnome-shell-screenshot@ttll.de" "clipboard-indicator@tudmotu.com" "appindicatorsupport@rgcjonas.gmail.com"];
-      };
-    };
   in
-    lib.mkMerge [custom_shortcuts wm_keybinds extensions app_menu_config];
+    lib.mkMerge [custom_shortcuts wm_keybinds app_menu_config];
 }
