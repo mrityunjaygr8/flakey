@@ -68,7 +68,7 @@
         specialArgs = {inherit inputs outputs;};
         modules = [
           # > Our main nixos configuration file <
-          ./nixos/kharkanas.nix
+          ./nixos/kharkanas
         ];
       };
     };

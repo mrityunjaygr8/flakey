@@ -9,25 +9,6 @@
   ...
 }: {
   # You can import other NixOS modules here
-  imports = [
-    # If you want to use modules your own flake exports (from modules/nixos):
-    # outputs.nixosModules.example
-
-    # Or modules from other flakes (such as nixos-hardware):
-    # inputs.hardware.nixosModules.common-cpu-amd
-    # inputs.hardware.nixosModules.common-ssd
-
-    # You can also split up your configuration and import pieces of it here:
-    # ./users.nix
-
-    # Import your generated (nixos-generate-config) hardware configuration
-    ./kharkanas-hardware-configuration.nix
-    "${builtins.fetchTarball {
-      url = "https://github.com/nix-community/disko/archive/refs/tags/v1.5.0.tar.gz";
-      sha256 = "sha256:0bnbd7afgnf870yqs5grjb4igmvyxd64i7kjjqhhmzcp17wxw45h";
-    }}/module.nix"
-    ./kharkanas-disko-config.nix
-  ];
 
   nixpkgs = {
     # You can add overlays here
@@ -86,8 +67,6 @@
 
   # FIXME: Add the rest of your current configuration
 
-  # TODO: Set your hostname
-  networking.hostName = "kharkanas";
   # Pick only one of the below networking options.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
   networking.networkmanager.enable = true; # Easiest to use and most distros use this by default.
@@ -173,6 +152,20 @@
   ];
 
   services.udev.packages = with pkgs; [gnome.gnome-settings-daemon];
+  programs.dconf.profiles = {
+    user.databases = [
+      {
+        settings = {
+          "org/gnome/shell".enabled-extensions = [
+            "appindicatorsupport@rgcjonas.gmail.com"
+            "pano@elhan.io"
+            "space-bar@luchrioh"
+            "Vitals@CoreCoding.com"
+          ];
+        };
+      }
+    ];
+  };
 
   # This setups a SSH server. Very important if you're setting up a headless system.
   # Feel free to remove if you don't need it.
