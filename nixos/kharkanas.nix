@@ -173,6 +173,20 @@
   ];
 
   services.udev.packages = with pkgs; [gnome.gnome-settings-daemon];
+  programs.dconf.profiles = {
+    user.databases = [
+      {
+        settings = {
+          "org/gnome/shell".enabled-extensions = [
+            "appindicatorsupport@rgcjonas.gmail.com"
+            "pano@elhan.io"
+            "space-bar@luchrioh"
+            "Vitals@CoreCoding.com"
+          ];
+        };
+      }
+    ];
+  };
 
   # This setups a SSH server. Very important if you're setting up a headless system.
   # Feel free to remove if you don't need it.
