@@ -20,12 +20,10 @@
     # You can also split up your configuration and import pieces of it here:
     # ./users.nix
 
+    inputs.disko.nixosModules.disko
+
     # Import your generated (nixos-generate-config) hardware configuration
     ./hardware-configuration.nix
-    "${builtins.fetchTarball {
-      url = "https://github.com/nix-community/disko/archive/refs/tags/v1.5.0.tar.gz";
-      sha256 = "sha256:1d03a0wb710by1m2c3rx758vy67f8r71gnv2h3qn4jj1bx10sdg4";
-    }}/module.nix"
     ./disko-config.nix
     ../common
   ];

@@ -12,6 +12,9 @@
     home-manager.url = "github:nix-community/home-manager/master";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
+    disko.url = "github:nix-community/disko";
+    disko.inputs.nixpkgs.follows = "nixpkgs";
+
     # TODO: Add any other flake you might need
     # hardware.url = "github:nixos/nixos-hardware";
 
@@ -29,6 +32,7 @@
     nixpkgs,
     home-manager,
     ghostty,
+    disko,
     ...
   } @ inputs: let
     inherit (self) outputs;
@@ -69,6 +73,7 @@
         modules = [
           # > Our main nixos configuration file <
           ./nixos/kharkanas
+          disko.nixosModules.disko
         ];
       };
       black-coral = nixpkgs.lib.nixosSystem {
@@ -76,6 +81,7 @@
         modules = [
           # > Our main nixos configuration file <
           ./nixos/black-coral
+          disko.nixosModules.disko
         ];
       };
     };
