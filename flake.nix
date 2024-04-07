@@ -71,6 +71,13 @@
           ./nixos/kharkanas.nix
         ];
       };
+      black-coral = nixpkgs.lib.nixosSystem {
+        specialArgs = {inherit inputs outputs;};
+        modules = [
+          # > Our main nixos configuration file <
+          ./nixos/black-coral.nix
+        ];
+      };
     };
 
     # Standalone home-manager configuration entrypoint
