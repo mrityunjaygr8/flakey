@@ -24,7 +24,7 @@
     ./hardware-configuration.nix
     "${builtins.fetchTarball {
       url = "https://github.com/nix-community/disko/archive/refs/tags/v1.5.0.tar.gz";
-      sha256 = "sha256:0bnbd7afgnf870yqs5grjb4igmvyxd64i7kjjqhhmzcp17wxw45h";
+      sha256 = "sha256:1d03a0wb710by1m2c3rx758vy67f8r71gnv2h3qn4jj1bx10sdg4";
     }}/module.nix"
     ./disko-config.nix
     ../common
