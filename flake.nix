@@ -82,7 +82,7 @@
         extraSpecialArgs = {inherit inputs outputs;};
         modules = [
           # > Our main home-manager configuration file <
-          ./home-manager/home.nix
+          ./home-manager/mgr8
           {
             home.packages = [ghostty.packages.x86_64-linux.default];
           }
