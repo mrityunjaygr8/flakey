@@ -23,7 +23,7 @@
     # Import your generated (nixos-generate-config) hardware configuration
     ./kharkanas-hardware-configuration.nix
     "${builtins.fetchTarball {
-      url = "https://github.com/nix-community/disko/archive/master.tar.gz";
+      url = "https://github.com/nix-community/disko/archive/refs/tags/v1.5.0.tar.gz";
       sha256 = "sha256:0bnbd7afgnf870yqs5grjb4igmvyxd64i7kjjqhhmzcp17wxw45h";
     }}/module.nix"
     ./kharkanas-disko-config.nix
