@@ -12,8 +12,8 @@ keymap.set("i", "jk", "<ESC>", { desc = "Exit insert mode with jk" })
 -- clear search highlights
 keymap.set("n", "<leader>nh", ":nohl<CR>", { desc = "Clear search highlights" })
 
-keymap.set("n", "<leader>w", "<cmd>w<CR>", { desc = "Clear search highlights" })
-keymap.set("n", "<leader>q", "<cmf>q<CR>", { desc = "Clear search highlights" })
+keymap.set("n", "<leader>w", "<cmd>w<CR>", { desc = "[W]rite file" })
+keymap.set("n", "<leader>q", "<cmd>bd<CR>", { desc = "[Q]uit buffer" })
 -- delete single character without copying into register
 -- keymap.set("n", "x", '"_x')
 
