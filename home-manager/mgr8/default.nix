@@ -82,6 +82,7 @@
     nodePackages.npm
     pre-commit
     uget
+    postman
     (nerdfonts.override {fonts = ["FiraCode" "JetBrainsMono"];})
   ];
 
