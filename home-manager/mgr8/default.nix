@@ -87,6 +87,10 @@
     (nerdfonts.override {fonts = ["FiraCode" "JetBrainsMono"];})
   ];
 
+  home.sessionPath = [
+    "$HOME/.local/bin"
+    "$HOME/flakey/scripts"
+  ];
   home.sessionVariables = {
     EDITOR = "nvim";
     SSH_AUTH_SOCK = "/run/user/1000/keyring/ssh";
