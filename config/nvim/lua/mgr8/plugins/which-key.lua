@@ -18,6 +18,7 @@ return {
 			["<leader>r"] = { name = "[R]ename", _ = "which_key_ignore" },
 			["<leader>s"] = { name = "[S]plits", _ = "which_key_ignore" },
 			["<leader>t"] = { name = "[T]abs", _ = "which_key_ignore" },
+			["<leader>h"] = { name = "[H]arpoon", _ = "which_key_ignore" },
 			["<leader>x"] = { name = "Trouble", _ = "which_key_ignore" },
 		})
 	end,
