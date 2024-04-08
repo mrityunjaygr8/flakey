@@ -77,6 +77,7 @@
     toybox
     go
     python3
+    pika-backup
     firefox
     nodePackages.pnpm
     nodePackages.npm
