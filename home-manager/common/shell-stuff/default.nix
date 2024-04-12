@@ -97,14 +97,29 @@
     tmux = {
       enable = true;
       clock24 = true;
-      # shortcut = "Space";
+      prefix = "C-a";
       baseIndex = 1;
+      sensibleOnTop = false;
       escapeTime = 0;
       keyMode = "vi";
       shell = "${pkgs.fish}/bin/fish";
       mouse = true;
       historyLimit = 10000;
       extraConfig = ''
+        unbind %
+        bind | split-window -h
+
+        unbind '"'
+        bind - split-window -v
+        bind-key -T copy-mode-vi 'v' send -X begin-selection # start selecting text with "v"
+        bind-key -T copy-mode-vi 'y' send -X copy-selection # copy text with "y"
+        unbind -T copy-mode-vi MouseDragEnd1Pane # don't exit copy mode after dragging with mouse
+
+        unbind r
+        bind r source-file ~/.config/tmux.conf
+
+        bind x kill-pane
+
         bind C-l send-keys 'C-l'
         # Smart pane switching with awareness of Vim splits.
         # See: https://github.com/christoomey/vim-tmux-navigator
