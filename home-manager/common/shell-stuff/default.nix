@@ -21,14 +21,20 @@
   ];
 
   home.packages = with pkgs; [
-    fzf
     difftastic
     lazydocker
     fd
     ripgrep
+    sesh
   ];
 
   programs = {
+    fzf = {
+      enable = true;
+      tmux = {
+        enableShellIntegration = true;
+      };
+    };
     lazygit = {
       enable = true;
       settings = {
@@ -285,6 +291,10 @@
   xdg.configFile = {
     nvim = {
       source = ../../../config/nvim;
+      recursive = true;
+    };
+    sesh = {
+      source = ../../../config/sesh;
       recursive = true;
     };
   };
