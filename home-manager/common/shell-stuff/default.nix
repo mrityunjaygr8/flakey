@@ -116,7 +116,7 @@
         unbind -T copy-mode-vi MouseDragEnd1Pane # don't exit copy mode after dragging with mouse
 
         unbind r
-        bind r source-file ~/.config/tmux.conf
+        bind r source-file ~/.config/tmux/tmux.conf
 
         bind x kill-pane
 
