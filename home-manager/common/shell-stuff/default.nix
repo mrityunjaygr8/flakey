@@ -111,6 +111,7 @@
       keyMode = "vi";
       shell = "${pkgs.fish}/bin/fish";
       mouse = true;
+      terminal = "xterm-ghostty";
       historyLimit = 10000;
       extraConfig = ''
         unbind %
