@@ -127,7 +127,7 @@
         bind r source-file ~/.config/tmux/tmux.conf
 
         bind x kill-pane
-
+        set -g detach-on-destroy off
         bind C-l send-keys 'C-l'
 
         bind-key "T" run-shell "sesh connect \"$(
@@ -251,6 +251,7 @@
         fish_config theme choose "ayu Dark"
         set -Ux GIT_ASKPASS ""
         set VIRTUALFISH_PYTHON_EXEC $(which python)
+        set TERM xterm-ghostty
 
         set -g direnv_fish_mode disable_arrow
 
