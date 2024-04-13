@@ -81,6 +81,7 @@
     firefox
     nodePackages.pnpm
     nodePackages.npm
+    obsidian
     pre-commit
     uget
     postman

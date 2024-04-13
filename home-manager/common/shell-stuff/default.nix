@@ -25,6 +25,7 @@
     lazydocker
     fd
     ripgrep
+    sesh
   ];
 
   programs = {
