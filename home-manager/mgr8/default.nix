@@ -113,7 +113,7 @@
         font-family = JetBrainsMonoNL Nerd Font
         font-size = 15
         command = fish
-        theme = ayu
+        theme = Dracula
       '';
     };
   };

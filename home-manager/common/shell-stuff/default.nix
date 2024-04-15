@@ -111,6 +111,18 @@
       keyMode = "vi";
       shell = "${pkgs.fish}/bin/fish";
       mouse = true;
+      plugins = with pkgs; [
+        tmuxPlugins.session-wizard
+        {
+          plugin = tmuxPlugins.dracula;
+
+          extraConfig = ''
+            set -g @dracula-show-powerline true
+            set -g @dracula-refresh-rate 10
+            set -g @dracula-plugins "cpu-usage gpu-usage ram-usage"
+          '';
+        }
+      ];
       terminal = "xterm-ghostty";
       historyLimit = 10000;
       extraConfig = ''
