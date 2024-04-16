@@ -72,6 +72,9 @@
     devenv
     dust
     bottom
+    nodejs
+    vscodium
+    bind
     tldr
     neofetch
     toybox
