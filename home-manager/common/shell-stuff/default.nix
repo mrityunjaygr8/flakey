@@ -251,6 +251,7 @@
         set -Ux GIT_ASKPASS ""
         set VIRTUALFISH_PYTHON_EXEC $(which python)
         set TERM xterm-ghostty
+        set FLAKE $HOME/flakey
 
         set -g direnv_fish_mode disable_arrow
 
@@ -294,6 +295,10 @@
         n = "nvim";
         o = "open";
         p = "python3";
+        nod = "nh os switch --dry";
+        no = "nh os switch";
+        nud = "nh home switch --dry";
+        nu = "nh home switch";
       };
       functions = {
         mkdcd = {

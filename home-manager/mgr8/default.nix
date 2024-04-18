@@ -88,6 +88,7 @@
     pre-commit
     uget
     postman
+    nh
     (nerdfonts.override {fonts = ["FiraCode" "JetBrainsMono"];})
   ];
 
