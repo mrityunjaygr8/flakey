@@ -77,6 +77,8 @@
     bind
     tldr
     neofetch
+    jq
+    unzip
     toybox
     go
     python3
