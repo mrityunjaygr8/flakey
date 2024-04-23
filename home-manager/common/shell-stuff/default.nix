@@ -112,7 +112,6 @@
       shell = "${pkgs.fish}/bin/fish";
       mouse = true;
       plugins = with pkgs; [
-        tmuxPlugins.session-wizard
         {
           plugin = tmuxPlugins.dracula;
 
@@ -256,6 +255,8 @@
         set -g direnv_fish_mode disable_arrow
 
         fish_add_path $HOME/.local/bin
+
+        bind \cs 'sesh connect (sesh list | fzf)'
 
         set -gx EDITOR nvim
         # The WAYLAND_DISPLAY env is not being set in terminals other than GNOME CONSOLE.
