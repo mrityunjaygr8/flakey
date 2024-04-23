@@ -296,10 +296,10 @@
         n = "nvim";
         o = "open";
         p = "python3";
-        nod = "nh os switch --dry";
-        no = "nh os switch";
-        nud = "nh home switch --dry";
-        nu = "nh home switch";
+        nod = "nh os switch --dry $HOME/flakey";
+        no = "nh os switch $HOME/flakey";
+        nud = "nh home switch --dry $HOME/flakey";
+        nu = "nh home switch $HOME/flakey";
       };
       functions = {
         mkdcd = {
