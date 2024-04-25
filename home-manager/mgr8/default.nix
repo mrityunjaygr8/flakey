@@ -68,6 +68,7 @@
     azure-cli
     xsel
     less
+    bruno
     git-credential-manager
     chromium
     devenv
