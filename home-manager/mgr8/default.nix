@@ -73,6 +73,7 @@
     devenv
     dust
     bottom
+    html-tidy
     nodejs
     vscodium
     bind
