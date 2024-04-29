@@ -129,7 +129,7 @@
       '';
     };
     ".config/emacs" = {
-      source = "../../config/emacs/";
+      source = ../../config/emacs;
       recursive = true;
     };
   };
