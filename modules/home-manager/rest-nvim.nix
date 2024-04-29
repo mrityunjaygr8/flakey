@@ -1,9 +1,11 @@
 {
   fetchurl,
   fetchzip,
+  pkgs,
   lua,
 }:
 lua.pkgs.buildLuarocksPackage {
+  buildInputs = [pkgs.curl];
   pname = "lua-curl";
   version = "0.3.13-1";
 

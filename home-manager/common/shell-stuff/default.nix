@@ -26,6 +26,11 @@
     fd
     ripgrep
     sesh
+    hurl
+    lua
+    luajitPackages.lua-curl
+    wget
+    luajitPackages.luarocks-nix
   ];
 
   programs = {
@@ -99,6 +104,7 @@
         nixd
         alejandra
         ### LSPs end
+        vimPlugins.rest-nvim
       ];
     };
     tmux = {

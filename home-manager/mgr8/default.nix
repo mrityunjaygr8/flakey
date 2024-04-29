@@ -19,6 +19,7 @@
     # You can also split up your configuration and import pieces of it here:
     # ./nvim.nix
     ../common
+    # ../../modules/home-manager/rest-nvim.nix
   ];
 
   nixpkgs = {
@@ -94,6 +95,7 @@
     uget
     postman
     nh
+    # (callPackage ../../modules/home-manager/rest-nvim.nix {})
     (nerdfonts.override {fonts = ["FiraCode" "JetBrainsMono"];})
   ];
 
