@@ -114,6 +114,9 @@
     home-manager = {
       enable = true;
     };
+    emacs = {
+      enable = true;
+    };
   };
 
   home.file = {
@@ -124,6 +127,10 @@
         command = fish
         theme = Dracula
       '';
+    };
+    ".config/emacs" = {
+      source = "../../config/emacs/";
+      recursive = true;
     };
   };
 
