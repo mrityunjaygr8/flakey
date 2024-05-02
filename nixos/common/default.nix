@@ -182,8 +182,8 @@
   virtualisation.docker.storageDriver = "btrfs";
 
   # Open ports in the firewall.
-  networking.firewall.allowedTCPPorts = [8000 3000 9090];
-  networking.firewall.allowedUDPPorts = [9090];
+  networking.firewall.allowedTCPPorts = [8000 3000 9090 10514];
+  networking.firewall.allowedUDPPorts = [9090 10514];
 
   # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
   system.stateVersion = "23.05";
