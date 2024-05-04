@@ -75,6 +75,13 @@
         specialArgs = {inherit inputs outputs;};
         modules = [
           # > Our main nixos configuration file <
+          {
+            nix.settings = {
+              substitutors = ["https://cosmic.cachix.org/"];
+              trusted-public-keys = ["cosmic.cachix.org-1:Dya9IyXD4xdBehWjrkPv6rtxpmMdRel02smYzA85dPE="];
+            };
+          }
+          nixos-cosmic.nixosModules.default
           ./nixos/kharkanas
           disko.nixosModules.disko
         ];
