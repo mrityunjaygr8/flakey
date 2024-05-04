@@ -63,7 +63,7 @@
     options = "--delete-older-than 15d";
   };
 
-  nix.package = pkgs.nixUnstable;
+  nix.package = pkgs.nixVersions.latest;
 
   # FIXME: Add the rest of your current configuration
 
