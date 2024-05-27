@@ -26,6 +26,7 @@
     fd
     ripgrep
     sesh
+    geist-font
   ];
 
   programs = {

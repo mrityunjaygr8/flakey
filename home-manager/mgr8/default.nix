@@ -119,7 +119,7 @@
   home.file = {
     ".config/ghostty/config" = {
       text = ''
-        font-family = JetBrainsMonoNL Nerd Font
+        font-family = Geist Mono
         font-size = 15
         command = fish
         theme = Dracula
