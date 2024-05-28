@@ -67,6 +67,7 @@
   home.packages = with pkgs; [
     azure-cli
     xsel
+    gh
     less
     bruno
     git-credential-manager
@@ -113,6 +114,16 @@
   programs = {
     home-manager = {
       enable = true;
+    };
+    gh-dash = {
+      enable = true;
+      settings = {
+        repoPaths = {
+          "egyanamtech/vlcm_fetcher" = "~/stuff/vlcm/vlcm_fetcher/";
+          "egyanamtech/vlcm_backend" = "~/stuff/vlcm/vlcm_fetcher/vlcm_backend";
+          "egyanamtech/vlcm_frontend_react" = "~/stuff/vlcm/vlcm_fetcher/vlcm_frontend";
+        };
+      };
     };
   };
 
