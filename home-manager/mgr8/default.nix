@@ -66,6 +66,7 @@
 
   home.packages = with pkgs; [
     azure-cli
+    beekeeper-studio
     xsel
     gh
     less
