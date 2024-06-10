@@ -92,7 +92,7 @@
         lua-language-server
         nodePackages.typescript-language-server
         nodePackages.bash-language-server
-        nodePackages.pyright
+        pyright
         gopls
         prettierd
         ruff
