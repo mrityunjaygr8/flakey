@@ -65,6 +65,8 @@
   home.stateVersion = "23.05";
 
   home.packages = with pkgs; [
+    lens
+    keypunch
     azure-cli
     beekeeper-studio
     httpie-desktop
