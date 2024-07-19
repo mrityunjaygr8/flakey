@@ -65,6 +65,8 @@
   home.stateVersion = "23.05";
 
   home.packages = with pkgs; [
+    kubectl
+    kubernetes-helm
     lens
     keypunch
     azure-cli

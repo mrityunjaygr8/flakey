@@ -290,6 +290,7 @@
         docker-compose = "docker compose";
       };
       shellAbbrs = {
+        k = "kubectl";
         lg = "lazygit";
         ld = "lazydocker";
         g = "git";
