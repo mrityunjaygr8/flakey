@@ -92,6 +92,7 @@
         lua-language-server
         nodePackages.typescript-language-server
         nodePackages.bash-language-server
+        vimPlugins.nvim-treesitter-parsers.templ
         pyright
         gopls
         prettierd
