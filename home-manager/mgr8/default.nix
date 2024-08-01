@@ -65,6 +65,11 @@
   home.stateVersion = "23.05";
 
   home.packages = with pkgs; [
+    # start for crafting interpretters
+    jetbrains.clion
+    jetbrains.idea-ultimate
+    kotlin
+    # end for crafting interpretters
     kubectl
     kubernetes-helm
     lens
