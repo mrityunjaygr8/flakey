@@ -109,16 +109,122 @@
     (nerdfonts.override {fonts = ["FiraCode" "JetBrainsMono"];})
   ];
 
-  programs.wezterm = {
+  # programs.wezterm = {
+  #   enable = true;
+  #   colorSchemes = {
+  #     # Bluloco Dark
+  #     bluloco_dark = {
+  #       foreground = "#b9c0cb";
+  #       background = "#282c34";
+  #       cursor_bg = "#ffcc00";
+  #       cursor_border = "#ffcc00";
+  #       cursor_fg = "#282c34";
+  #       selection_bg = "#b9c0ca";
+  #       selection_fg = "#272b33";
+  #
+  #       ansi = ["#41444d" "#fc2f52" "#25a45c" "#ff936a" "#3476ff" "#7a82da" "#4483aa" "#cdd4e0"];
+  #       brights = ["#8f9aae" "#ff6480" "#3fc56b" "#f9c859" "#10b1fe" "#ff78f8" "#5fb9bc" "#ffffff"];
+  #     };
+  #   };
+  #   extraConfig = ''
+  #     return {
+  #       font = wezterm.font("Geist Mono"),
+  #       font_size = 16.0,
+  #       enable_tab_bar = false,
+  #       default_prog = {"fish"},
+  #       color_scheme = "bluloco_dark",
+  #     }
+  #   '';
+  # };
+
+  programs.alacritty = {
     enable = true;
-    extraConfig = ''
-      return {
-        font = wezterm.font("Geist Mono"),
-        font_size = 16.0,
-        enable_tab_bar = false,
-        default_prog = {"fish"},
-      }
-    '';
+    settings = {
+      shell = "fish";
+      font = {
+        normal = {
+          family = "Geist Mono";
+        };
+        size = 16.0;
+      };
+      # Flow colorscheme | Alacritty
+      # https://github.com/0xstepit/flow.nvim
+
+      # Black and white
+      colors = {
+        primary = {
+          background = "#1B2228";
+          foreground = "#B2C1CC";
+        };
+        normal = {
+          black = "#1D0D0D";
+          red = "#F07581";
+          green = "#81F075";
+          yellow = "#F1E575";
+          blue = "#76BDF0";
+          magenta = "#A876F0";
+          cyan = "#76F0E6";
+          white = "#F2F2F2";
+        };
+      };
+      # # Bright colors
+      colors.bright = {
+        black = "#0D0D0D";
+        red = "#F07580";
+        green = "#80F075";
+        yellow = "#F0E575";
+        blue = "#75BDF0";
+        magenta = "#A875F0";
+        cyan = "#75F0E6";
+        white = "#F2F2F2";
+      };
+
+      # Search colors
+      colors.search.matches = {
+        foreground = "#FF007C";
+        background = "#0D0D0D";
+      };
+
+      colors.search.focused_match = {
+        foreground = "#0D0D0D";
+        background = "#FF007C";
+      };
+
+      # Selection colors
+      colors.selection = {
+        background = "#FF007C";
+        text = "#0D0D0D";
+      };
+
+      # Cursors
+      # If you don't want to override original behavior, which is nice,
+      # remove [colors.cursor] and [colors.vi_mode_cursor].
+      colors.cursor = {
+        cursor = "#FF007C";
+        text = "#0D0D0D";
+      };
+
+      colors.vi_mode_cursor = {
+        cursor = "#FF007C";
+        text = "#0D0D0D";
+      };
+
+      colors.footer_bar = {
+        foreground = "#FF007C";
+        background = "#0D0D0D";
+      };
+
+      colors.indexed_colors = [
+        {
+          index = 93;
+          color = "#A875F0";
+        }
+        {
+          index = 198;
+          color = "#FF007C";
+        }
+      ];
+    };
   };
 
   home.sessionPath = [
@@ -209,7 +315,7 @@
       mkSettings [
         {
           name = "Launch Terminal";
-          command = "wezterm";
+          command = "alacritty";
           binding = "<Super>Return";
         }
         {

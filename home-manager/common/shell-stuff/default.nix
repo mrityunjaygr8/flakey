@@ -110,17 +110,17 @@
       keyMode = "vi";
       shell = "${pkgs.fish}/bin/fish";
       mouse = true;
-      plugins = with pkgs; [
-        {
-          plugin = tmuxPlugins.dracula;
-
-          extraConfig = ''
-            set -g @dracula-show-powerline true
-            set -g @dracula-refresh-rate 10
-            set -g @dracula-plugins ""
-          '';
-        }
-      ];
+      # plugins = with pkgs; [
+      #   {
+      #     plugin = tmuxPlugins.dracula;
+      #
+      #     extraConfig = ''
+      #       set -g @dracula-show-powerline true
+      #       set -g @dracula-refresh-rate 10
+      #       set -g @dracula-plugins ""
+      #     '';
+      #   }
+      # ];
       terminal = "xterm-256color";
       historyLimit = 10000;
       extraConfig = ''
@@ -167,24 +167,33 @@
         bind-key -T copy-mode-vi 'C-l' select-pane -R
         bind-key -T copy-mode-vi 'C-\' select-pane -l
         bind-key -T copy-mode-vi 'C-Space' select-pane -t:.+
+        # Flow colorscheme | Tmux
+        # https://github.com/0xstepit/flow.nvim
 
-        fg="#CBCCC6"
-        bg="#212732"
-        status_bg="#34455A"
-        border_fg="#70748C"
-        border_active_fg="#FECB6E"
-        status_left_bg="#FFA759"
+        ## Statusbar style
 
-        set -g status-style "bg=$status_bg,fg=$fg"
-        # set -g status-left-style "bg=$status_left_bg,fg=$fg"
+        set -g status-position top
+        set -g status-right-length "100"
+        set -g status-left-length "100"
+        set -g status-style bg=#141A1F,fg=#3D4F5C
+        set -g window-status-style fg=#3D4F5C,bg=#141A1F
+        setw -g window-status-separator " "
+        set -g window-status-current-style fg=colour198
+        set -g window-status-format "(#I) #W"
+        set -g window-status-current-format "(#I) #W"
+        set -g status-left "#[fg=#0D0D0D,bg=#75BDF0] #S #[bg=#3D4F5C,fg=#75BDF0] #h #[bg=#141A1F] "
+        set -g status-right "#[bg=#3D4F5C,fg=#75BDF0] %H:%M #[fg=#0D0D0D,bg=#75BDF0] %A %d. %b %Y "
 
-        # Border
-        set -g pane-border-style "bg=$bg,fg=$border_fg"
-        set -g pane-active-border-style "bg=$bg,fg=$border_active_fg"
+        set -g message-command-style fg=#FF007C
+        set -g message-style "fg=#FF007C, bg=#141A1F" # color used in the message popup.
 
-        # Window
-        set -g window-status-current-style "fg=$border_active_fg"
-        set -g window-status-style "fg=$fg"
+        set -g mode-style "fg=#FF007C"
+
+        ## Borders
+        set -g pane-border-style "fg=#3D4F5C"
+        set -g pane-active-border-style "fg=#3D4F5C"
+
+        # Set below the rest of your config
       '';
     };
     fish = {
