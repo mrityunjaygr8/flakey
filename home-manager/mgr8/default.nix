@@ -109,6 +109,18 @@
     (nerdfonts.override {fonts = ["FiraCode" "JetBrainsMono"];})
   ];
 
+  programs.wezterm = {
+    enable = true;
+    extraConfig = ''
+      return {
+        font = wezterm.font("Geist Mono"),
+        font_size = 16.0,
+        enable_tab_bar = false,
+        default_prog = {"fish"},
+      }
+    '';
+  };
+
   home.sessionPath = [
     "$HOME/.local/bin"
     "$HOME/flakey/scripts"
@@ -196,8 +208,8 @@
     in
       mkSettings [
         {
-          name = "Launch Ghostty";
-          command = "ghostty";
+          name = "Launch Terminal";
+          command = "wezterm";
           binding = "<Super>Return";
         }
         {

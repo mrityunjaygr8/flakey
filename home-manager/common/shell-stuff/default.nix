@@ -121,7 +121,7 @@
           '';
         }
       ];
-      terminal = "xterm-ghostty";
+      terminal = "xterm-256color";
       historyLimit = 10000;
       extraConfig = ''
         unbind %
@@ -248,7 +248,6 @@
         fish_config theme choose "ayu Dark"
         set -Ux GIT_ASKPASS ""
         set VIRTUALFISH_PYTHON_EXEC $(which python)
-        set TERM xterm-ghostty
         set FLAKE $HOME/flakey
 
         set -g direnv_fish_mode disable_arrow
