@@ -76,7 +76,7 @@
     keypunch
     azure-cli
     beekeeper-studio
-    httpie-desktop
+    # httpie-desktop
     xsel
     gh
     less
