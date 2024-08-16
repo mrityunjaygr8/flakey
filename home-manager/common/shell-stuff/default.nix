@@ -7,7 +7,14 @@
   config,
   pkgs,
   ...
-}: {
+}: let
+  catppuccin-fish = pkgs.fetchFromGitHub {
+    owner = "catppuccin";
+    repo = "fish";
+    rev = "a3b9eb5eaf2171ba1359fe98f20d226c016568cf";
+    hash = "sha256-shQxlyoauXJACoZWtRUbRMxmm10R8vOigXwjxBhG8ng=";
+  };
+in {
   # You can import other home-manager modules here
   imports = [
     # If you want to use modules your own flake exports (from modules/home-manager):
@@ -110,20 +117,28 @@
       keyMode = "vi";
       shell = "${pkgs.fish}/bin/fish";
       mouse = true;
-      # plugins = with pkgs; [
-      #   {
-      #     plugin = tmuxPlugins.dracula;
-      #
-      #     extraConfig = ''
-      #       set -g @dracula-show-powerline true
-      #       set -g @dracula-refresh-rate 10
-      #       set -g @dracula-plugins ""
-      #     '';
-      #   }
-      # ];
-      terminal = "xterm-256color";
+      plugins = with pkgs; [
+        {
+          plugin = tmuxPlugins.catppuccin;
+
+          extraConfig = ''
+            set -g @catppuccin_flavor 'mocha'
+            set -g @catppuccin_window_default_fill "number"
+
+            set -g @catppuccin_window_current_fill "number"
+            set -g @catppuccin_window_current_text "#{pane_current_path}"
+
+            set -g @catppuccin_status_modules_right "application session date_time"
+            set -g @catppuccin_status_left_separator  "█"
+            set -g @catppuccin_status_right_separator "█"
+          '';
+        }
+      ];
+      terminal = "tmux-256color";
       historyLimit = 10000;
       extraConfig = ''
+        set -ag terminal-overrides ",xterm-256color:RGB"
+
         unbind %
         bind | split-window -h
 
@@ -167,33 +182,7 @@
         bind-key -T copy-mode-vi 'C-l' select-pane -R
         bind-key -T copy-mode-vi 'C-\' select-pane -l
         bind-key -T copy-mode-vi 'C-Space' select-pane -t:.+
-        # Flow colorscheme | Tmux
-        # https://github.com/0xstepit/flow.nvim
 
-        ## Statusbar style
-
-        set -g status-position top
-        set -g status-right-length "100"
-        set -g status-left-length "100"
-        set -g status-style bg=#141A1F,fg=#3D4F5C
-        set -g window-status-style fg=#3D4F5C,bg=#141A1F
-        setw -g window-status-separator " "
-        set -g window-status-current-style fg=colour198
-        set -g window-status-format "(#I) #W"
-        set -g window-status-current-format "(#I) #W"
-        set -g status-left "#[fg=#0D0D0D,bg=#75BDF0] #S #[bg=#3D4F5C,fg=#75BDF0] #h #[bg=#141A1F] "
-        set -g status-right "#[bg=#3D4F5C,fg=#75BDF0] %H:%M #[fg=#0D0D0D,bg=#75BDF0] %A %d. %b %Y "
-
-        set -g message-command-style fg=#FF007C
-        set -g message-style "fg=#FF007C, bg=#141A1F" # color used in the message popup.
-
-        set -g mode-style "fg=#FF007C"
-
-        ## Borders
-        set -g pane-border-style "fg=#3D4F5C"
-        set -g pane-active-border-style "fg=#3D4F5C"
-
-        # Set below the rest of your config
       '';
     };
     fish = {
@@ -248,13 +237,22 @@
             sha256 = "sha256-28QW/WTLckR4lEfHv6dSotwkAKpNJFCShxmKFGQQ1Ew=";
           };
         }
+        {
+          name = "catpuccin";
+          src = pkgs.fetchFromGitHub {
+            owner = "catppuccin";
+            repo = "fish";
+            rev = "a3b9eb5eaf2171ba1359fe98f20d226c016568cf";
+            sha256 = "sha256-shQxlyoauXJACoZWtRUbRMxmm10R8vOigXwjxBhG8ng=";
+          };
+        }
       ];
       shellInit = ''
         # Set syntax highlighting colours; var names defined here:
         # http://fishshell.com/docs/current/index.html#variables-color
         set fish_color_autosuggestion brblack
 
-        fish_config theme choose "ayu Dark"
+        fish_config theme choose "Catppuccin Mocha"
         set -Ux GIT_ASKPASS ""
         set VIRTUALFISH_PYTHON_EXEC $(which python)
         set FLAKE $HOME/flakey
@@ -326,6 +324,9 @@
     sesh = {
       source = ../../../config/sesh;
       recursive = true;
+    };
+    "fish/themes/Catppuccin Mocha.theme" = {
+      source = "${catppuccin-fish}/themes/Catppuccin Mocha.theme";
     };
   };
 }
