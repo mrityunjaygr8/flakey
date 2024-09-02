@@ -90,6 +90,7 @@ return {
 			nixd = {},
 			bashls = {},
 			rust_analyzer = {},
+			terraformls = {},
 
 			lua_ls = {
 				-- cmd = {...},

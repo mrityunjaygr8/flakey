@@ -24,6 +24,7 @@ return {
 			ensure_installed = {
 				"json",
 				"javascript",
+				"terraform",
 				"typescript",
 				"tsx",
 				"yaml",

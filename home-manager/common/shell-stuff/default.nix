@@ -98,6 +98,7 @@ in {
         nodePackages.bash-language-server
         vimPlugins.nvim-treesitter-parsers.templ
         pyright
+        terraform-ls
         gopls
         prettierd
         ruff

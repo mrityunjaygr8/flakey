@@ -76,6 +76,7 @@
     keypunch
     azure-cli
     beekeeper-studio
+    opentofu
     # httpie-desktop
     xsel
     gh
