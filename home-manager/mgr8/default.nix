@@ -69,6 +69,7 @@
     jetbrains.clion
     jetbrains.idea-ultimate
     kotlin
+    cypress
     # end for crafting interpretters
     kubectl
     kubernetes-helm
