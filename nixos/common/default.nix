@@ -142,7 +142,7 @@
     openssl
     gnome-tweaks
     gnomeExtensions.appindicator
-    gnomeExtensions.pano
+    # gnomeExtensions.pano
     gnomeExtensions.blur-my-shell
     gnomeExtensions.vitals
     gnomeExtensions.space-bar
@@ -152,14 +152,14 @@
     gnomeExtensions.tiling-assistant
   ];
 
-  services.udev.packages = with pkgs; [gnome.gnome-settings-daemon];
+  services.udev.packages = with pkgs; [gnome-settings-daemon];
   programs.dconf.profiles = {
     user.databases = [
       {
         settings = {
           "org/gnome/shell".enabled-extensions = [
             "appindicatorsupport@rgcjonas.gmail.com"
-            "pano@elhan.io"
+            # "pano@elhan.io"
             "space-bar@luchrioh"
             "Vitals@CoreCoding.com"
           ];
