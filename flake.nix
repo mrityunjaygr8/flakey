@@ -23,7 +23,7 @@
     # nix-colors.url = "github:misterio77/nix-colors";
 
     ghostty = {
-      url = "git+ssh://git@github.com/mitchellh/ghostty";
+      url = "git+ssh://git@github.com/ghostty-org/ghostty";
     };
   };
 
