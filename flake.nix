@@ -84,6 +84,14 @@
           disko.nixosModules.disko
         ];
       };
+      arr = nixpkgs.lib.nixosSystem {
+        specialArgs = {inherit inputs outputs;};
+        modules = [
+          # > Our main nixos configuration file <
+          ./nixos/arr
+          disko.nixosModules.disko
+        ];
+      };
     };
 
     # Standalone home-manager configuration entrypoint

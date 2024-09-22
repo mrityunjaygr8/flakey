@@ -65,6 +65,7 @@
   home.stateVersion = "23.05";
 
   home.packages = with pkgs; [
+    nmap
     atkinson-hyperlegible
     # start for crafting interpretters
     jetbrains.clion
