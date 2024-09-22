@@ -89,7 +89,6 @@
         modules = [
           # > Our main nixos configuration file <
           ./nixos/arr
-          disko.nixosModules.disko
         ];
       };
     };
