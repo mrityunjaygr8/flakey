@@ -25,6 +25,7 @@
   fileSystems."/mnt/media" = 
     { device = "/dev/disk/by-uuid/63FC-6250";
       fsType = "exfat";
+      options = ["defaults" "nofail" "uid=1000" "gid=100" "umask=000" "users"];
     };
 
   swapDevices =
