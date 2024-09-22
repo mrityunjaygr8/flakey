@@ -9,7 +9,6 @@
   ...
 }: {
   imports = [
-    ./users.nix
     ./shell-stuff
   ];
 }
