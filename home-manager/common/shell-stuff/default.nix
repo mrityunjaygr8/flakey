@@ -29,6 +29,7 @@ in {
 
   home.packages = with pkgs; [
     difftastic
+    nh
     lazydocker
     fd
     ripgrep

@@ -22,16 +22,16 @@
     # everything match nicely? Try nix-colors!
     # nix-colors.url = "github:misterio77/nix-colors";
 
-    ghostty = {
-      url = "git+ssh://git@github.com/ghostty-org/ghostty";
-    };
+    # ghostty = {
+    #   url = "git+ssh://git@github.com/ghostty-org/ghostty";
+    # };
   };
 
   outputs = {
     self,
     nixpkgs,
     home-manager,
-    ghostty,
+    # ghostty,
     disko,
     ...
   } @ inputs: let
@@ -103,9 +103,9 @@
         modules = [
           # > Our main home-manager configuration file <
           ./home-manager/mgr8
-          {
-            home.packages = [ghostty.packages.x86_64-linux.default];
-          }
+          # {
+          #   home.packages = [ghostty.packages.x86_64-linux.default];
+          # }
         ];
       };
       "arr" = home-manager.lib.homeManagerConfiguration {
