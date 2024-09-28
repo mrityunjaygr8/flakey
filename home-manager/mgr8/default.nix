@@ -67,6 +67,7 @@
   home.packages = with pkgs; [
     nmap
     atkinson-hyperlegible
+    code-cursor
     # start for crafting interpretters
     jetbrains.clion
     jetbrains.idea-ultimate
