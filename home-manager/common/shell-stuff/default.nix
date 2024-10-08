@@ -312,7 +312,7 @@ in {
       functions = {
         mkdcd = {
           description = "Make a directory tree and enter it";
-          body = "mkdir -p $argv[1]; and cd $argv[1]";
+          body = "mkdir -p $argv[1]; and z $argv[1]";
         };
       };
     };
