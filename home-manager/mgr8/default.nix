@@ -65,6 +65,7 @@
   home.stateVersion = "23.05";
 
   home.packages = with pkgs; [
+    restic
     nmap
     atkinson-hyperlegible
     code-cursor
