@@ -98,6 +98,7 @@
     bind
     tldr
     neofetch
+    zed-editor
     jq
     unzip
     toybox
