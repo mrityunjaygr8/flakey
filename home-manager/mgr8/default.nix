@@ -81,7 +81,7 @@
     kubernetes-helm
     lens
     keypunch
-    azure-cli
+    # azure-cli
     beekeeper-studio
     opentofu
     # httpie-desktop
