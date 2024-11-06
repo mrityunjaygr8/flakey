@@ -65,6 +65,7 @@
   home.stateVersion = "23.05";
 
   home.packages = with pkgs; [
+    google-chrome
     xsv
     marimo
     restic
@@ -72,9 +73,9 @@
     atkinson-hyperlegible
     code-cursor
     # start for crafting interpretters
-    jetbrains.clion
-    jetbrains.idea-ultimate
-    kotlin
+    # jetbrains.clion
+    # jetbrains.idea-ultimate
+    # kotlin
     cypress
     # end for crafting interpretters
     kubectl
@@ -98,7 +99,6 @@
     nodejs
     vscodium
     bind
-    tldr
     neofetch
     zed-editor
     jq
@@ -264,6 +264,14 @@
   programs = {
     home-manager = {
       enable = true;
+    };
+    tealdeer = {
+      enable = true;
+      settings = {
+        update = {
+          auto_update = false;
+        };
+      };
     };
     gh-dash = {
       enable = true;
