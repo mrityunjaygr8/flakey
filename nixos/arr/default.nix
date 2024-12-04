@@ -42,7 +42,7 @@
     options = "--delete-older-than 15d";
   };
 
-  nix.package = pkgs.nixVersions.nix_2_23;
+  # nix.package = pkgs.nixVersions.nix_2_23;
 
   # FIXME: Add the rest of your current configuration
 
