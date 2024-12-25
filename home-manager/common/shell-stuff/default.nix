@@ -314,6 +314,17 @@ in {
           description = "Make a directory tree and enter it";
           body = "mkdir -p $argv[1]; and z $argv[1]";
         };
+        y = {
+          description = "Wrapper for yazi to change CWD when exiting";
+          body = ''
+            set tmp (mktemp -t "yazi-cwd.XXXXXX")
+            yazi $argv --cwd-file="$tmp"
+            if set cwd (command cat -- "$tmp"); and [ -n "$cwd" ]; and [ "$cwd" != "$PWD" ]
+              builtin cd -- "$cwd"
+            end
+            rm -f -- "$tmp"
+          '';
+        };
       };
     };
   };

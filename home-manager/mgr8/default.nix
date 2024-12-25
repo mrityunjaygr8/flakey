@@ -116,7 +116,9 @@
     uget
     postman
     nh
+    yazi
     nerd-fonts.fira-code
+    nerd-fonts.symbols-only
     nerd-fonts.jetbrains-mono
   ];
 
