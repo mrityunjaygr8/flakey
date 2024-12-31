@@ -68,7 +68,7 @@
     calibre
     google-chrome
     xsv
-    marimo
+    ghostty
     restic
     nmap
     atkinson-hyperlegible
