@@ -293,9 +293,9 @@
     ".config/ghostty/config" = {
       text = ''
         font-family = Geist Mono
-        font-size = 15
+        font-size = 16
         command = fish
-        theme = Dracula
+        theme = ChallengerDeep
       '';
     };
   };
@@ -348,7 +348,7 @@
       mkSettings [
         {
           name = "Launch Terminal";
-          command = "alacritty";
+          command = "ghostty";
           binding = "<Super>Return";
         }
         {
