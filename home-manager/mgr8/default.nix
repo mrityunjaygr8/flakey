@@ -295,7 +295,7 @@
         font-family = Geist Mono
         font-size = 16
         command = fish
-        theme = ChallengerDeep
+        theme = flexoki-dark
       '';
     };
   };
