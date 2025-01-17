@@ -89,15 +89,19 @@
   #   useXkbConfig = true; # use xkb.options in tty.
   # };
 
-  # Enable the X11 windowing system.
-  services.xserver.enable = true;
-  services.xserver.displayManager.gdm.enable = true;
-  services.xserver.desktopManager.gnome.enable = true;
+  # # Enable the X11 windowing system.
+  # services.xserver.enable = true;
+  # services.xserver.displayManager.gdm.enable = true;
+  # services.xserver.desktopManager.gnome.enable = true;
+  #
+  # # Configure keymap in X11
+  # services.xserver.xkb.layout = "in";
+  # services.xserver.xkb.variant = "eng";
+  # services.xserver.xkb.options = "caps:escape";
 
-  # Configure keymap in X11
-  services.xserver.xkb.layout = "in";
-  services.xserver.xkb.variant = "eng";
-  services.xserver.xkb.options = "caps:escape";
+  import = [
+    ../../modules/nixos/hyprland.nix
+  ];
 
   # Enable CUPS to print documents.
   services.printing.enable = true;
