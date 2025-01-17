@@ -66,6 +66,7 @@
   home.stateVersion = "23.05";
 
   home.packages = with pkgs; [
+    libnotify
     calibre
     google-chrome
     xsv
