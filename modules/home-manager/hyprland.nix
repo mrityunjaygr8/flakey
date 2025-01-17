@@ -1,13 +1,14 @@
 {pkgs, ...}: {
   imports = [
     ./gtk.nix
+    ./waybar.nix
   ];
 
   home.packages = with pkgs; [
     hyprpolkitagent
   ];
 
-  services.dunst.enable = true;
+  services.mako.enable = true;
   programs.wofi.enable = true;
   programs.kitty.enable = true;
   wayland.windowManager.hyprland = {
@@ -17,7 +18,10 @@
       "$terminal" = "ghostty";
       "$browser" = "firefox";
       "$menu" = "wofi --show drun";
-      "exec-once" = "systemctl --user start hyprpolkitagent";
+      "exec-once" = [
+        "systemctl --user start hyprpolkitagent"
+        "waybar & mako"
+      ];
       bindel = [
         ",XF86AudioRaiseVolume, exec, wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%+"
         ",XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"
