@@ -7,6 +7,8 @@
       bind =
         [
           "$mod, b, exec, firefox"
+          "$mod, RETURN, exec, ghostty"
+          "$mod, Q, exec, kitty"
         ]
         ++ (
           builtins.concatLists (builtins.genList (
