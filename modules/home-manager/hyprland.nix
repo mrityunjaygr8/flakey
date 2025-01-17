@@ -5,10 +5,10 @@
 
   home.packages = with pkgs; [
     hyprpolkitagent
-    dunst
-    wofi
   ];
 
+  services.dunst.enable = true;
+  programs.wofi.enable = true;
   programs.kitty.enable = true;
   wayland.windowManager.hyprland = {
     enable = true;
