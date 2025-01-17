@@ -101,6 +101,7 @@
 
   imports = [
     ../../modules/nixos/hyprland.nix
+    ../../modules/nixos/audio.nix
   ];
 
   # Enable CUPS to print documents.
@@ -108,15 +109,8 @@
 
   # Enable sound.
   # sound.enable = true;
-  hardware.pulseaudio.enable = false;
 
   security.rtkit.enable = true;
-  services.pipewire = {
-    enable = true;
-    alsa.enable = true;
-    alsa.support32Bit = true;
-    pulse.enable = true;
-  };
   # TODO: Configure your system-wide user settings (groups, etc), add more users as needed.
   users.users = {
     # FIXME: Replace with your username
