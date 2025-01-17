@@ -99,7 +99,7 @@
   # services.xserver.xkb.variant = "eng";
   # services.xserver.xkb.options = "caps:escape";
 
-  import = [
+  imports = [
     ../../modules/nixos/hyprland.nix
   ];
 
