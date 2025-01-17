@@ -3,12 +3,12 @@
     ./gtk.nix
   ];
 
+  home.packages = with pkgs; [
+    hyprpolkitagent
+    dunst
+    wofi
+  ];
 
-    font = {
-      name = "Geist Mono";
-      size = 12;
-    };
-  };
   programs.kitty.enable = true;
   wayland.windowManager.hyprland = {
     enable = true;
@@ -16,6 +16,8 @@
       "$mod" = "SUPER";
       "$terminal" = "ghostty";
       "$browser" = "firefox";
+      "$menu" = "wofi --show drun";
+      "exec-once" = "systemctl --user start hyprpolkitagent";
       bindel = [
         ",XF86AudioRaiseVolume, exec, wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%+"
         ",XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"
@@ -32,6 +34,7 @@
           "$mod, L, movefocus, r"
           "$mod, J, movefocus, d"
           "$mod, K, movefocus, u"
+          "$mod, R, exec, $menu"
           "$mod, S, togglespecialworkspace, magic"
           "$mod SHIFT, S, movetoworkspace, special:magic"
         ]
