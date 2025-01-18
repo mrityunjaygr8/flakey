@@ -67,10 +67,6 @@
 
   # FIXME: Add the rest of your current configuration
 
-  # Pick only one of the below networking options.
-  # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
-  networking.networkmanager.enable = true; # Easiest to use and most distros use this by default.
-
   # TODO: This is just an example, be sure to use whatever bootloader you prefer
   boot.loader.systemd-boot.enable = true;
 
@@ -102,6 +98,7 @@
   imports = [
     ../../modules/nixos/hyprland.nix
     ../../modules/nixos/audio.nix
+    ../../modules/nixos/network.nix
   ];
 
   # Enable CUPS to print documents.
@@ -124,7 +121,7 @@
         # TODO: Add your SSH public key(s) here, if you plan on using SSH to connect
       ];
       # TODO: Be sure to add any other groups you need (such as networkmanager, audio, docker, etc)
-      extraGroups = ["wheel" "docker"];
+      extraGroups = ["wheel" "docker" "networkmanager"];
     };
   };
 
@@ -178,11 +175,6 @@
 
   virtualisation.docker.enable = true;
   virtualisation.docker.storageDriver = "btrfs";
-
-  # Open ports in the firewall.
-  # port 9090 is for calibre content server
-  networking.firewall.allowedTCPPorts = [8000 3000 9090];
-  networking.firewall.allowedUDPPorts = [9090];
 
   # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
   system.stateVersion = "23.05";
