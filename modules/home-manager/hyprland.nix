@@ -27,6 +27,13 @@
         ",XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"
         ",XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
       ];
+      monitor = [
+        "desc:Dell Inc. DELL P2419H C5WWLV2, preferred, auto, 1, transform, 3"
+        ", preferred, auto, 1"
+      ];
+      animations = {
+        enabled = false;
+      };
       bind =
         [
           "$mod, B, exec, $browser"
