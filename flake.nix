@@ -128,7 +128,7 @@
         modules = [
           # > Our main home-manager configuration file <
           ./home-manager/mgr8
-          cosmic-manager.homeManagerModules.cosmic-manager
+          # cosmic-manager.homeManagerModules.cosmic-manager
           # {
           #   home.packages = [ghostty.packages.x86_64-linux.default];
           # }
