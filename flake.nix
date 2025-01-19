@@ -11,6 +11,13 @@
     # Home manager
     home-manager.url = "github:nix-community/home-manager/master";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
+    cosmic-manager = {
+      url = "github:HeitorAugustoLN/cosmic-manager";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        home-manager.follows = "home-manager";
+      };
+    };
 
     disko.url = "github:nix-community/disko";
     disko.inputs.nixpkgs.follows = "nixpkgs";
@@ -34,6 +41,7 @@
     nixpkgs,
     home-manager,
     nixos-cosmic,
+    cosmic-manager,
     # ghostty,
     disko,
     ...
@@ -120,6 +128,7 @@
         modules = [
           # > Our main home-manager configuration file <
           ./home-manager/mgr8
+          cosmic-manager.homeManagerModules.cosmic-manager
           # {
           #   home.packages = [ghostty.packages.x86_64-linux.default];
           # }
