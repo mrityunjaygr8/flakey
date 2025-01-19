@@ -1,5 +1,5 @@
 {pkgs, ...}: {
-  home.packages = with pkgs; [overskride pavucontrol networkmanager];
+  home.packages = with pkgs; [overskride pavucontrol networkmanager networkmanagerapplet];
   programs.waybar = {
     enable = true;
     settings = {
@@ -46,6 +46,7 @@
           "tooltip-format-ethernet" = "{ifname} ";
           "tooltip-format-disconnected" = "Disconnected";
           "max-length" = 50;
+          "on-click" = "nm-applet";
         };
 
         "privacy" = {
