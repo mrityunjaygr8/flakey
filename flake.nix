@@ -15,6 +15,8 @@
     disko.url = "github:nix-community/disko";
     disko.inputs.nixpkgs.follows = "nixpkgs";
 
+    nixos-cosmic.url = "github:lilyinstarlight/nixos-cosmic";
+
     # TODO: Add any other flake you might need
     # hardware.url = "github:nixos/nixos-hardware";
 
@@ -31,6 +33,7 @@
     self,
     nixpkgs,
     home-manager,
+    nixos-cosmic,
     # ghostty,
     disko,
     ...
@@ -72,6 +75,13 @@
         specialArgs = {inherit inputs outputs;};
         modules = [
           # > Our main nixos configuration file <
+          {
+            nix.settings = {
+              substituters = ["https://cosmic.cachix.org"];
+              trusted-public-keys = ["cosmic.cachix.org-1:Dya9IyXD4xdBehWjrkPv6rtxpmMdRel02smYzA85dPE="];
+            };
+          }
+          nixos-cosmic.nixosModules.default
           ./nixos/kharkanas
           disko.nixosModules.disko
         ];
