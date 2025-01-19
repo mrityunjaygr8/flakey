@@ -1,6 +1,10 @@
 {...}: {
   wayland.desktopManager.cosmic = {
     enable = true;
-    appearance.theme.default = "dark";
+    appearance = {
+      theme = {
+        default = "dark";
+      };
+    };
   };
 }
