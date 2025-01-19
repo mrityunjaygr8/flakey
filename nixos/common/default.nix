@@ -10,6 +10,7 @@
 }: {
   # You can import other NixOS modules here
 
+  imports = [../../modules/nixos/cosmic.nix ../../modules/nixos/sound.nix];
   nixpkgs = {
     # You can add overlays here
     overlays = [
@@ -94,9 +95,6 @@
   # services.xserver.displayManager.gdm.enable = true;
   # services.xserver.desktopManager.gnome.enable = true;
 
-  services.desktopManager.cosmic.enable = true;
-  services.displayManager.cosmic-greeter.enable = true;
-
   # Configure keymap in X11
   services.xserver.xkb.layout = "in";
   services.xserver.xkb.variant = "eng";
@@ -105,17 +103,7 @@
   # Enable CUPS to print documents.
   services.printing.enable = true;
 
-  # Enable sound.
-  # sound.enable = true;
-  hardware.pulseaudio.enable = false;
-
   security.rtkit.enable = true;
-  services.pipewire = {
-    enable = true;
-    alsa.enable = true;
-    alsa.support32Bit = true;
-    pulse.enable = true;
-  };
   # TODO: Configure your system-wide user settings (groups, etc), add more users as needed.
   users.users = {
     # FIXME: Replace with your username
