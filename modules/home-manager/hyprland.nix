@@ -63,8 +63,8 @@ in
                 i: let
                   ws = i + 1;
                 in [
-                  "$mod,${builtins.getAttr (toString ws)}, workspace, ${toString ws}"
-                  "$mod SHIFT,${builtins.getAttr (toString ws)}, movetoworkspace, ${toString ws}"
+                  "$mod,${builtins.getAttr (toString ws) number_letter_mapping}, workspace, ${toString ws}"
+                  "$mod SHIFT,${builtins.getAttr (toString ws) number_letter_mapping}, movetoworkspace, ${toString ws}"
                 ]
               )
               4)
