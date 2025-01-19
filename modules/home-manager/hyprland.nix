@@ -67,7 +67,7 @@ in
                   "$mod SHIFT,${builtins.getAttr (toString ws) number_letter_mapping}, movetoworkspace, ${toString ws}"
                 ]
               )
-              4)
+              5)
           );
       };
     };
