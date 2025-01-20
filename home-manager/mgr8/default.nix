@@ -66,6 +66,7 @@
   home.stateVersion = "23.05";
 
   home.packages = with pkgs; [
+    bottom
     calibre
     google-chrome
     xsv
