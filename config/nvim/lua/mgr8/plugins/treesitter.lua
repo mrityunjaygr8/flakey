@@ -38,6 +38,7 @@ return {
 				"dockerfile",
 				"gitignore",
 				"elixir",
+				"heex",
 				"query",
 				"vimdoc",
 				"c",
