@@ -260,12 +260,11 @@
   ];
   home.sessionVariables = {
     EDITOR = "nvim";
-    SSH_AUTH_SOCK = "/run/user/1000/keyring/ssh";
   };
 
-  services.gpg-agent = {
-    enable = true;
-  };
+  # services.gpg-agent = {
+  #   enable = true;
+  # };
 
   programs = {
     home-manager = {
