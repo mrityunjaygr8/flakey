@@ -92,6 +92,7 @@ return {
 			rust_analyzer = {},
 			terraformls = {},
 			denols = {},
+      elixirls = {},
 
 			lua_ls = {
 				-- cmd = {...},
