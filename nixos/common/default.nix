@@ -10,6 +10,7 @@
 }: {
   # You can import other NixOS modules here
 
+  imports = [../../modules/nixos/cosmic.nix ../../modules/nixos/sound.nix];
   nixpkgs = {
     # You can add overlays here
     overlays = [
@@ -90,9 +91,9 @@
   # };
 
   # Enable the X11 windowing system.
-  services.xserver.enable = true;
-  services.xserver.displayManager.gdm.enable = true;
-  services.xserver.desktopManager.gnome.enable = true;
+  # services.xserver.enable = true;
+  # services.xserver.displayManager.gdm.enable = true;
+  # services.xserver.desktopManager.gnome.enable = true;
 
   # Configure keymap in X11
   services.xserver.xkb.layout = "in";
@@ -102,17 +103,7 @@
   # Enable CUPS to print documents.
   services.printing.enable = true;
 
-  # Enable sound.
-  # sound.enable = true;
-  hardware.pulseaudio.enable = false;
-
   security.rtkit.enable = true;
-  services.pipewire = {
-    enable = true;
-    alsa.enable = true;
-    alsa.support32Bit = true;
-    pulse.enable = true;
-  };
   # TODO: Configure your system-wide user settings (groups, etc), add more users as needed.
   users.users = {
     # FIXME: Replace with your username
@@ -132,7 +123,7 @@
 
   # security.pam.services.lightdm.enableGnomeKeyring = true;
   programs.ssh.startAgent = true;
-  services.gnome.gnome-keyring.enable = true;
+  # services.gnome.gnome-keyring.enable = true;
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [

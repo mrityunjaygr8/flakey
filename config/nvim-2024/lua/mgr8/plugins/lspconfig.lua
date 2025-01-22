@@ -85,14 +85,16 @@ return {
 			--    https://github.com/pmizio/typescript-tools.nvim
 			--
 			-- But for many setups, the LSP (`tsserver`) will work just fine
-			ts_ls = {},
+			tsserver = {},
 			--
 			nixd = {},
 			bashls = {},
 			rust_analyzer = {},
 			terraformls = {},
 			denols = {},
-      elixirls = {},
+			elixirls = {
+				cmd = { "elixir-ls" },
+			},
 
 			lua_ls = {
 				-- cmd = {...},

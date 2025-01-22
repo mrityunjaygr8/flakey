@@ -11,9 +11,18 @@
     # Home manager
     home-manager.url = "github:nix-community/home-manager/master";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
+    cosmic-manager = {
+      url = "github:HeitorAugustoLN/cosmic-manager";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        home-manager.follows = "home-manager";
+      };
+    };
 
     disko.url = "github:nix-community/disko";
     disko.inputs.nixpkgs.follows = "nixpkgs";
+
+    nixos-cosmic.url = "github:lilyinstarlight/nixos-cosmic";
 
     # TODO: Add any other flake you might need
     # hardware.url = "github:nixos/nixos-hardware";
@@ -31,6 +40,8 @@
     self,
     nixpkgs,
     home-manager,
+    nixos-cosmic,
+    cosmic-manager,
     # ghostty,
     disko,
     ...
@@ -72,6 +83,13 @@
         specialArgs = {inherit inputs outputs;};
         modules = [
           # > Our main nixos configuration file <
+          {
+            nix.settings = {
+              substituters = ["https://cosmic.cachix.org"];
+              trusted-public-keys = ["cosmic.cachix.org-1:Dya9IyXD4xdBehWjrkPv6rtxpmMdRel02smYzA85dPE="];
+            };
+          }
+          nixos-cosmic.nixosModules.default
           ./nixos/kharkanas
           disko.nixosModules.disko
         ];
@@ -80,6 +98,13 @@
         specialArgs = {inherit inputs outputs;};
         modules = [
           # > Our main nixos configuration file <
+          {
+            nix.settings = {
+              substituters = ["https://cosmic.cachix.org"];
+              trusted-public-keys = ["cosmic.cachix.org-1:Dya9IyXD4xdBehWjrkPv6rtxpmMdRel02smYzA85dPE="];
+            };
+          }
+          nixos-cosmic.nixosModules.default
           ./nixos/black-coral
           disko.nixosModules.disko
         ];
@@ -103,6 +128,7 @@
         modules = [
           # > Our main home-manager configuration file <
           ./home-manager/mgr8
+          # cosmic-manager.homeManagerModules.cosmic-manager
           # {
           #   home.packages = [ghostty.packages.x86_64-linux.default];
           # }

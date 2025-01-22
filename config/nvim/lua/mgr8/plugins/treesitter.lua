@@ -1,60 +1,60 @@
 return {
-	"nvim-treesitter/nvim-treesitter",
-	event = { "BufReadPre", "BufNewFile" },
-	build = ":TSUpdate",
-	dependencies = {
-		"windwp/nvim-ts-autotag",
-	},
-	config = function()
-		-- import nvim-treesitter plugin
-		local treesitter = require("nvim-treesitter.configs")
+  "nvim-treesitter/nvim-treesitter",
+  event = {"BufReadPre", "BufNewFile"},
+  dependencies = {
+    "windwp/nvim-ts-autotag",
+  },
+  build = ":TSUpdate",
+  config = function() 
+    local configs = require("nvim-treesitter.configs")
 
-		-- configure treesitter
-		treesitter.setup({ -- enable syntax highlighting
-			highlight = {
-				enable = true,
-			},
-			-- enable indentation
-			indent = { enable = true },
-			-- enable autotagging (w/ nvim-ts-autotag plugin)
-			autotag = {
-				enable = true,
-			},
-			-- ensure these language parsers are installed
-			ensure_installed = {
-				"json",
-				"javascript",
-				"terraform",
-				"typescript",
-				"tsx",
-				"yaml",
-				"html",
-				"css",
-				"markdown",
-				"markdown_inline",
-				"bash",
-				"lua",
-				"vim",
-				"dockerfile",
-				"gitignore",
-				"query",
-				"vimdoc",
-				"c",
-				"python",
-				"go",
-				"rust",
-				"sql",
-				"templ",
-			},
-			incremental_selection = {
-				enable = true,
-				keymaps = {
-					init_selection = "<C-space>",
+    configs.setup({
+      highlight = {
+        enable = true,
+      },
+      indent = {
+        enable = true,
+      },
+      autotag = {
+        enable = true,
+      },
+      ensure_installed = {
+        "lua",
+        "vim",
+        "elixir",
+        "heex",
+        "python",
+        "go",
+        "typescript",
+        "tsx",
+        "yaml",
+        "html",
+        "css",
+        "markdown",
+        "markdown_inline",
+        "bash",
+        "dockerfile",
+        "gitignore",
+        "rust",
+        "sql",
+        "csv",
+        "fish",
+        "json",
+        "json5",
+        "jsonc",
+        "nix",
+        "toml",
+      },
+
+      incremental_selection = {
+        enable = true,
+        keymaps = {
+          init_selection = "<C-space>",
 					node_incremental = "<C-space>",
 					scope_incremental = false,
 					node_decremental = "<bs>",
-				},
-			},
-		})
-	end,
+        },
+      },
+    })
+  end
 }

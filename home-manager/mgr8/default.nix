@@ -19,6 +19,7 @@
     # You can also split up your configuration and import pieces of it here:
     # ./nvim.nix
     ../common
+    # ../../modules/home-manager/cosmic.nix
   ];
 
   nixpkgs = {
@@ -65,6 +66,8 @@
   home.stateVersion = "23.05";
 
   home.packages = with pkgs; [
+    deno
+    bottom
     calibre
     google-chrome
     xsv
@@ -258,12 +261,11 @@
   ];
   home.sessionVariables = {
     EDITOR = "nvim";
-    SSH_AUTH_SOCK = "/run/user/1000/keyring/ssh";
   };
 
-  services.gpg-agent = {
-    enable = true;
-  };
+  # services.gpg-agent = {
+  #   enable = true;
+  # };
 
   programs = {
     home-manager = {
@@ -300,84 +302,84 @@
     };
   };
 
-  dconf.settings = let
-    custom_shortcuts = let
-      inherit (builtins) length head tail listToAttrs genList;
-      range = a: b:
-        if a < b
-        then [a] ++ range (a + 1) b
-        else [];
-      globalPath = "org/gnome/settings-daemon/plugins/media-keys";
-      path = "${globalPath}/custom-keybindings";
-      mkPath = id: "${globalPath}/custom${toString id}";
-      isEmpty = list: length list == 0;
-      mkSettings = settings: let
-        checkSettings = {
-          name,
-          command,
-          binding,
-        } @ this:
-          this;
-        aux = i: list:
-          if isEmpty list
-          then []
-          else let
-            hd = head list;
-            tl = tail list;
-            name = mkPath i;
-          in
-            aux (i + 1) tl
-            ++ [
-              {
-                name = mkPath i;
-                value = checkSettings hd;
-              }
-            ];
-        settingsList = aux 0 settings;
-      in
-        listToAttrs (settingsList
-          ++ [
-            {
-              name = globalPath;
-              value = {
-                custom-keybindings = genList (i: "/${mkPath i}/") (length settingsList);
-              };
-            }
-          ]);
-    in
-      mkSettings [
-        {
-          name = "Launch Terminal";
-          command = "ghostty";
-          binding = "<Super>Return";
-        }
-        {
-          name = "Launch Firefox";
-          command = "firefox";
-          binding = "<Super>b";
-        }
-      ];
-
-    wm_keybinds = {
-      "org/gnome/shell/keybindings" = {
-        toggle-message-tray = [];
-      };
-      "org/gnome/settings-daemon/plugins/media-keys" = {
-        volume-down = ["<Control><Alt>minus" "XF86AudioLowerVolume"];
-        volume-mute = ["<Control><Alt>0" "XF86AudioMute"];
-        volume-up = ["<Control><Alt>equal" "XF86AudioRaiseVolume"];
-      };
-      "org/gnome/desktop/wm/keybindings" = {
-        close = ["<Shift><Super>c"];
-        toggle-maximized = ["<Super>m"];
-      };
-    };
-
-    app_menu_config = {
-      "org/gnome/desktop/wm/preferences" = {
-        button-layout = "appmenu:minimize,maximize,close";
-      };
-    };
-  in
-    lib.mkMerge [custom_shortcuts wm_keybinds app_menu_config];
+  # dconf.settings = let
+  #   custom_shortcuts = let
+  #     inherit (builtins) length head tail listToAttrs genList;
+  #     range = a: b:
+  #       if a < b
+  #       then [a] ++ range (a + 1) b
+  #       else [];
+  #     globalPath = "org/gnome/settings-daemon/plugins/media-keys";
+  #     path = "${globalPath}/custom-keybindings";
+  #     mkPath = id: "${globalPath}/custom${toString id}";
+  #     isEmpty = list: length list == 0;
+  #     mkSettings = settings: let
+  #       checkSettings = {
+  #         name,
+  #         command,
+  #         binding,
+  #       } @ this:
+  #         this;
+  #       aux = i: list:
+  #         if isEmpty list
+  #         then []
+  #         else let
+  #           hd = head list;
+  #           tl = tail list;
+  #           name = mkPath i;
+  #         in
+  #           aux (i + 1) tl
+  #           ++ [
+  #             {
+  #               name = mkPath i;
+  #               value = checkSettings hd;
+  #             }
+  #           ];
+  #       settingsList = aux 0 settings;
+  #     in
+  #       listToAttrs (settingsList
+  #         ++ [
+  #           {
+  #             name = globalPath;
+  #             value = {
+  #               custom-keybindings = genList (i: "/${mkPath i}/") (length settingsList);
+  #             };
+  #           }
+  #         ]);
+  #   in
+  #     mkSettings [
+  #       {
+  #         name = "Launch Terminal";
+  #         command = "ghostty";
+  #         binding = "<Super>Return";
+  #       }
+  #       {
+  #         name = "Launch Firefox";
+  #         command = "firefox";
+  #         binding = "<Super>b";
+  #       }
+  #     ];
+  #
+  #   wm_keybinds = {
+  #     "org/gnome/shell/keybindings" = {
+  #       toggle-message-tray = [];
+  #     };
+  #     "org/gnome/settings-daemon/plugins/media-keys" = {
+  #       volume-down = ["<Control><Alt>minus" "XF86AudioLowerVolume"];
+  #       volume-mute = ["<Control><Alt>0" "XF86AudioMute"];
+  #       volume-up = ["<Control><Alt>equal" "XF86AudioRaiseVolume"];
+  #     };
+  #     "org/gnome/desktop/wm/keybindings" = {
+  #       close = ["<Shift><Super>c"];
+  #       toggle-maximized = ["<Super>m"];
+  #     };
+  #   };
+  #
+  #   app_menu_config = {
+  #     "org/gnome/desktop/wm/preferences" = {
+  #       button-layout = "appmenu:minimize,maximize,close";
+  #     };
+  #   };
+  # in
+  #   lib.mkMerge [custom_shortcuts wm_keybinds app_menu_config];
 }
