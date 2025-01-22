@@ -1,10 +1,23 @@
 return {
   "nvim-treesitter/nvim-treesitter",
+  event = {"BufReadPre", "BufNewFile"},
+  dependencies = {
+    "windwp/nvim-ts-autotag",
+  },
   build = ":TSUpdate",
   config = function() 
     local configs = require("nvim-treesitter.configs")
 
     configs.setup({
+      highlight = {
+        enable = true,
+      },
+      indent = {
+        enable = true,
+      },
+      autotag = {
+        enable = true,
+      },
       ensure_installed = {
         "lua",
         "vim",
@@ -29,7 +42,6 @@ return {
         "json",
         "json5",
         "jsonc",
-        "nginx",
         "nix",
         "toml",
       },
