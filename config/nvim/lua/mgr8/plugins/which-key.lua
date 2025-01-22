@@ -8,8 +8,8 @@ return {
   config = function()
     require("which-key").register({
       J = {"mzJ`z", "Join lines and keep cursor position"},
-      ["<C-d">] = {"<C-d>zz", "Half page down and center"},
-      ["<C-u">] = {"<C-u>zz", "Half page up and center"},
+      ["<C-d>"] = {"<C-d>zz", "Half page down and center"},
+      ["<C-u>"] = {"<C-u>zz", "Half page up and center"},
       n = { "nzzzv", "Next search result and center" },
       N = { "Nzzzv", "Previous search result and center" },
       ["<leader>"] = {
