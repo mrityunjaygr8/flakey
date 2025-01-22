@@ -6,7 +6,7 @@ return {
   },
   init = function()
     vim.o.timeout = true
-    vim.o.timeoutlen = 500
+    vim.o.timeoutlen = 1000
   end,
   config = function()
     require("which-key").add({
