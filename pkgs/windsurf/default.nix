@@ -1,4 +1,5 @@
 { stdenv
+, lib
 , inputs
 , callPackage
 , fetchurl
@@ -13,7 +14,7 @@ let
 
   plat =
     {
-      x86_64-linux = "7461194334a117931551955534585c72e79517d56a43efe86ad291774640392d";
+      x86_64-linux = "linux-x64";
       # Pretty sure these below aren't currently supported.
       # x86_64-darwin = "macos-x64";
       # aarch64-linux = "linux-arm64";
@@ -24,7 +25,7 @@ let
   archive_fmt = if stdenv.hostPlatform.isDarwin then "zip" else "tar.gz";
 
   sha256 = {
-    x86_64-linux = "7461194334a117931551955534585c72e79517d56a43efe86ad291774640392d";
+    x86_64-linux = "sha256-dGEZQzShF5MVUZVVNFhccueVF9VqQ+/oatKRd0ZAOS0=";
   }.${system} or throwSystem;
 
 in

@@ -66,6 +66,7 @@
   home.stateVersion = "23.05";
 
   home.packages = with pkgs; [
+    (lib.hiPrio (pkgs.callPackage ./../../pkgs/windsurf/default.nix {inherit inputs;}) )
     deno
     bottom
     calibre
