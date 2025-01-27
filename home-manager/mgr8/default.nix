@@ -114,8 +114,9 @@
     python3
     pika-backup
     firefox
-    nodePackages.pnpm
-    nodePackages.npm
+    pnpm_8
+    # pnpm_10
+    # nodePackages.npm
     obsidian
     pre-commit
     uget
