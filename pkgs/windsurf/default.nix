@@ -43,6 +43,7 @@ callPackage "${inputs.nixpkgs}/pkgs/applications/editors/vscode/generic.nix" rec
   src = fetchurl {
     url = "https://windsurf-stable.codeiumdata.com/${plat}/stable/aa53e9df956d9bc7cb1835f8eaa47768ce0e5b44/Windsurf-${plat}-${version}.${archive_fmt}";
     inherit sha256;
+    # sha256 = lib.fakeSha256;
   };
 
   sourceRoot = "Windsurf";
