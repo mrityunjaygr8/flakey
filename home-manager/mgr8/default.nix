@@ -68,6 +68,7 @@
   home.packages = with pkgs; [
     (lib.hiPrio (pkgs.callPackage ./../../pkgs/windsurf/default.nix {inherit inputs;}) )
     deno
+    elixir-ls
     bottom
     calibre
     google-chrome
