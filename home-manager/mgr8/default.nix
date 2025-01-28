@@ -66,7 +66,9 @@
   home.stateVersion = "23.05";
 
   home.packages = with pkgs; [
+    (lib.hiPrio (pkgs.callPackage ./../../pkgs/windsurf/default.nix {inherit inputs;}) )
     deno
+    elixir-ls
     bottom
     calibre
     google-chrome
@@ -112,8 +114,9 @@
     python3
     pika-backup
     firefox
-    nodePackages.pnpm
-    nodePackages.npm
+    pnpm_8
+    # pnpm_10
+    # nodePackages.npm
     obsidian
     pre-commit
     uget

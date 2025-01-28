@@ -93,7 +93,7 @@ return {
 			terraformls = {},
 			denols = {},
       elixirls = {
-        cmd = { "elixir-ls" }
+        cmd = {"elixir-ls"};
       },
 
 			lua_ls = {
