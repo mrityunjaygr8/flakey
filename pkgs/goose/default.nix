@@ -1,6 +1,6 @@
 { stdenv
 , rustPlatform
-, fetchFromGithub
+, fetchFromGitHub
 , lib
 , pkg-config
 , dbus
@@ -16,14 +16,14 @@
   pname = "goose";
   version = "1.0.3";
 
-  src = fetchFromGithub {
+  src = fetchFromGitHub {
     owner = "block";
     repo = "goose";
     rev = "v${version}";
-    hash = lib.fakeSha256;
+    hash = "sha256-82IhLhw0TdaMh21phBxcUZ5JI5xOXb0DrwnBmPwyfAQ=";
   };
 
-  cargoHash = lib.fakeSha256;
+  cargoHash = "sha256-Sfks9NkADsHkTe9Uz5HipxR7bqC9OCKua0yRiuMECd4=";
 
   nativeBuildInputs = [
     pkg-config
