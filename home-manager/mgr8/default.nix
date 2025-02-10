@@ -72,12 +72,15 @@
     bottom
     calibre
     google-chrome
-    xsv
+    xan
     ghostty
     restic
     nmap
     atkinson-hyperlegible
     code-cursor
+    brave
+    git-crypt
+    ollama
     # start for crafting interpretters
     # jetbrains.clion
     # jetbrains.idea-ultimate
@@ -86,7 +89,6 @@
     # end for crafting interpretters
     kubectl
     kubernetes-helm
-    lens
     keypunch
     # azure-cli
     beekeeper-studio
