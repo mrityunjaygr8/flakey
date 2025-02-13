@@ -66,7 +66,8 @@
   home.stateVersion = "23.05";
 
   home.packages = with pkgs; [
-    (lib.hiPrio (pkgs.callPackage ./../../pkgs/windsurf/default.nix {inherit inputs;}) )
+    (lib.hiPrio (pkgs.callPackage ./../../pkgs/windsurf/default.nix {inherit inputs;}))
+    ollama
     deno
     elixir-ls
     bottom
