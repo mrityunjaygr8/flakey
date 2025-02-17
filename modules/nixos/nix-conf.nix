@@ -16,7 +16,7 @@
       # Deduplicate and optimize nix store
       auto-optimise-store = true;
       trusted-users = ["root" "@wheel"];
-      substitutors = [
+      substituters = [
         "https://cache.nixos.org"
         "https://cosmic.cachix.org"
         "https://nix-community.cachix.org"
