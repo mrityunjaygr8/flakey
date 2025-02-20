@@ -79,6 +79,8 @@
     nmap
     atkinson-hyperlegible
     code-cursor
+    uv
+    pgadmin4-desktopmode
     brave
     git-crypt
     ollama
