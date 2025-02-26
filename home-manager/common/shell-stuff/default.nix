@@ -67,6 +67,24 @@ in {
         credential = {
           helper = "store";
         };
+        branch = {
+          sort = "-committerdate";
+        };
+        tag = {
+          sort = "version:refname";
+        };
+        push = {
+          autoSetupRemote = true;
+          followTags = true;
+        };
+        fetch = {
+          prune = true;
+          pruneTags = true;
+          all = true;
+        };
+        merge = {
+          conflictStyle = "zdiff3";
+        };
       };
     };
     eza = {
