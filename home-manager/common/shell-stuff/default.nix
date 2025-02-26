@@ -30,6 +30,7 @@ in {
   home.packages = with pkgs; [
     difftastic
     nh
+    wl-clipboard
     lazydocker
     fd
     ripgrep
