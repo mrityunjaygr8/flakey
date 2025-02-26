@@ -104,9 +104,7 @@
     };
   };
 
-  # security.pam.services.lightdm.enableGnomeKeyring = true;
   programs.ssh.startAgent = true;
-  # services.gnome.gnome-keyring.enable = true;
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
@@ -115,33 +113,7 @@
     wget
     openssl
     cachix
-    gnome-tweaks
-    gnomeExtensions.appindicator
-    # gnomeExtensions.pano
-    gnomeExtensions.blur-my-shell
-    gnomeExtensions.vitals
-    gnomeExtensions.space-bar
-    gnomeExtensions.just-perfection
-    gnomeExtensions.paperwm
-    gnomeExtensions.forge
-    gnomeExtensions.tiling-assistant
   ];
-
-  services.udev.packages = with pkgs; [gnome-settings-daemon];
-  programs.dconf.profiles = {
-    user.databases = [
-      {
-        settings = {
-          "org/gnome/shell".enabled-extensions = [
-            "appindicatorsupport@rgcjonas.gmail.com"
-            # "pano@elhan.io"
-            "space-bar@luchrioh"
-            "Vitals@CoreCoding.com"
-          ];
-        };
-      }
-    ];
-  };
 
   # This setups a SSH server. Very important if you're setting up a headless system.
   # Feel free to remove if you don't need it.
