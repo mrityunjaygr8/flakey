@@ -119,7 +119,8 @@
     python3
     pika-backup
     firefox
-    pnpm_8
+    # pnpm_8
+    pnpm_9
     # pnpm_10
     # nodePackages.npm
     obsidian
