@@ -77,6 +77,7 @@
     ghostty
     restic
     nmap
+    kazam
     atkinson-hyperlegible
     code-cursor
     uv
