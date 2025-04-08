@@ -112,7 +112,7 @@
     vscodium
     bind
     neofetch
-    zed-editor
+    # zed-editor
     jq
     unzip
     toybox
