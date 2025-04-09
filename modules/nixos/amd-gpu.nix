@@ -11,4 +11,6 @@
     };
     rocmOverrideGfx = "10.3.1";
   };
+
+  services.open-webui.enable = true;
 }
