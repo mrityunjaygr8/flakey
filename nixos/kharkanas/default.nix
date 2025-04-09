@@ -24,6 +24,7 @@
     ./hardware-configuration.nix
     ./disko-config.nix
     ../common
+    ../../modules/nixos/amd-gpu.nix
   ];
 
   networking.hostName = "kharkanas";
