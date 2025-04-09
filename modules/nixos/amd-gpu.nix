@@ -1,6 +1,10 @@
 {pkgs, ...}: {
   environment.systemPackages = with pkgs; [
-    ollama-rocm
-    amdgpu-top
+    amdgpu_top
   ];
+
+  services.ollama = {
+    enable = true;
+    acceleration = "rocm";
+  };
 }

@@ -83,7 +83,7 @@
     pgadmin4-desktopmode
     brave
     git-crypt
-    ollama
+    # ollama
     # start for crafting interpretters
     # jetbrains.clion
     # jetbrains.idea-ultimate
