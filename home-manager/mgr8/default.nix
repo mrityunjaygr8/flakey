@@ -66,8 +66,7 @@
   home.stateVersion = "23.05";
 
   home.packages = with pkgs; [
-    (lib.hiPrio (pkgs.callPackage ./../../pkgs/windsurf/default.nix {inherit inputs;}))
-    ollama
+    # (lib.hiPrio (pkgs.callPackage ./../../pkgs/windsurf/default.nix {inherit inputs;}))
     deno
     elixir-ls
     bottom
@@ -95,7 +94,7 @@
     kubernetes-helm
     keypunch
     # azure-cli
-    beekeeper-studio
+    # beekeeper-studio
     opentofu
     # httpie-desktop
     xsel
