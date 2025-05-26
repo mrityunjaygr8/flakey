@@ -15,11 +15,14 @@
     dconf-editor
     gnome-tweaks
     gnomeExtensions.appindicator
-    # gnomeExtensions.pano
     gnomeExtensions.blur-my-shell
     gnomeExtensions.vitals
+    gnomeExtensions.clipboard-indicator
     gnomeExtensions.space-bar
     gnomeExtensions.just-perfection
+    # gnomeExtensions.focus-changer
+    gnomeExtensions.tiling-shell
+    gnomeExtensions.gnome-40-ui-improvements
   ];
   services.udev.packages = with pkgs; [gnome-settings-daemon];
   programs.dconf.enable = true;
@@ -30,12 +33,14 @@
           with lib.gvariant; {
             "org/gnome/shell".enabled-extensions = [
               "appindicatorsupport@rgcjonas.gmail.com"
-              # "pano@elhan.io"
               "space-bar@luchrioh"
               "Vitals@CoreCoding.com"
+              "clipboard-indicator@tudmotu.com"
+              # "focus-changer@heartmire"
+              "tilingshell@ferrarodomenico.com"
+              "gnome-ui-tune@itstime.tech"
             ];
             "org/gtk/gtk4/settings/debug".inspector-warning = false;
-            "org/gnome/desktop/calendar".show-weekdate = true;
             "org/gnome/desktop/interface" = {
               color-scheme = "prefer-dark";
               gtk-enable-primary-paste = true;
@@ -77,20 +82,34 @@
             ];
             "org/gnome/desktop/wm/keybindings" = {
               close = ["<Super>q"];
-              panel-run-dialog = ["<Super><Backspace>"];
+              panel-run-dialog = ["<Super>BackSpace"];
               move-to-workspace-left = ["<Control><Super>h"];
               move-to-workspace-up = ["<Control><Super>k"];
               move-to-workspace-down = ["<Control><Super>j"];
               move-to-workspace-right = ["<Control><Super>l"];
-              switch-to-workspace-1 = ["<Control><Super>a"];
-              switch-to-workspace-2 = ["<Control><Super>s"];
-              switch-to-workspace-3 = ["<Control><Super>d"];
-              switch-to-workspace-4 = ["<Control><Super>f"];
+              move-to-workspace-1 = ["<Control><Super>a"];
+              move-to-workspace-2 = ["<Control><Super>s"];
+              move-to-workspace-3 = ["<Control><Super>d"];
+              move-to-workspace-4 = ["<Control><Super>f"];
+              move-to-workspace-last = mkEmptyArray type.string;
+              switch-to-workspace-1 = ["<Super>a"];
+              switch-to-workspace-2 = ["<Super>s"];
+              switch-to-workspace-3 = ["<Super>d"];
+              switch-to-workspace-4 = ["<Super>f"];
               switch-to-workspace-left = ["<Super>h"];
+              switch-to-workspace-up = ["<Super>k"];
+              switch-to-workspace-down = ["<Super>j"];
               switch-to-workspace-right = ["<Super>l"];
-              toggle-fullscreen = ["<Shift><Super>f"];
-              toggle-maximized = ["<Super>f"];
-              toggle-on-all-workspaces = ["<Control><Super>s"];
+
+              move-to-monitor-left = ["<Shift><Super>h"];
+              move-to-monitor-up = ["<Shift><Super>k"];
+              move-to-monitor-down = ["<Shift><Super>j"];
+              move-to-monitor-right = ["<Shift><Super>l"];
+
+              toggle-fullscreen = mkEmptyArray type.string;
+              toggle-maximized = ["<Super>m"];
+              minimize = mkEmptyArray type.string;
+              toggle-on-all-workspaces = ["<Control><Super>w"];
             };
             "org/gnome/shell/keybindings" = {
               # Following binds need to be disabled, as their defaults are used for
@@ -99,13 +118,34 @@
               switch-to-application-2 = mkEmptyArray type.string;
               switch-to-application-3 = mkEmptyArray type.string;
               switch-to-application-4 = mkEmptyArray type.string;
+              switch-to-application-5 = mkEmptyArray type.string;
+              switch-to-application-6 = mkEmptyArray type.string;
+              switch-to-application-7 = mkEmptyArray type.string;
+              switch-to-application-8 = mkEmptyArray type.string;
+              switch-to-application-9 = mkEmptyArray type.string;
+              open-new-window-application-1 = mkEmptyArray type.string;
+              open-new-window-application-2 = mkEmptyArray type.string;
+              open-new-window-application-3 = mkEmptyArray type.string;
+              open-new-window-application-4 = mkEmptyArray type.string;
+              open-new-window-application-5 = mkEmptyArray type.string;
+              open-new-window-application-6 = mkEmptyArray type.string;
+              open-new-window-application-7 = mkEmptyArray type.string;
+              open-new-window-application-8 = mkEmptyArray type.string;
+              open-new-window-application-9 = mkEmptyArray type.string;
               toggle-application-view = mkEmptyArray type.string;
-              toggle-quick-settings = mkEmptyArray type.string;
+              toggle-quick-settings = ["<Super>u"];
+              toggle-message-tray = mkEmptyArray type.string;
 
               screenshot = mkEmptyArray type.string;
               show-screen-recording-ui = mkEmptyArray type.string;
-              show-screenshot-ui = ["<Super>s"];
+              show-screenshot-ui = ["<Super>p"];
             };
+            "org/gnome/shell".favorite-apps = [
+              "com.mitchellh.ghostty.desktop"
+              "firefox.desktop"
+              "chromium-browser.desktop"
+              "postman.desktop"
+            ];
           });
       }
     ];
