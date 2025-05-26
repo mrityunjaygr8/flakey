@@ -12,6 +12,7 @@
   services.xserver.desktopManager.gnome.enable = true;
 
   environment.systemPackages = with pkgs; [
+    dconf-editor
     gnome-tweaks
     gnomeExtensions.appindicator
     # gnomeExtensions.pano
@@ -71,36 +72,40 @@
             # This is necessary for some reason, or the above custom-keybindings don't work.
             "org/gnome/settings-daemon/plugins/media-keys".custom-keybindings = [
               "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/"
+              "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/"
+              "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/"
             ];
-            # "org/gnome/desktop/wm/keybindings" = {
-            #   close = ["<Super>q"];
-            #   move-to-workspace-left = ["<Control><Super>l"];
-            #   move-to-workspace-right = ["<Control><Super>h"];
-            #   panel-run-dialog = ["spacer"];
-            #   switch-to-workspace-1 = ["<Shift><Super>1"];
-            #   switch-to-workspace-2 = ["<Shift><Super>2"];
-            #   switch-to-workspace-3 = ["<Shift><Super>3"];
-            #   switch-to-workspace-4 = ["<Shift><Super>4"];
-            #   switch-to-workspace-left = ["<Super>l"];
-            #   switch-to-workspace-right = ["<Super>h"];
-            #   toggle-fullscreen = ["<Shift><Super>f"];
-            #   toggle-maximized = ["<Super>f"];
-            #   toggle-on-all-workspaces = ["<Control><Super>s"];
-            # };
-            # "org/gnome/shell/keybindings" = {
-            #   # Following binds need to be disabled, as their defaults are used for
-            #   # the binds above, and will run into conflicts.
-            #   switch-to-application-1 = mkEmptyArray type.string;
-            #   switch-to-application-2 = mkEmptyArray type.string;
-            #   switch-to-application-3 = mkEmptyArray type.string;
-            #   switch-to-application-4 = mkEmptyArray type.string;
-            #   toggle-application-view = mkEmptyArray type.string;
-            #   toggle-quick-settings = mkEmptyArray type.string;
-            #
-            #   screenshot = mkEmptyArray type.string;
-            #   show-screen-recording-ui = ["<Shift><Super>r"];
-            #   show-screenshot-ui = ["<Shift><Super>s"];
-            # };
+            "org/gnome/desktop/wm/keybindings" = {
+              close = ["<Super>q"];
+              panel-run-dialog = ["<Super><Backspace>"];
+              move-to-workspace-left = ["<Control><Super>h"];
+              move-to-workspace-up = ["<Control><Super>k"];
+              move-to-workspace-down = ["<Control><Super>j"];
+              move-to-workspace-right = ["<Control><Super>l"];
+              switch-to-workspace-1 = ["<Control><Super>a"];
+              switch-to-workspace-2 = ["<Control><Super>s"];
+              switch-to-workspace-3 = ["<Control><Super>d"];
+              switch-to-workspace-4 = ["<Control><Super>f"];
+              switch-to-workspace-left = ["<Super>h"];
+              switch-to-workspace-right = ["<Super>l"];
+              toggle-fullscreen = ["<Shift><Super>f"];
+              toggle-maximized = ["<Super>f"];
+              toggle-on-all-workspaces = ["<Control><Super>s"];
+            };
+            "org/gnome/shell/keybindings" = {
+              # Following binds need to be disabled, as their defaults are used for
+              # the binds above, and will run into conflicts.
+              switch-to-application-1 = mkEmptyArray type.string;
+              switch-to-application-2 = mkEmptyArray type.string;
+              switch-to-application-3 = mkEmptyArray type.string;
+              switch-to-application-4 = mkEmptyArray type.string;
+              toggle-application-view = mkEmptyArray type.string;
+              toggle-quick-settings = mkEmptyArray type.string;
+
+              screenshot = mkEmptyArray type.string;
+              show-screen-recording-ui = mkEmptyArray type.string;
+              show-screenshot-ui = ["<Super>s"];
+            };
           });
       }
     ];
