@@ -20,8 +20,6 @@
     gnomeExtensions.clipboard-indicator
     gnomeExtensions.space-bar
     gnomeExtensions.just-perfection
-    # gnomeExtensions.focus-changer
-    gnomeExtensions.tiling-shell
     gnomeExtensions.gnome-40-ui-improvements
   ];
   services.udev.packages = with pkgs; [gnome-settings-daemon];
@@ -36,8 +34,6 @@
               "space-bar@luchrioh"
               "Vitals@CoreCoding.com"
               "clipboard-indicator@tudmotu.com"
-              # "focus-changer@heartmire"
-              "tilingshell@ferrarodomenico.com"
               "gnome-ui-tune@itstime.tech"
             ];
             "org/gtk/gtk4/settings/debug".inspector-warning = false;
@@ -52,6 +48,13 @@
               power-button-action = "interactive";
               # Suspend only on battery power, not while charging.
               sleep-inactive-ac-type = "nothing";
+            };
+            "org/gnome/mutter" = {
+              workspaces-only-on-primary = false;
+              dynamic-workspaces = false;
+            };
+            "org/gnome/desktop/wm/preferences" = {
+              num-workspaces = mkInt32 4;
             };
             "org/gtk/gtk4/settings/file-chooser" = {
               show-hidden = true;
