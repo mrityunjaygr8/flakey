@@ -24,6 +24,7 @@
     ./hardware-configuration.nix
     ./disko-config.nix
     ../common
+    ../../modules/nixos/gnome.nix
     # ../../modules/nixos/amd-gpu.nix
   ];
 
