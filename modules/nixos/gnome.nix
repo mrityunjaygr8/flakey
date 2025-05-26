@@ -37,10 +37,7 @@
             "org/gnome/desktop/calendar".show-weekdate = true;
             "org/gnome/desktop/interface" = {
               color-scheme = "prefer-dark";
-              gtk-enable-primary-paste = false;
-              gtk-theme = "adw-gtk3-dark";
-              icon-theme = "MoreWaita";
-              monospace-font-name = "Recursive 10 @MONO=1,CRSV=0,wght=400";
+              gtk-enable-primary-paste = true;
               show-battery-percentage = true;
             };
             "org/gnome/desktop/peripherals/touchpad".tap-to-click = true;
@@ -75,35 +72,35 @@
             "org/gnome/settings-daemon/plugins/media-keys".custom-keybindings = [
               "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/"
             ];
-            "org/gnome/desktop/wm/keybindings" = {
-              close = ["<Super>q"];
-              move-to-workspace-left = ["<Control><Super>l"];
-              move-to-workspace-right = ["<Control><Super>h"];
-              panel-run-dialog = ["spacer"];
-              switch-to-workspace-1 = ["<Shift><Super>1"];
-              switch-to-workspace-2 = ["<Shift><Super>2"];
-              switch-to-workspace-3 = ["<Shift><Super>3"];
-              switch-to-workspace-4 = ["<Shift><Super>4"];
-              switch-to-workspace-left = ["<Super>l"];
-              switch-to-workspace-right = ["<Super>h"];
-              toggle-fullscreen = ["<Shift><Super>f"];
-              toggle-maximized = ["<Super>f"];
-              toggle-on-all-workspaces = ["<Control><Super>s"];
-            };
-            "org/gnome/shell/keybindings" = {
-              # Following binds need to be disabled, as their defaults are used for
-              # the binds above, and will run into conflicts.
-              switch-to-application-1 = mkEmptyArray type.string;
-              switch-to-application-2 = mkEmptyArray type.string;
-              switch-to-application-3 = mkEmptyArray type.string;
-              switch-to-application-4 = mkEmptyArray type.string;
-              toggle-application-view = mkEmptyArray type.string;
-              toggle-quick-settings = mkEmptyArray type.string;
-
-              screenshot = mkEmptyArray type.string;
-              show-screen-recording-ui = ["<Shift><Super>r"];
-              show-screenshot-ui = ["<Shift><Super>s"];
-            };
+            # "org/gnome/desktop/wm/keybindings" = {
+            #   close = ["<Super>q"];
+            #   move-to-workspace-left = ["<Control><Super>l"];
+            #   move-to-workspace-right = ["<Control><Super>h"];
+            #   panel-run-dialog = ["spacer"];
+            #   switch-to-workspace-1 = ["<Shift><Super>1"];
+            #   switch-to-workspace-2 = ["<Shift><Super>2"];
+            #   switch-to-workspace-3 = ["<Shift><Super>3"];
+            #   switch-to-workspace-4 = ["<Shift><Super>4"];
+            #   switch-to-workspace-left = ["<Super>l"];
+            #   switch-to-workspace-right = ["<Super>h"];
+            #   toggle-fullscreen = ["<Shift><Super>f"];
+            #   toggle-maximized = ["<Super>f"];
+            #   toggle-on-all-workspaces = ["<Control><Super>s"];
+            # };
+            # "org/gnome/shell/keybindings" = {
+            #   # Following binds need to be disabled, as their defaults are used for
+            #   # the binds above, and will run into conflicts.
+            #   switch-to-application-1 = mkEmptyArray type.string;
+            #   switch-to-application-2 = mkEmptyArray type.string;
+            #   switch-to-application-3 = mkEmptyArray type.string;
+            #   switch-to-application-4 = mkEmptyArray type.string;
+            #   toggle-application-view = mkEmptyArray type.string;
+            #   toggle-quick-settings = mkEmptyArray type.string;
+            #
+            #   screenshot = mkEmptyArray type.string;
+            #   show-screen-recording-ui = ["<Shift><Super>r"];
+            #   show-screenshot-ui = ["<Shift><Super>s"];
+            # };
           });
       }
     ];
