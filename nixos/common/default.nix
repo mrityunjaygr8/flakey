@@ -11,7 +11,6 @@
 
   imports = [
     ../../modules/nixos/nix-conf.nix
-    ../../modules/nixos/cosmic.nix
     ../../modules/nixos/sound.nix
   ];
   nixpkgs = {
