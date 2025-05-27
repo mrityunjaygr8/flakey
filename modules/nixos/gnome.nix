@@ -85,6 +85,10 @@
               "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/"
               "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/"
             ];
+            "org/gnome/mutter/keybindings" = {
+              toggle-tiled-left = ["<Shift><Control><Alt><Super>h"];
+              toggle-tiled-right = ["<Shift><Control><Alt><Super>l"];
+            };
             "org/gnome/desktop/wm/keybindings" = {
               close = ["<Super>q"];
               panel-run-dialog = ["<Super>BackSpace"];
