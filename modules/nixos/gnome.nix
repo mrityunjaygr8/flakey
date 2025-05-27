@@ -21,6 +21,7 @@
     gnomeExtensions.space-bar
     gnomeExtensions.just-perfection
     gnomeExtensions.gnome-40-ui-improvements
+    gnomeExtensions.focus-changer
   ];
   services.udev.packages = with pkgs; [gnome-settings-daemon];
   programs.dconf.enable = true;
@@ -35,6 +36,7 @@
               "Vitals@CoreCoding.com"
               "clipboard-indicator@tudmotu.com"
               "gnome-ui-tune@itstime.tech"
+              "focus-changer@heartmire"
             ];
             "org/gtk/gtk4/settings/debug".inspector-warning = false;
             "org/gnome/desktop/interface" = {
@@ -95,19 +97,19 @@
               move-to-workspace-3 = ["<Control><Super>d"];
               move-to-workspace-4 = ["<Control><Super>f"];
               move-to-workspace-last = mkEmptyArray type.string;
-              switch-to-workspace-1 = ["<Super>a"];
-              switch-to-workspace-2 = ["<Super>s"];
-              switch-to-workspace-3 = ["<Super>d"];
-              switch-to-workspace-4 = ["<Super>f"];
-              switch-to-workspace-left = ["<Super>h"];
-              switch-to-workspace-up = ["<Super>k"];
-              switch-to-workspace-down = ["<Super>j"];
-              switch-to-workspace-right = ["<Super>l"];
+              switch-to-workspace-1 = ["<Shift><Super>a"];
+              switch-to-workspace-2 = ["<Shift><Super>s"];
+              switch-to-workspace-3 = ["<Shift><Super>d"];
+              switch-to-workspace-4 = ["<Shift><Super>f"];
+              switch-to-workspace-left = ["<Shift><Super>h"];
+              switch-to-workspace-up = ["<Shift><Super>k"];
+              switch-to-workspace-down = ["<Shift><Super>j"];
+              switch-to-workspace-right = ["<Shift><Super>l"];
 
-              move-to-monitor-left = ["<Shift><Super>h"];
-              move-to-monitor-up = ["<Shift><Super>k"];
-              move-to-monitor-down = ["<Shift><Super>j"];
-              move-to-monitor-right = ["<Shift><Super>l"];
+              move-to-monitor-left = ["<Alt><Super>h"];
+              move-to-monitor-up = ["<Alt><Super>k"];
+              move-to-monitor-down = ["<Alt><Super>j"];
+              move-to-monitor-right = ["<Alt><Super>l"];
 
               toggle-fullscreen = mkEmptyArray type.string;
               toggle-maximized = ["<Super>m"];
@@ -141,7 +143,7 @@
 
               screenshot = mkEmptyArray type.string;
               show-screen-recording-ui = mkEmptyArray type.string;
-              show-screenshot-ui = ["<Super>p"];
+              show-screenshot-ui = ["<Super><Shift>p"];
             };
             "org/gnome/shell".favorite-apps = [
               "com.mitchellh.ghostty.desktop"
