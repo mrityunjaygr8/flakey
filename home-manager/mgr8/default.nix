@@ -67,6 +67,7 @@
 
   home.packages = with pkgs; [
     # (lib.hiPrio (pkgs.callPackage ./../../pkgs/windsurf/default.nix {inherit inputs;}))
+    jetbrains.idea-community-bin
     deno
     elixir-ls
     bottom
@@ -91,6 +92,7 @@
     cypress
     # end for crafting interpretters
     kubectl
+    ibmcloud-cli
     kubernetes-helm
     keypunch
     # azure-cli
