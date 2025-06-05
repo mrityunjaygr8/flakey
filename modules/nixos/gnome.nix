@@ -64,6 +64,7 @@
               view-type = "list";
             };
             "org/gnome/settings-daemon/plugins/media-keys".home = ["<Super>e"];
+            "org/gnome/settings-daemon/plugins/media-keys".screensaver = ["<Super><Shift>o"];
             "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0" = {
               binding = "<Super>Return";
               command = "ghostty";
