@@ -8,8 +8,8 @@
 }: {
   # Enable the X11 windowing system.
   services.xserver.enable = true;
-  services.xserver.displayManager.gdm.enable = true;
-  services.xserver.desktopManager.gnome.enable = true;
+  services.displayManager.gdm.enable = true;
+  services.desktopManager.gnome.enable = true;
 
   environment.systemPackages = with pkgs; [
     dconf-editor
@@ -52,7 +52,6 @@
               sleep-inactive-ac-type = "nothing";
             };
             "org/gnome/mutter" = {
-              workspaces-only-on-primary = false;
               dynamic-workspaces = false;
             };
             "org/gnome/desktop/wm/preferences" = {
