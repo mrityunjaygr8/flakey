@@ -22,6 +22,7 @@
     gnomeExtensions.just-perfection
     gnomeExtensions.gnome-40-ui-improvements
     gnomeExtensions.focus-changer
+    gnomeExtensions.media-controls
   ];
   services.udev.packages = with pkgs; [gnome-settings-daemon];
   programs.dconf.enable = true;
@@ -37,6 +38,7 @@
               "clipboard-indicator@tudmotu.com"
               "gnome-ui-tune@itstime.tech"
               "focus-changer@heartmire"
+              "mediacontrols@cliffniff.github.com"
             ];
             "org/gtk/gtk4/settings/debug".inspector-warning = false;
             "org/gnome/desktop/interface" = {
