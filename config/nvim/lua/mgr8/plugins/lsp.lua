@@ -15,8 +15,12 @@ return {
     "saghen/blink.cmp",
     version = '1.*',
     opts = {
-      keymap = { preset = "default"},
+      keymap = { preset = "super-tab"},
       fuzzy = {implementation = "lua"},
+      completion = {
+        documentation = {auto_show = true, auto_show_delay_ms = 500}
+      },
+      signature = {enabled = true },
       sources = {
         -- add lazydev to your completion providers
         default = { "lazydev", "lsp", "path", "snippets", "buffer" },
