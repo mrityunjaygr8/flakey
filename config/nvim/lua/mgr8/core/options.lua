@@ -3,86 +3,56 @@ vim.g.maplocalleader = ' '
 
 vim.g.have_nerd_font = true
 
-vim.o.number = true
-vim.o.relativenumber = true
+local opt = vim.opt
 
-vim.o.showmode = false
+opt.number = true
+opt.relativenumber = true
+
+opt.showmode = false
 
 vim.schedule(function()
-  vim.o.clipboard = 'unnamedplus'
+  opt.clipboard = 'unnamedplus'
 end)
 
 -- Enable break indent
-vim.o.breakindent = true
+opt.breakindent = true
 
 -- Save undo history
-vim.o.undofile = true
+opt.undofile = true
 
 -- Keep signcolumn on by default
-vim.o.signcolumn = 'yes'
+opt.signcolumn = 'yes'
 
 -- Decrease update time
-vim.o.updatetime = 250
+opt.updatetime = 250
 
 -- Decrease mapped sequence wait time
-vim.o.timeoutlen = 300
+opt.timeoutlen = 300
 
-vim.o.list = true
-vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
+opt.list = true
+opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
 
 -- Preview substitutions live, as you type!
-vim.o.inccommand = 'split'
+opt.inccommand = 'split'
 
 -- Show which line your cursor is on
-vim.o.cursorline = true
+opt.cursorline = true
+opt.colorcolumn = 80
 
 -- Minimal number of screen lines to keep above and below the cursor.
-vim.o.scrolloff = 20
+opt.scrolloff = 20
 
 
+-- tabs & indentation
+opt.tabstop = 2 -- 2 spaces for tabs (prettier default)
+opt.shiftwidth = 2 -- 2 spaces for indent width
+opt.expandtab = true -- expand tab to spaces
+opt.autoindent = true -- copy indent from current line when starting new one
 
 
+-- line wrapping
+opt.wrap = false -- disable line wrapping
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+-- search settings
+opt.ignorecase = true -- ignore case when searching
+opt.smartcase = true -- if you include mixed case in your search, assumes you want case-sensitive
