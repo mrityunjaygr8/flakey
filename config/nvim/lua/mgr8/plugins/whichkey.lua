@@ -15,7 +15,6 @@ return { -- Useful plugin to show you pending keybinds.
       { "J", "mzJ`z", desc = "Join lines and keep cursor position" },
       { "N", "Nzzzv", desc = "Previous search result and center" },
       { "n", "nzzzv", desc = "Next search result and center" },
-      {"<leader>e", desc = "[E]xplorer Related"},
     },
     opts = {
       -- delay between pressing a key and opening which-key (milliseconds)
