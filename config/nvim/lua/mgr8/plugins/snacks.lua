@@ -16,7 +16,7 @@ return {
     bigfile = { enabled = true },
     dashboard = { enabled = true },
     explorer = {enabled = true, replace_netrw = true},
-    indent = { enabled = true },
+    indent = { enabled = true, animate = { enabled = false }},
     input = { enabled = true },
     lazygit = {enabled = true },
     picker = { enabled = true },
