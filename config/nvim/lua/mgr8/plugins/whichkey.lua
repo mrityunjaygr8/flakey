@@ -20,6 +20,7 @@ return { -- Useful plugin to show you pending keybinds.
         { "<leader>x", group = "Trouble" },
         { "<leader>q", group = "[Q]uit" },
         { "<leader>l", group = "[L]azygit" },
+        { "<leader>t", group = "[T]odo Comments" },
       },
       -- delay between pressing a key and opening which-key (milliseconds)
       -- this setting is independent of vim.o.timeoutlen
