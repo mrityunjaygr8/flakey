@@ -1,6 +1,21 @@
 return { -- Useful plugin to show you pending keybinds.
     'folke/which-key.nvim',
     event = 'VimEnter', -- Sets the loading event to 'VimEnter'
+    keys = {
+      { "<C-d>", "<C-d>zz", desc = "Half page down and center" },
+      { "<C-u>", "<C-u>zz", desc = "Half page up and center" },
+      { "<leader>c", group = "[C]ode Actions" },
+      { "<leader>e", group = "[E]xplorer" },
+      { "<leader>f", group = "[F]ormat File" },
+      { "<leader>h", group = "[H]arpoon" },
+      { "<leader>n", group = "Clear Search Highlights" },
+      { "<leader>r", group = "[R]ename" },
+      { "<leader>s", group = "[S]earch" },
+      { "<leader>x", group = "Trouble" },
+      { "J", "mzJ`z", desc = "Join lines and keep cursor position" },
+      { "N", "Nzzzv", desc = "Previous search result and center" },
+      { "n", "nzzzv", desc = "Next search result and center" }
+    },
     opts = {
       -- delay between pressing a key and opening which-key (milliseconds)
       -- this setting is independent of vim.o.timeoutlen
