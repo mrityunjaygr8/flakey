@@ -1,2 +1,2 @@
-require("mgr8.core")
-require("mgr8.lazy")
+-- bootstrap lazy.nvim, LazyVim and your plugins
+require("config.lazy")
