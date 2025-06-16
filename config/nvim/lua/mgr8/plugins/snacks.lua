@@ -54,13 +54,6 @@ return {
 			desc = "Find Git Files",
 		},
 		{
-			"<leader>sp",
-			function()
-				Snacks.picker.projects()
-			end,
-			desc = "Projects",
-		},
-		{
 			"<leader>sr",
 			function()
 				Snacks.picker.recent()
