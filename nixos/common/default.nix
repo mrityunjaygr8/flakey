@@ -105,7 +105,10 @@
 
   programs.nix-ld = {
     enable = true;
-    # libraries = with pkgs; [];
+    libraries = with pkgs; [
+      stdenv.cc.cc.lib
+      zlib # for numpy, which is for pandas
+    ];
   };
   programs.ssh.startAgent = true;
   # List packages installed in system profile. To search, run:
