@@ -103,6 +103,10 @@
     };
   };
 
+  programs.nix-ld = {
+    enable = true;
+    # libraries = with pkgs; [];
+  };
   programs.ssh.startAgent = true;
   # List packages installed in system profile. To search, run:
   # $ nix search wget
