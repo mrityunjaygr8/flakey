@@ -1,15 +1,11 @@
 return {
-	"nuvic/flexoki-nvim",
-	name = "flexoki",
-	priority = 1000,
-	config = function()
-		require("flexoki").setup({
-			variant = "moon",
-			enable = {
-				terminal = true,
-			},
-		})
+  "folke/tokyonight.nvim",
+  lazy = false,
+  priority = 1000,
+  opts = {},
+  config = function()
+    require("tokyonight").setup()
+    vim.cmd([[colorscheme tokyonight]])
 
-		vim.cmd([[colorscheme flexoki]])
-	end,
+  end
 }
