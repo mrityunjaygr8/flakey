@@ -10,6 +10,9 @@
   services.xserver.enable = true;
   services.displayManager.gdm.enable = true;
   services.desktopManager.gnome.enable = true;
+  # SSH agent and GNOME GCR-agent conflict
+  # so disabling ssh agent starting where gnome is active
+  programs.ssh.startAgent = lib.mkForce false;
 
   environment.systemPackages = with pkgs; [
     dconf-editor
