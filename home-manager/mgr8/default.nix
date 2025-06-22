@@ -68,11 +68,9 @@
   home.packages = with pkgs; [
     # (lib.hiPrio (pkgs.callPackage ./../../pkgs/windsurf/default.nix {inherit inputs;}))
     jetbrains.idea-community-bin
-    deno
     elixir-ls
     bottom
     calibre
-    google-chrome
     xan
     ghostty
     restic
@@ -82,7 +80,6 @@
     code-cursor
     uv
     pgadmin4-desktopmode
-    brave
     git-crypt
     # ollama
     # start for crafting interpretters
@@ -163,6 +160,43 @@
   #     }
   #   '';
   # };
+
+  programs.zed-editor = {
+    enable = true;
+    extenstions = ["nix"];
+    userKeymaps = [
+      {
+        "context" = "Workspace";
+        "bindings" = {
+          "space w" = "workspace::Save";
+          "space q a" = "pane::CloseAllItems";
+          "space q b" = "pane::CloseActiveItem";
+        };
+      }
+    ];
+    userSettings = [
+      {
+        "vim_mode" = true;
+        "ui_font_size" = 16;
+        "buffer_font_size" = 16;
+        "theme" = {
+          "mode" = "system";
+          "light" = "One Light";
+          "dark" = "Snowflake Original";
+        };
+        "terminal" = {
+          "shell" = {"program" = "fish";};
+          "detect_venv" = {
+            "on" = {
+              "directories" = [".venv" "venv"];
+              "activate_script" = "fish";
+            };
+          };
+        };
+        "ui_font_family" = "Geist Mono";
+      }
+    ];
+  };
 
   programs.alacritty = {
     enable = true;
