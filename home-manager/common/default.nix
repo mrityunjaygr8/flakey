@@ -11,4 +11,7 @@
   imports = [
     ./shell-stuff
   ];
+  home.packages = with pkgs; [
+    python3
+  ];
 }
