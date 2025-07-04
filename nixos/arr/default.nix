@@ -128,6 +128,7 @@
     wget
     docker-compose
     dive
+    dig
     # podman-compose
   ];
   virtualisation.docker.enable = true;
