@@ -67,7 +67,7 @@
 
   home.packages = with pkgs; [
     # (lib.hiPrio (pkgs.callPackage ./../../pkgs/windsurf/default.nix {inherit inputs;}))
-    jetbrains.idea-community-bin
+    # jetbrains.idea-community-bin
     elixir-ls
     bottom
     calibre
@@ -77,7 +77,7 @@
     nmap
     kazam
     atkinson-hyperlegible
-    code-cursor
+    # code-cursor
     uv
     pgadmin4-desktopmode
     git-crypt
@@ -115,7 +115,6 @@
     unzip
     toybox
     go
-    python3
     pika-backup
     firefox
     # pnpm_8
