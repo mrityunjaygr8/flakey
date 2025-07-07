@@ -110,7 +110,7 @@
     vscodium
     bind
     neofetch
-    zed-editor
+    # zed-editor
     jq
     unzip
     toybox
@@ -162,7 +162,7 @@
 
   programs.zed-editor = {
     enable = true;
-    extenstions = ["nix"];
+    # extenstions = ["nix"];
     userKeymaps = [
       {
         "context" = "Workspace";
@@ -173,28 +173,26 @@
         };
       }
     ];
-    userSettings = [
-      {
-        "vim_mode" = true;
-        "ui_font_size" = 16;
-        "buffer_font_size" = 16;
-        "theme" = {
-          "mode" = "system";
-          "light" = "One Light";
-          "dark" = "Snowflake Original";
-        };
-        "terminal" = {
-          "shell" = {"program" = "fish";};
-          "detect_venv" = {
-            "on" = {
-              "directories" = [".venv" "venv"];
-              "activate_script" = "fish";
-            };
+    userSettings = {
+      "vim_mode" = true;
+      "ui_font_size" = 16;
+      "buffer_font_size" = 16;
+      "theme" = {
+        "mode" = "system";
+        "light" = "One Light";
+        "dark" = "Snowflake Original";
+      };
+      "terminal" = {
+        "shell" = {"program" = "fish";};
+        "detect_venv" = {
+          "on" = {
+            "directories" = [".venv" "venv"];
+            "activate_script" = "fish";
           };
         };
-        "ui_font_family" = "Geist Mono";
-      }
-    ];
+      };
+      "ui_font_family" = "Geist Mono";
+    };
   };
 
   programs.alacritty = {
