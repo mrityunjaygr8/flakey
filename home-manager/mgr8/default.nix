@@ -78,6 +78,7 @@
     kazam
     atkinson-hyperlegible
     # code-cursor
+    opencode
     uv
     pgadmin4-desktopmode
     git-crypt
