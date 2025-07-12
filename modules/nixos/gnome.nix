@@ -76,8 +76,8 @@
             };
             "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1" = {
               binding = "<Super>b";
-              command = "firefox";
-              name = "firefox";
+              command = "zen";
+              name = "zen";
             };
             "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2" = {
               binding = "<Super>c";
@@ -156,7 +156,7 @@
             };
             "org/gnome/shell".favorite-apps = [
               "com.mitchellh.ghostty.desktop"
-              "firefox.desktop"
+              "zen-twilight.desktop"
               "chromium-browser.desktop"
               "postman.desktop"
             ];

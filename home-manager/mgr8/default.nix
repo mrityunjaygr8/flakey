@@ -18,6 +18,7 @@
 
     # You can also split up your configuration and import pieces of it here:
     # ./nvim.nix
+    inputs.zen-browser.homeModules.twilight
     ../common
     # ../../modules/home-manager/cosmic.nix
   ];
@@ -161,6 +162,83 @@
   #   '';
   # };
 
+  programs.zen-browser = {
+    enable = true;
+    policies = {
+      AutofillAddressEnabled = true;
+      AutofillCreditCardEnabled = false;
+      DisableAppUpdate = true;
+      DisableFeedbackCommands = true;
+      DisableFirefoxStudies = true;
+      DisablePocket = true;
+      DisableTelemetry = true;
+      DontCheckDefaultBrowser = true;
+      NoDefaultBookmarks = true;
+      OfferToSaveLogins = false;
+      EnableTrackingProtection = {
+        Value = true;
+        Locked = true;
+        Cryptomining = true;
+        Fingerprinting = true;
+      };
+      ExtensionSettings = {
+        "sponsorBlocker@ajay.app" = {
+          install_url = "sponsorblock";
+          installation_mode = "force_installed";
+        };
+
+        "uBlock0@raymondhill.net" = {
+          install_url = "ublock-origin";
+          installation_mode = "force_installed";
+        };
+
+        "jid1-MnnxcxisBPnSXQ@jetpack" = {
+          install_url = "privacy-badger17";
+          installation_mode = "force_installed";
+        };
+
+        "{74145f27-f039-47ce-a470-a662b129930a}" = {
+          install_url = "clearurls";
+          installation_mode = "force_installed";
+        };
+
+        "enhancerforyoutube@maximerf.addons.mozilla.org" = {
+          install_url = "enhancer-for-youtube";
+          installation_mode = "force_installed";
+        };
+
+        "jid1-xUfzOsOFlzSOXg@jetpack" = {
+          install_url = "reddit-enhancement-suite";
+          installation_mode = "force_installed";
+        };
+
+        "{446900e4-71c2-419f-a6a7-df9c091e268b}" = {
+          install_url = "bitwarden-password-manager";
+          installation_mode = "force_installed";
+        };
+
+        "addon@darkreader.org" = {
+          install_url = "darkreader";
+          installation_mode = "force_installed";
+        };
+
+        "@testpilot-containers" = {
+          install_url = "multi-account-containers";
+          installation_mode = "force_installed";
+        };
+
+        "{2e5ff8c8-32fe-46d0-9fc8-6b8986621f3c}" = {
+          install_url = "search_by_image";
+          installation_mode = "force_installed";
+        };
+
+        "{c5f935cf-9b17-4b85-bed8-9277861b4116}" = {
+          install_url = "access-control-allow-origin";
+          installation_mode = "force_installed";
+        };
+      };
+    };
+  };
   programs.zed-editor = {
     enable = true;
     # extenstions = ["nix"];
