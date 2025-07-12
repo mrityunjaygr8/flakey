@@ -7,22 +7,19 @@
     # at the same time. Here's an working example:
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     # Also see the 'unstable-packages' overlay at 'overlays/default.nix'.
+    zen-browser = {
+      url = "github:0xc000022070/zen-browser-flake";
+      # IMPORTANT: we're using "libgbm" and is only available in unstable so ensure
+      # to have it up-to-date or simply don't specify the nixpkgs input
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     # Home manager
     home-manager.url = "github:nix-community/home-manager/master";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
-    cosmic-manager = {
-      url = "github:HeitorAugustoLN/cosmic-manager";
-      inputs = {
-        nixpkgs.follows = "nixpkgs";
-        home-manager.follows = "home-manager";
-      };
-    };
 
     disko.url = "github:nix-community/disko";
     disko.inputs.nixpkgs.follows = "nixpkgs";
-
-    nixos-cosmic.url = "github:lilyinstarlight/nixos-cosmic";
 
     # TODO: Add any other flake you might need
     # hardware.url = "github:nixos/nixos-hardware";
@@ -40,9 +37,7 @@
     self,
     nixpkgs,
     home-manager,
-    nixos-cosmic,
-    cosmic-manager,
-    # ghostty,
+    zen-browser,
     disko,
     ...
   } @ inputs: let
@@ -83,7 +78,6 @@
         specialArgs = {inherit inputs outputs;};
         modules = [
           # > Our main nixos configuration file <
-          nixos-cosmic.nixosModules.default
           ./nixos/kharkanas
           disko.nixosModules.disko
         ];
@@ -92,7 +86,6 @@
         specialArgs = {inherit inputs outputs;};
         modules = [
           # > Our main nixos configuration file <
-          nixos-cosmic.nixosModules.default
           ./nixos/black-coral
           disko.nixosModules.disko
         ];
