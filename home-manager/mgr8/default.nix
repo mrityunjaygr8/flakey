@@ -80,7 +80,7 @@
     atkinson-hyperlegible
     # code-cursor
     ares-cli
-    opencode
+    (lib.hiPrio (pkgs.callPackage ./../../pkgs/opencode/package.nix {}))
     uv
     pgadmin4-desktopmode
     git-crypt
