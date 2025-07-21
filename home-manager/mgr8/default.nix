@@ -79,6 +79,7 @@
     kazam
     atkinson-hyperlegible
     # code-cursor
+    ares-cli
     opencode
     uv
     pgadmin4-desktopmode
