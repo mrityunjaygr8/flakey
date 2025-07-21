@@ -305,8 +305,8 @@ in {
           src = pkgs.fetchFromGitHub {
             owner = "jorgebucaran";
             repo = "nvm.fish";
-            rev = "9db8eaf6e3064a962bca398edd42162f65058ae8";
-            sha256 = "sha256-LkCpij6i5XEkZGYLx9naO/cnbkUCuemypHwTjvfDzuk=";
+            rev = "846f1f20b2d1d0a99e344f250493c41a450f9448";
+            sha256 = "sha256-u3qhoYBDZ0zBHbD+arDxLMM8XoLQlNI+S84wnM3nDzg=";
           };
         }
         {
