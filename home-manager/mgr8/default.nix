@@ -131,6 +131,7 @@
     nh
     yazi
     nerd-fonts.fira-code
+    nerd-fonts.terminess-ttf
     nerd-fonts.symbols-only
     nerd-fonts.jetbrains-mono
   ];
@@ -416,7 +417,8 @@
   home.file = {
     ".config/ghostty/config" = {
       text = ''
-        font-family = Geist Mono
+        # font-family = Geist Mono
+        font-family = Terminess Nerd Font Mono
         font-size = 16
         command = fish
         theme = flexoki-dark
