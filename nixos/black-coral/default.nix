@@ -23,7 +23,8 @@
     # Import your generated (nixos-generate-config) hardware configuration
     ./hardware-configuration.nix
     ../common
-    ../../modules/nixos/gnome.nix
+    ../../modules/nixos/kde.nix
+    # ../../modules/nixos/gnome.nix
   ];
 
   networking.hostName = "black-coral";
