@@ -132,6 +132,7 @@
     yazi
     nerd-fonts.fira-code
     nerd-fonts.terminess-ttf
+    nerd-fonts.gohufont
     nerd-fonts.symbols-only
     nerd-fonts.jetbrains-mono
   ];
@@ -419,7 +420,7 @@
       text = ''
         # font-family = Geist Mono
         font-family = Terminess Nerd Font Mono
-        font-size = 16
+        font-size = 20
         command = fish
         theme = flexoki-dark
       '';
