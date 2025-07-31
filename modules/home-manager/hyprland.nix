@@ -81,6 +81,7 @@
     portalPackage = null;
     enable = true;
     systemd.variables = ["--all"];
+    plugins = with pkgs; [hyprlandPlugins.hyprsplit];
     settings = {
       "exec-once" = [
         # "waybar"
@@ -89,7 +90,23 @@
         # "dunst"
       ];
       "$mod" = "SUPER";
-      monitor = ",preffered,auto,1";
+      plugin = {
+        hyprsplit = {
+          num_workspaces = 4;
+        };
+      };
+      animations = {
+        enabled = true;
+        bezier = "myBezier, 0.05, 0.9, 0.1, 1.05";
+        animation = [
+          "windows, 1, 2, myBezier"
+          "windowsOut, 1, 2, default, popin 80%"
+          "border, 1, 3, default"
+          "fade, 1, 2, default"
+          "workspaces, 1, 2, default"
+        ];
+      };
+      monitor = [",preffered,auto,1" "DP-2,preffered,auto,1,transform,3"];
       windowrule = [
         # Ignore maximize requests from apps. You'll probably like this.
         "suppressevent maximize, class:.*"
@@ -133,11 +150,11 @@
               i: let
                 ws = i + 1;
               in [
-                "$mod, code:1${toString i}, workspace, ${toString ws}"
-                "$mod SHIFT, code:1${toString i}, movetoworkspace, ${toString ws}"
+                "$mod, code:1${toString i}, split:workspace, ${toString ws}"
+                "$mod SHIFT, code:1${toString i}, split:movetoworkspacesilent, ${toString ws}"
               ]
             )
-            8)
+            4)
         );
     };
   };
