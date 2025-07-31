@@ -26,6 +26,8 @@
     gnomeExtensions.gnome-40-ui-improvements
     gnomeExtensions.focus-changer
     gnomeExtensions.media-controls
+    bibata-cursors
+    numix-icon-theme
   ];
   services.udev.packages = with pkgs; [gnome-settings-daemon];
   programs.dconf.enable = true;
