@@ -4,12 +4,12 @@
     grimblast
     brightnessctl
     walker
-    # waybar
-    # dunst
     pipewire
     wireplumber
+    fastfetch
   ];
   programs.hyprpanel = {
+    enable = true;
     # Configure and theme almost all options from the GUI.
     # See 'https://hyprpanel.com/configuration/settings.html'.
     # Default: <same as gui>
@@ -74,25 +74,6 @@
     };
   };
   services.hyprpolkitagent.enable = true;
-  home.pointerCursor = {
-    gtk.enable = true;
-    package = pkgs.bibata-cursors;
-    name = "Bibata-Modern-Ice";
-    size = 16;
-  };
-
-  gtk = {
-    enable = true;
-    iconTheme = {
-      package = pkgs.flat-remix-gtk;
-      name = "Adwaita";
-    };
-
-    font = {
-      name = "Terminess Nerd Font Mono";
-      size = 11;
-    };
-  };
   wayland.windowManager.hyprland = {
     ### Using the package from nixos module for betting setting up
     package = null;
@@ -155,7 +136,7 @@
                 "$mod SHIFT, code:1${toString i}, movetoworkspace, ${toString ws}"
               ]
             )
-            4)
+            8)
         );
     };
   };
