@@ -74,6 +74,7 @@
     };
   };
   services.hyprpolkitagent.enable = true;
+  programs.hyprlock.enable = true;
   wayland.windowManager.hyprland = {
     ### Using the package from nixos module for betting setting up
     package = null;
