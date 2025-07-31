@@ -24,6 +24,7 @@
     ./hardware-configuration.nix
     ../common
     ../../modules/nixos/gnome.nix
+    ../../modules/nixos/hyprland.nix
   ];
 
   networking.hostName = "black-coral";

@@ -20,7 +20,7 @@
     # ./nvim.nix
     inputs.zen-browser.homeModules.twilight
     ../common
-    # ../../modules/home-manager/cosmic.nix
+    ../../modules/home-manager/hyprland.nix
   ];
 
   nixpkgs = {
