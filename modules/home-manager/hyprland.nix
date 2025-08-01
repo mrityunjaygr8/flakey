@@ -123,6 +123,7 @@
           "$mod, RETURN, exec, ghostty"
           "$mod, B, exec, zen-twilight"
           "$mod, C, exec, chromium"
+          "$mod SHIFT, L, exec, hyprlock"
           ", Print, exec, grimblast copy area"
         ]
         ++
