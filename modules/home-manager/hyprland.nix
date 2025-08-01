@@ -93,6 +93,7 @@
       plugin = {
         hyprsplit = {
           num_workspaces = 4;
+          persistent_workspaces = true;
         };
       };
       animations = {
@@ -131,6 +132,12 @@
           "$mod,l,movefocus,r"
           "$mod,j,movefocus,d"
           "$mod,k,movefocus,u"
+        ]
+        ++
+        # Swap focus and windows between monitors
+        [
+          "$mod, O, focusmonitor, +1"
+          "$mod SHIFT, O, movewindow, mon:+1"
         ]
         ++
         # Volume Stuff
