@@ -400,6 +400,7 @@ in {
         no = "nh os switch $HOME/flakey";
         nud = "nh home switch --dry $HOME/flakey";
         nu = "nh home switch $HOME/flakey";
+        dc = "docker compose";
       };
       functions = {
         mkdcd = {
