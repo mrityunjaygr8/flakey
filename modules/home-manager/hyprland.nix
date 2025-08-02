@@ -96,6 +96,13 @@
           persistent_workspaces = true;
         };
       };
+      windowrulev2 = [
+        # These rules are for pinning the Picture-in-Picture window
+        "float, title:^(Picture-in-Picture|zen-twilight)$"
+        "size 800 450,title:^(Picture-in-Picture|zen-twilight)$"
+        "content video,title:^(Picture-in-Picture|zen-twilight)$"
+        "pin, title:^(Picture-in-Picture|zen-twilight)$"
+      ];
       animations = {
         enabled = true;
         bezier = "myBezier, 0.05, 0.9, 0.1, 1.05";
@@ -115,6 +122,12 @@
         # Fix some dragging issues with XWayland
         "nofocus,class:^$,title:^$,xwayland:1,floating:1,fullscreen:0,pinned:0"
       ];
+      bindm =
+        # Move/resize windows with mainMod + LMB/RMB and dragging
+        [
+          "$mod,mouse:272, movewindow"
+          "$mod,mouse:273, resizewindowpixel"
+        ];
       bind =
         [
           "Control_L,SPACE,exec,anyrun"
