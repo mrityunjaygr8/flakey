@@ -416,6 +416,13 @@
     };
   };
 
+  xdg.configFile = {
+    "systemd/user" = {
+      source = ../../systemd;
+      recursive = true;
+    };
+  };
+
   home.file = {
     ".config/ghostty/config" = {
       text = ''

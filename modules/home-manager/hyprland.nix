@@ -7,6 +7,7 @@
     pipewire
     wireplumber
     fastfetch
+    swww
   ];
   programs.hyprpanel = {
     enable = true;
@@ -87,6 +88,7 @@
         # "waybar"
         "hyprpanel"
         "systemctl --user start hyprpolkitagent"
+        "swww-daemon"
         # "dunst"
       ];
       "$mod" = "SUPER";
