@@ -71,8 +71,8 @@ in {
     Timer = {
       # Run 1 minute after boot/login
       OnBootSec = "1min";
-      # Run every 30 minutes thereafter
-      OnUnitActiveSec = "5min";
+      # Run every 2 minutes thereafter
+      OnUnitActiveSec = "2min";
       Unit = "wallpaper-changer.service";
     };
     Install = {
