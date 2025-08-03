@@ -53,6 +53,11 @@ in {
     fastfetch
     swww
     fd
+    rose-pine-hyprcursor
+    hyprcursor
+    nwg-look
+    hyprsunset
+    clipse
   ];
   systemd.user.services.wallpaper-changer = {
     Unit = {
@@ -166,6 +171,25 @@ in {
       ];
     };
   };
+  xdg.configFile = {
+    "hypr/hyprsunset.conf" = {
+      enable = true;
+      text = ''
+        max-gamma = 150
+        profile {
+          time = 7:30
+          identity = true
+        }
+
+        profile {
+          time = 20:00
+          temperature = 4500
+          gamma = 0.8
+        }
+
+      '';
+    };
+  };
   services.hyprpolkitagent.enable = true;
   programs.hyprlock.enable = true;
   wayland.windowManager.hyprland = {
@@ -176,12 +200,16 @@ in {
     systemd.variables = ["--all"];
     plugins = with pkgs; [hyprlandPlugins.hyprsplit];
     settings = {
+      env = ["HYPRCURSOR_THEME,rose-pine-hyprcursor"];
       "exec-once" = [
         # "waybar"
+        "clipse -listen"
+        "hyprsunset"
         "hypridle"
         "hyprpanel"
         "systemctl --user start hyprpolkitagent"
         "swww-daemon"
+        "hyprctl setcursor rose-pine-hyprcursor 32"
         # "dunst"
       ];
       "$mod" = "SUPER";
@@ -191,13 +219,21 @@ in {
           persistent_workspaces = true;
         };
       };
-      windowrulev2 = [
-        # These rules are for pinning the Picture-in-Picture window
-        "float, title:^(Picture-in-Picture|zen-twilight)$"
-        "size 800 450,title:^(Picture-in-Picture|zen-twilight)$"
-        "content video,title:^(Picture-in-Picture|zen-twilight)$"
-        "pin, title:^(Picture-in-Picture|zen-twilight)$"
-      ];
+      windowrulev2 =
+        [
+          # These rules are for pinning the Picture-in-Picture window
+          "float, title:^(Picture-in-Picture|zen-twilight)$"
+          "size 800 450,title:^(Picture-in-Picture|zen-twilight)$"
+          "content video,title:^(Picture-in-Picture|zen-twilight)$"
+          "pin, title:^(Picture-in-Picture|zen-twilight)$"
+        ]
+        ++
+        # For the clipboard TUI
+        [
+          "float, class:(clipse)"
+          "size 622 652, class:(clipse)"
+          "stayfocused, class:(clipse)"
+        ];
       animations = {
         enabled = true;
         bezier = "myBezier, 0.05, 0.9, 0.1, 1.05";
@@ -234,6 +270,9 @@ in {
           "$mod SHIFT, L, exec, hyprlock"
           "$mod SHIFT, W, exec, ${wallpaperScript}/bin/random-wallpaper"
           ", Print, exec, grimblast copy area"
+        ]
+        ++ [
+          "$mod SHIFT, V, exec, ghostty --class=clipse -e clipse"
         ]
         ++
         # Focus Switching keybinds
