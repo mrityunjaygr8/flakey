@@ -230,9 +230,9 @@ in {
         ++
         # For the clipboard TUI
         [
-          "float, class:(clipse)"
-          "size 622 652, class:(clipse)"
-          "stayfocused, class:(clipse)"
+          "float, class:(window.clipse.output)"
+          "size 622 652, class:(window.clipse.output)"
+          "stayfocused, class:(window.clipse.output)"
         ];
       animations = {
         enabled = true;
@@ -272,7 +272,7 @@ in {
           ", Print, exec, grimblast copy area"
         ]
         ++ [
-          "$mod SHIFT, V, exec, ghostty --class=clipse -e clipse"
+          "$mod SHIFT, V, exec, ghostty --class=window.clipse.output -e clipse"
         ]
         ++
         # Focus Switching keybinds
