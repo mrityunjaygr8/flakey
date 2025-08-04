@@ -283,6 +283,18 @@ in {
           "$mod,k,movefocus,u"
         ]
         ++
+        # Switching workspaces using ASDF
+        [
+          "$mod, A, split:workspace, 1"
+          "$mod SHIFT, A, split:movetoworkspacesilent, 1"
+          "$mod, S, split:workspace, 2"
+          "$mod SHIFT, S, split:movetoworkspacesilent, 2"
+          "$mod, D, split:workspace, 3"
+          "$mod SHIFT, D, split:movetoworkspacesilent, 3"
+          "$mod, F, split:workspace, 4"
+          "$mod SHIFT, F, split:movetoworkspacesilent, 4"
+        ]
+        ++
         # Swap focus and windows between monitors
         [
           "$mod, O, focusmonitor, +1"
