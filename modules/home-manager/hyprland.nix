@@ -147,30 +147,6 @@ in {
       };
     };
   };
-  programs.anyrun = {
-    enable = true;
-    config = {
-      x = {fraction = 0.5;};
-      y = {fraction = 0.3;};
-      width = {fraction = 0.3;};
-      hideIcons = false;
-      ignoreExclusiveZones = false;
-      layer = "overlay";
-      hidePluginInfo = false;
-      closeOnClick = false;
-      showResultsImmediately = false;
-      maxEntries = null;
-      plugins = [
-        "${pkgs.anyrun}/lib/libapplications.so"
-        "${pkgs.anyrun}/lib/libsymbols.so"
-        "${pkgs.anyrun}/lib/librink.so"
-        "${pkgs.anyrun}/lib/libtranslate.so"
-        "${pkgs.anyrun}/lib/libkidex.so"
-        "${pkgs.anyrun}/lib/librandr.so"
-        "${pkgs.anyrun}/lib/libwebsearch.so"
-      ];
-    };
-  };
   xdg.configFile = {
     "hypr/hyprsunset.conf" = {
       enable = true;
@@ -261,7 +237,6 @@ in {
         ];
       bind =
         [
-          "Control_L,SPACE,exec,anyrun"
           "$mod, Q, killactive"
           "$mod, V, togglefloating"
           "$mod, RETURN, exec, ghostty"
