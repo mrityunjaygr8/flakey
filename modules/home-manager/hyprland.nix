@@ -1,4 +1,5 @@
 {
+  inputs,
   pkgs,
   config,
   ...
@@ -43,6 +44,9 @@
 
   '';
 in {
+  imports = [
+    inputs.sherlock.homeModules.default
+  ];
   programs.kitty.enable = true; # required for the default Hyprland config
   home.packages = with pkgs; [
     grimblast
@@ -59,6 +63,21 @@ in {
     hyprsunset
     clipse
   ];
+  programs.sherlock = {
+    enable = true;
+    settings = {
+      config = {};
+      launchers = [
+        {
+          name = "App Launcher";
+          type = "app_launcher";
+          args = {};
+          priority = 1;
+          home = true;
+        }
+      ];
+    };
+  };
   systemd.user.services.wallpaper-changer = {
     Unit = {
       Description = "Change wallpaper periodically";
@@ -237,9 +256,10 @@ in {
         ];
       bind =
         [
+          "Control_L,SPACE,exec,sherlock"
           "$mod, Q, killactive"
           "$mod, V, togglefloating"
-          "$mod, RETURN, exec, ghostty"
+          "$mod, RETURN, exec, [workspace 1 silent] ghostty"
           "$mod, B, exec, zen-twilight"
           "$mod, C, exec, chromium"
           "$mod SHIFT, L, exec, hyprlock"

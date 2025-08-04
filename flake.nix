@@ -21,6 +21,9 @@
     disko.url = "github:nix-community/disko";
     disko.inputs.nixpkgs.follows = "nixpkgs";
 
+    sherlock.url = "github:Skxxtz/sherlock";
+    sherlock.inputs.nixpkgs.follows = "nixpkgs";
+
     # TODO: Add any other flake you might need
     # hardware.url = "github:nixos/nixos-hardware";
 
@@ -39,6 +42,7 @@
     home-manager,
     zen-browser,
     disko,
+    sherlock,
     ...
   } @ inputs: let
     inherit (self) outputs;
