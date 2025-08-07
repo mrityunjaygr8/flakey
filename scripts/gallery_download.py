@@ -6,7 +6,6 @@
 # ///
 import requests
 import os
-import re
 import sys
 
 WALLPAPER_FOLDER = os.path.expanduser(os.path.join("~", "Pictures", "Wallpapers"))
@@ -40,13 +39,8 @@ def download_reddit_gallery(gallery_url):
         # Sanitize the post title to create a valid folder name
         post_title = post_data["title"]
         # Remove invalid characters for a folder name
-        safe_folder_name = re.sub(r'[\\/*?:"<>|]', "", post_title).strip()
 
-        # Create a directory with the sanitized post title
-        if not os.path.exists(safe_folder_name):
-            os.makedirs(safe_folder_name)
-
-        print(f"Downloading images to folder: '{safe_folder_name}'")
+        print(f"Downloading images to folder: '{WALLPAPER_FOLDER}'")
 
         # Loop through each image in the gallery's metadata
         image_count = 0
