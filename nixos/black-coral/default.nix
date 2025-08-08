@@ -25,6 +25,7 @@
     ../common
     ../../modules/nixos/gnome.nix
     ../../modules/nixos/hyprland.nix
+    ../../modules/nixos/riverwm.nix
   ];
 
   networking.hostName = "black-coral";

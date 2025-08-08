@@ -21,6 +21,7 @@
     inputs.zen-browser.homeModules.twilight
     ../common
     ../../modules/home-manager/hyprland.nix
+    ../../modules/home-manager/riverwm.nix
   ];
 
   nixpkgs = {
@@ -69,6 +70,7 @@
   home.packages = with pkgs; [
     # (lib.hiPrio (pkgs.callPackage ./../../pkgs/windsurf/default.nix {inherit inputs;}))
     # jetbrains.idea-community-bin
+    inkscape
     elixir-ls
     bottom
     calibre
