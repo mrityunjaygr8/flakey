@@ -1,5 +1,12 @@
-let
-  wallpaperScript = import ./wallpaper-script.nix;
+{
+  pkgs,
+  config,
+  ...
+}: let
+  wallpaperScript = import ./wallpaper-script.nix {
+    inherit pkgs;
+    inherit config;
+  };
 in {
   programs.i3bar-river = {
     enable = true;
@@ -107,7 +114,7 @@ in {
           "Super+Shift J" = "swap next";
           "Super+Shift K" = "swap previous";
           "Super+Shift E" = "exit";
-          "Super+Shift W" = "spawn ${wallpaperScript.wallpaperScript}/bin/random-wallpaper";
+          "Super+Shift W" = "spawn ${wallpaperScript}/bin/random-wallpaper";
         };
       };
       default-layout = "rivertile";

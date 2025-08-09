@@ -4,7 +4,10 @@
   config,
   ...
 }: let
-  wallpaperScript = import ./wallpaper-script.nix;
+  wallpaperScript = import ./wallpaper-script.nix {
+    inherit pkgs;
+    inherit config;
+  };
 in {
   imports = [
     inputs.sherlock.homeModules.default
@@ -199,7 +202,7 @@ in {
           "$mod, B, exec, zen-twilight"
           "$mod, C, exec, chromium"
           "$mod SHIFT, L, exec, hyprlock"
-          "$mod SHIFT, W, exec, ${wallpaperScript.wallpaperScript}/bin/random-wallpaper"
+          "$mod SHIFT, W, exec, ${wallpaperScript}/bin/random-wallpaper"
           ", Print, exec, grimblast copy area"
         ]
         ++ [

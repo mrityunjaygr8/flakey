@@ -3,7 +3,10 @@
   config,
   ...
 }: let
-  wallpaperScript = import ./wallpaper-script.nix;
+  wallpaperScript = import ./wallpaper-script.nix {
+    inherit pkgs;
+    inherit config;
+  };
 in {
   home.packages = with pkgs; [swww bibata-cursors];
   systemd.user.services.wallpaper-changer = {
@@ -13,7 +16,7 @@ in {
     Service = {
       Type = "oneshot";
       # This points to the script we defined above in the `let` block.
-      ExecStart = "${wallpaperScript.wallpaperScript}/bin/random-wallpaper";
+      ExecStart = "${wallpaperScript}/bin/random-wallpaper";
     };
   };
   systemd.user.timers.wallpaper-changer = {
