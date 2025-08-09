@@ -14,7 +14,7 @@ in {
     settings = {
       background = "#282828ff";
       color = "#ffffffff";
-      font = "Terminess Nerd Font Mono 12";
+      font = "Terminess Nerd Font Mono 16";
       height = 24;
       margin_bottom = 0;
       margin_left = 0;
