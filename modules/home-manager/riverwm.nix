@@ -19,27 +19,15 @@ in {
       margin_left = 0;
       margin_top = 0;
       separator = "#9a8a62ff";
-      "wm.river" = {
+      wm.river = {
         max_tag = 6;
       };
-      # command = "i3status-rs ${config.home.homeDirectory}/.config/i3status-rust/config-default.toml";
+      command = "i3status-rs ${config.home.homeDirectory}/.config/i3status-rust/config-default.toml";
     };
   };
   programs.i3status-rust = {
     enable = true;
     bars = {
-      "" = {
-        blocks = [
-          {
-            alert = 10.0;
-            block = "disk_space";
-            info_type = "available";
-            interval = 60;
-            path = "/";
-            warning = 20.0;
-          }
-        ];
-      };
       default = {
         blocks = [
           {
