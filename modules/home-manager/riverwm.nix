@@ -111,6 +111,8 @@ in {
           "None XF86MonBrightnessDown" = "spawn 'brightnessctl set 5%-'";
         };
       };
+      focus-follows-cursor = "normal";
+      xcursor-theme = "'Bibata-Modern-Classic' 24";
       default-layout = "rivertile";
       spawn = [
         "i3bar-river"
