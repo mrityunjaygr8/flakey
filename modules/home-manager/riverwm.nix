@@ -8,6 +8,7 @@
     inherit config;
   };
 in {
+  home.packages = with pkgs; [pamixer brightnessctl];
   programs.i3bar-river = {
     enable = true;
     settings = {
@@ -103,6 +104,11 @@ in {
           "Super+Shift K" = "swap previous";
           "Super+Shift E" = "exit";
           "Super+Shift W" = "spawn ${wallpaperScript}/bin/random-wallpaper";
+          "None XF86AudioRaiseVolume" = "spawn 'pamixer -i 5'";
+          "None XF86AudioLowerVolume" = "spawn 'pamixer -d 5'";
+          "None XF86AudioMute" = "spawn 'pamixer --toggle-mute'";
+          "None XF86MonBrightnessUp" = "spawn 'brightnessctl set +5%'";
+          "None XF86MonBrightnessDown" = "spawn 'brightnessctl set 5%-'";
         };
       };
       default-layout = "rivertile";
