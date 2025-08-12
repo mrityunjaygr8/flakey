@@ -158,6 +158,7 @@ in {
         bind x kill-pane
         set -g detach-on-destroy off
         bind C-l send-keys 'C-l'
+        bind C-a send-keys 'C-a'
 
         # Smart pane switching with awareness of Vim splits.
         # See: https://github.com/christoomey/vim-tmux-navigator
