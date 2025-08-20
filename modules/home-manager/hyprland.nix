@@ -44,9 +44,9 @@
 
   '';
 in {
-  imports = [
-    inputs.sherlock.homeModules.default
-  ];
+  # imports = [
+  #   inputs.sherlock.homeModules.default
+  # ];
   programs.kitty.enable = true; # required for the default Hyprland config
   home.packages = with pkgs; [
     grimblast
@@ -217,10 +217,10 @@ in {
       windowrulev2 =
         [
           # These rules are for pinning the Picture-in-Picture window
-          "float, title:^(Picture-in-Picture|zen-twilight)$"
-          "size 800 450,title:^(Picture-in-Picture|zen-twilight)$"
-          "content video,title:^(Picture-in-Picture|zen-twilight)$"
-          "pin, title:^(Picture-in-Picture|zen-twilight)$"
+          "float, title:^(Picture-in-Picture|firefox)$"
+          "size 800 450,title:^(Picture-in-Picture|firefox)$"
+          "content video,title:^(Picture-in-Picture|firefox)$"
+          "pin, title:^(Picture-in-Picture|firefox)$"
         ]
         ++
         # For the clipboard TUI
@@ -260,7 +260,7 @@ in {
           "$mod, Q, killactive"
           "$mod, V, togglefloating"
           "$mod, RETURN, exec, [workspace 1 silent] ghostty"
-          "$mod, B, exec, zen-twilight"
+          "$mod, B, exec, firefox"
           "$mod, C, exec, chromium"
           "$mod SHIFT, L, exec, hyprlock"
           "$mod SHIFT, W, exec, ${wallpaperScript}/bin/random-wallpaper"
