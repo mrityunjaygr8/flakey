@@ -8,7 +8,7 @@
     inherit config;
   };
 in {
-  home.packages = with pkgs; [pamixer brightnessctl];
+  home.packages = with pkgs; [pamixer brightnessctl lswt waybar];
   programs.i3bar-river = {
     enable = true;
     settings = {
@@ -20,9 +20,6 @@ in {
       margin_left = 0;
       margin_top = 0;
       separator = "#9a8a62ff";
-      wm.river = {
-        max_tag = 6;
-      };
       command = "i3status-rs ${config.home.homeDirectory}/.config/i3status-rust/config-default.toml";
     };
   };
@@ -30,38 +27,6 @@ in {
     enable = true;
     bars = {
       default = {
-        blocks = [
-          {
-            alert = 10.0;
-            block = "disk_space";
-            info_type = "available";
-            interval = 60;
-            path = "/";
-            warning = 20.0;
-          }
-          {
-            block = "memory";
-            format = " $icon mem_used_percents ";
-            format_alt = " $icon $swap_used_percents ";
-          }
-          {
-            block = "cpu";
-            interval = 1;
-          }
-          {
-            block = "load";
-            format = " $icon $1m ";
-            interval = 1;
-          }
-          {
-            block = "sound";
-          }
-          {
-            block = "time";
-            format = " $timestamp.datetime(f:'%a %d/%m %R') ";
-            interval = 60;
-          }
-        ];
       };
     };
   };
@@ -97,13 +62,15 @@ in {
           "Super Q" = "close";
           "Super Return" = "spawn ghostty";
           "Control Space" = "spawn sherlock";
-          "Super B" = "spawn zen-twilight";
+          "Super B" = "spawn 'zen-twilight -P=Default'";
+          "Super N" = "spawn 'zen-twilight -P=two --name=my.zen.youtube'";
           "Super J" = "focus-view next";
           "Super K" = "focus-view previous";
           "Super+Shift J" = "swap next";
           "Super+Shift K" = "swap previous";
           "Super+Shift E" = "exit";
           "Super+Shift W" = "spawn ${wallpaperScript}/bin/random-wallpaper";
+
           "None XF86AudioRaiseVolume" = "spawn 'pamixer -i 5'";
           "None XF86AudioLowerVolume" = "spawn 'pamixer -d 5'";
           "None XF86AudioMute" = "spawn 'pamixer --toggle-mute'";
@@ -111,6 +78,13 @@ in {
           "None XF86MonBrightnessDown" = "spawn 'brightnessctl set 5%-'";
         };
       };
+      rule-add = [
+        "-app-id 'my.zen.youtube' tags 000000100"
+      ];
+      border-color-focused = "0x93a1a1";
+      border-color-unfocused = "0x586e75";
+      border-color-urgent = "0xf6c177";
+      border-width = 20;
       focus-follows-cursor = "normal";
       xcursor-theme = "'Bibata-Modern-Classic' 24";
       default-layout = "rivertile";
