@@ -1,20 +1,16 @@
 {
   lib,
+  stdenv,
   stdenvNoCC,
   buildGoModule,
   bun,
   fetchFromGitHub,
+  makeBinaryWrapper,
   models-dev,
   nix-update-script,
   testers,
   writableTmpDirAsHomeHook,
 }: let
-  opencode-node-modules-hash = {
-    "aarch64-darwin" = "sha256-TAeFDsHGFJnUyp20ec+Rxp4t1FrWKfbtnxsE8PnLS0o=";
-    "aarch64-linux" = "sha256-F056MWf2dNAO21ezEvWg689WUibtz4Q4mcSuDuSY5EM=";
-    "x86_64-darwin" = "sha256-AN1Ha/les1ByJGfVkLDibfxjPouC0tAZ//EN3vDi1Hc=";
-    "x86_64-linux" = "sha256-XIRV1QrgRHnpJyrgK9ITxH61dve7nWfVoCPs3Tc8nuU=";
-  };
   bun-target = {
     "aarch64-darwin" = "bun-darwin-arm64";
     "aarch64-linux" = "bun-linux-arm64";
@@ -24,20 +20,21 @@
 in
   stdenvNoCC.mkDerivation (finalAttrs: {
     pname = "opencode";
-    version = "0.3.58";
+    version = "0.6.4";
     src = fetchFromGitHub {
       owner = "sst";
       repo = "opencode";
       tag = "v${finalAttrs.version}";
-      hash = "sha256-EM44FkMPPkRChuLcNEEK3n4dLc5uqnX7dHROsZXyr58=";
+      hash = "sha256-o7SzDGbWgCh8cMNK+PeLxAw0bQMKFouHdedUslpA6gw=";
     };
 
     tui = buildGoModule {
       pname = "opencode-tui";
-      inherit (finalAttrs) version;
-      src = "${finalAttrs.src}/packages/tui";
+      inherit (finalAttrs) version src;
 
-      vendorHash = "sha256-/YxvM+HZM4aRqcjUiSX0D1DhhMJkmLdh7G4+fPqtnic=";
+      modRoot = "packages/tui";
+
+      vendorHash = "sha256-8pwVQVraLSE1DRL6IFMlQ/y8HQ8464N/QwAS8Faloq4=";
 
       subPackages = ["cmd/opencode"];
 
@@ -80,11 +77,14 @@ in
 
          export BUN_INSTALL_CACHE_DIR=$(mktemp -d)
 
+         # Disable post-install scripts to avoid shebang issues
          bun install \
            --filter=opencode \
            --force \
            --frozen-lockfile \
-           --no-progress
+           --ignore-scripts \
+           --no-progress \
+           --production
 
         runHook postBuild
       '';
@@ -101,19 +101,20 @@ in
       # Required else we get errors that our fixed-output derivation references store paths
       dontFixup = true;
 
-      outputHash = opencode-node-modules-hash.${stdenvNoCC.hostPlatform.system};
+      outputHash = "sha256-PmLO0aU2E7NlQ7WtoiCQzLRw4oKdKxS5JI571lvbhHo=";
       outputHashAlgo = "sha256";
       outputHashMode = "recursive";
     };
 
     nativeBuildInputs = [
       bun
+      makeBinaryWrapper
       models-dev
     ];
 
     patches = [
       # Patch `packages/opencode/src/provider/models-macro.ts` to get contents of
-      # `api.json` from the file bundled with `bun build`.
+      # `_api.json` from the file bundled with `bun build`.
       ./local-models-dev.patch
     ];
 
@@ -125,19 +126,19 @@ in
       runHook postConfigure
     '';
 
-    env.MODELS_DEV_API_JSON = "${models-dev}/dist/api.json";
+    env.MODELS_DEV_API_JSON = "${models-dev}/dist/_api.json";
 
     buildPhase = ''
       runHook preBuild
 
       bun build \
+        --define OPENCODE_TUI_PATH="'${finalAttrs.tui}/bin/tui'" \
         --define OPENCODE_VERSION="'${finalAttrs.version}'" \
         --compile \
-        --minify \
+        --compile-exec-argv="--" \
         --target=${bun-target.${stdenvNoCC.hostPlatform.system}} \
         --outfile=opencode \
         ./packages/opencode/src/index.ts \
-        ${finalAttrs.tui}/bin/tui
 
       runHook postBuild
     '';
@@ -150,6 +151,15 @@ in
       install -Dm755 opencode $out/bin/opencode
 
       runHook postInstall
+    '';
+
+    # Execution of commands using bash-tool fail on linux with
+    # Error [ERR_DLOPEN_FAILED]: libstdc++.so.6: cannot open shared object file: No such
+    # file or directory
+    # Thus, we add libstdc++.so.6 manually to LD_LIBRARY_PATH
+    postFixup = ''
+      wrapProgram $out/bin/opencode \
+        --set LD_LIBRARY_PATH "${lib.makeLibraryPath [stdenv.cc.cc.lib]}"
     '';
 
     passthru = {
