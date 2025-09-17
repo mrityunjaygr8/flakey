@@ -4,6 +4,7 @@
   config,
   ...
 }: let
+  localPlugins = pkgs.callPackage ./../../pkgs/hyprland-plugins {};
   wallpaperScript = pkgs.writeShellScriptBin "random-wallpaper" ''
     #!/usr/bin/env bash
     set -o pipefail
@@ -48,20 +49,21 @@ in {
   #   inputs.sherlock.homeModules.default
   # ];
   programs.kitty.enable = true; # required for the default Hyprland config
-  home.packages = with pkgs; [
-    grimblast
-    brightnessctl
-    walker
-    pipewire
-    wireplumber
-    fastfetch
-    swww
-    fd
-    rose-pine-hyprcursor
-    hyprcursor
-    nwg-look
-    hyprsunset
-    clipse
+  home.packages = [
+    pkgs.grimblast
+    pkgs.brightnessctl
+    pkgs.walker
+    pkgs.pipewire
+    pkgs.wireplumber
+    pkgs.fastfetch
+    pkgs.swww
+    pkgs.fd
+    pkgs.rose-pine-hyprcursor
+    pkgs.hyprcursor
+    pkgs.nwg-look
+    pkgs.hyprsunset
+    pkgs.clipse
+    localPlugins.hyprsplit
   ];
   programs.sherlock = {
     enable = true;
@@ -194,7 +196,7 @@ in {
     enable = true;
     systemd.variables = ["--all"];
     # plugins = with pkgs; [hyprlandPlugins.hyprsplit];
-    plugins = [./../../pkgs/hyprsplit.nix];
+    # plugins = [./../../pkgs/hyprsplit.nix];
     settings = {
       env = ["HYPRCURSOR_THEME,rose-pine-hyprcursor"];
       "exec-once" = [
@@ -279,18 +281,18 @@ in {
           "$mod,k,movefocus,u"
         ]
         ++
-        # Switching workspaces using ASDF
-        [
-          "$mod, A, split:workspace, 1"
-          "$mod SHIFT, A, split:movetoworkspacesilent, 1"
-          "$mod, S, split:workspace, 2"
-          "$mod SHIFT, S, split:movetoworkspacesilent, 2"
-          "$mod, D, split:workspace, 3"
-          "$mod SHIFT, D, split:movetoworkspacesilent, 3"
-          "$mod, F, split:workspace, 4"
-          "$mod SHIFT, F, split:movetoworkspacesilent, 4"
-        ]
-        ++
+        # # Switching workspaces using ASDF
+        # [
+        #   "$mod, A, split:workspace, 1"
+        #   "$mod SHIFT, A, split:movetoworkspacesilent, 1"
+        #   "$mod, S, split:workspace, 2"
+        #   "$mod SHIFT, S, split:movetoworkspacesilent, 2"
+        #   "$mod, D, split:workspace, 3"
+        #   "$mod SHIFT, D, split:movetoworkspacesilent, 3"
+        #   "$mod, F, split:workspace, 4"
+        #   "$mod SHIFT, F, split:movetoworkspacesilent, 4"
+        # ]
+        # ++
         # Swap focus and windows between monitors
         [
           "$mod, O, focusmonitor, +1"
@@ -314,8 +316,8 @@ in {
               i: let
                 ws = i + 1;
               in [
-                "$mod, code:1${toString i}, split:workspace, ${toString ws}"
-                "$mod SHIFT, code:1${toString i}, split:movetoworkspacesilent, ${toString ws}"
+                # "$mod, code:1${toString i}, split:workspace, ${toString ws}"
+                # "$mod SHIFT, code:1${toString i}, split:movetoworkspacesilent, ${toString ws}"
               ]
             )
             4)
