@@ -193,7 +193,8 @@ in {
     portalPackage = null;
     enable = true;
     systemd.variables = ["--all"];
-    plugins = with pkgs; [hyprlandPlugins.hyprsplit];
+    # plugins = with pkgs; [hyprlandPlugins.hyprsplit];
+    plugins = [./../../pkgs/hyprsplit.nix];
     settings = {
       env = ["HYPRCURSOR_THEME,rose-pine-hyprcursor"];
       "exec-once" = [
