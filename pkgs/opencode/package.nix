@@ -20,12 +20,12 @@
 in
   stdenvNoCC.mkDerivation (finalAttrs: {
     pname = "opencode";
-    version = "0.6.4";
+    version = "0.9.9";
     src = fetchFromGitHub {
       owner = "sst";
       repo = "opencode";
       tag = "v${finalAttrs.version}";
-      hash = "sha256-o7SzDGbWgCh8cMNK+PeLxAw0bQMKFouHdedUslpA6gw=";
+      hash = "sha256-VHg5yZeU380ggCUwgq2yUD4jV0IiacsIDlcoUjZzuFA=";
     };
 
     tui = buildGoModule {
@@ -34,7 +34,7 @@ in
 
       modRoot = "packages/tui";
 
-      vendorHash = "sha256-8pwVQVraLSE1DRL6IFMlQ/y8HQ8464N/QwAS8Faloq4=";
+      vendorHash = "sha256-H+TybeyyHTbhvTye0PCDcsWkcN8M34EJ2ddxyXEJkZI=";
 
       subPackages = ["cmd/opencode"];
 
@@ -81,10 +81,12 @@ in
          bun install \
            --filter=opencode \
            --force \
-           --frozen-lockfile \
            --ignore-scripts \
-           --no-progress \
-           --production
+           --no-progress
+           # Remove `--frozen-lockfile` and `--production` — they erroneously report the lockfile needs updating even though `bun install` does not change it.
+           # Related to  https://github.com/oven-sh/bun/issues/19088
+           # --frozen-lockfile \
+           # --production
 
         runHook postBuild
       '';
@@ -101,7 +103,7 @@ in
       # Required else we get errors that our fixed-output derivation references store paths
       dontFixup = true;
 
-      outputHash = "sha256-PmLO0aU2E7NlQ7WtoiCQzLRw4oKdKxS5JI571lvbhHo=";
+      outputHash = "sha256-fGf2VldMlxbr9pb3B6zVL+fW1S8bRjefJW+jliTO73A=";
       outputHashAlgo = "sha256";
       outputHashMode = "recursive";
     };
@@ -135,7 +137,6 @@ in
         --define OPENCODE_TUI_PATH="'${finalAttrs.tui}/bin/tui'" \
         --define OPENCODE_VERSION="'${finalAttrs.version}'" \
         --compile \
-        --compile-exec-argv="--" \
         --target=${bun-target.${stdenvNoCC.hostPlatform.system}} \
         --outfile=opencode \
         ./packages/opencode/src/index.ts \
