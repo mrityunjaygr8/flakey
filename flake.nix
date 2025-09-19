@@ -14,6 +14,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    expert = {
+      inputs.nixpkgs.follows = "nixpkgs";
+      url = "github:elixir-lang/expert";
+    };
     # Home manager
     home-manager.url = "github:nix-community/home-manager/master";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
@@ -40,6 +44,7 @@
     self,
     nixpkgs,
     home-manager,
+    expert,
     zen-browser,
     disko,
     sherlock,
