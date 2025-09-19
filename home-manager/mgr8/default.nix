@@ -69,7 +69,7 @@
   home.packages = with pkgs; [
     # (lib.hiPrio (pkgs.callPackage ./../../pkgs/windsurf/default.nix {inherit inputs;}))
     # jetbrains.idea-community-bin
-    elixir-ls
+    beamMinimal28Packages.elixir
     bottom
     calibre
     xan
