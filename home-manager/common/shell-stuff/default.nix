@@ -25,6 +25,7 @@ in {
 
     # You can also split up your configuration and import pieces of it here:
     # ./nvim.nix
+    # inputs.expert.packages."x86_64-linux".default
   ];
 
   home.packages = with pkgs; [
@@ -36,6 +37,10 @@ in {
     ripgrep
     sesh
     geist-font
+    inputs.expert.packages."x86_64-linux".default
+    ty
+    ruff
+    basedpyright
   ];
 
   programs = {
