@@ -61,11 +61,14 @@ return {
 				terraformls = {},
 				-- ty = {},
 				basedpyright = {},
-				expert = {
-					cmd = { "expert" },
-					root_markers = { "mix.exs", ".git" },
-					filetypes = { "elixir", "eelixir", "heex" },
+				elixirls = {
+					cmd = { "elixir-ls" },
 				},
+				-- expert = {
+				-- 	cmd = { "expert" },
+				-- 	root_markers = { "mix.exs", ".git" },
+				-- 	filetypes = { "elixir", "eelixir", "heex" },
+				-- },
 			},
 		},
 		config = function(_, opts)
