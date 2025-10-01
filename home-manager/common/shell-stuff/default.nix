@@ -122,6 +122,7 @@ in {
         nodePackages.typescript-language-server
         nodePackages.bash-language-server
         vimPlugins.nvim-treesitter-parsers.templ
+        elixir_ls
         pyright
         terraform-ls
         gopls
