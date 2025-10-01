@@ -43,6 +43,16 @@
         --transition-duration 0.7
 
   '';
+  working_hyprsplit_version = "0.51.0";
+  new_hyprsplit = pkgs.hyprlandPlugins.hyprsplit.overrideAttrs (finalAttrs: previousAttrs: {
+    version = working_hyprsplit_version;
+    src = pkgs.fetchFromGitHub {
+      owner = "shezdy";
+      repo = "hyprsplit";
+      tag = "v${working_hyprsplit_version}";
+      hash = "sha256-h6vDtBKTfyuA/6frSFcTrdjoAKhwlGBT+nzjoWf9sQE=";
+    };
+  });
 in {
   # imports = [
   #   inputs.sherlock.homeModules.default
@@ -193,7 +203,7 @@ in {
     portalPackage = null;
     enable = true;
     systemd.variables = ["--all"];
-    plugins = with pkgs; [hyprlandPlugins.hyprsplit];
+    plugins = [new_hyprsplit];
     settings = {
       env = ["HYPRCURSOR_THEME,rose-pine-hyprcursor"];
       "exec-once" = [
