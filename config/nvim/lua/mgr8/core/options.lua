@@ -1,14 +1,23 @@
 vim.g.have_nerd_font = true
 
+-- For UFO Start
+vim.o.foldcolumn = "1"
+vim.o.foldlevel = 99
+vim.o.foldlevelstart = 99
+vim.o.foldenable = true
+-- For UFO End
+
 local opt = vim.opt
 
+-- opt.foldcolumn = "1"
+-- op
 opt.number = true
 opt.relativenumber = true
 
 opt.showmode = false
 
 vim.schedule(function()
-  opt.clipboard = 'unnamedplus'
+	opt.clipboard = "unnamedplus"
 end)
 
 -- Enable break indent
@@ -18,7 +27,7 @@ opt.breakindent = true
 opt.undofile = true
 
 -- Keep signcolumn on by default
-opt.signcolumn = 'yes'
+opt.signcolumn = "yes"
 
 -- Decrease update time
 opt.updatetime = 250
@@ -27,10 +36,10 @@ opt.updatetime = 250
 opt.timeoutlen = 300
 
 opt.list = true
-opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
+opt.listchars = { tab = "» ", trail = "·", nbsp = "␣" }
 
 -- Preview substitutions live, as you type!
-opt.inccommand = 'split'
+opt.inccommand = "split"
 
 -- Show which line your cursor is on
 opt.cursorline = true
@@ -48,7 +57,6 @@ opt.tabstop = 2 -- 2 spaces for tabs (prettier default)
 opt.shiftwidth = 2 -- 2 spaces for indent width
 opt.expandtab = true -- expand tab to spaces
 opt.autoindent = true -- copy indent from current line when starting new one
-
 
 -- line wrapping
 opt.wrap = false -- disable line wrapping

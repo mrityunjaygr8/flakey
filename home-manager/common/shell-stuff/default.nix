@@ -25,6 +25,7 @@ in {
 
     # You can also split up your configuration and import pieces of it here:
     # ./nvim.nix
+    # inputs.expert.packages."x86_64-linux".default
   ];
 
   home.packages = with pkgs; [
@@ -36,6 +37,10 @@ in {
     ripgrep
     sesh
     geist-font
+    inputs.expert.packages."x86_64-linux".default
+    ty
+    ruff
+    basedpyright
   ];
 
   programs = {
@@ -117,6 +122,7 @@ in {
         nodePackages.typescript-language-server
         nodePackages.bash-language-server
         vimPlugins.nvim-treesitter-parsers.templ
+        elixir_ls
         pyright
         terraform-ls
         gopls
@@ -158,6 +164,7 @@ in {
         bind x kill-pane
         set -g detach-on-destroy off
         bind C-l send-keys 'C-l'
+        bind C-a send-keys 'C-a'
 
         # Smart pane switching with awareness of Vim splits.
         # See: https://github.com/christoomey/vim-tmux-navigator
@@ -400,6 +407,7 @@ in {
         no = "nh os switch $HOME/flakey";
         nud = "nh home switch --dry $HOME/flakey";
         nu = "nh home switch $HOME/flakey";
+        dc = "docker compose";
       };
       functions = {
         mkdcd = {

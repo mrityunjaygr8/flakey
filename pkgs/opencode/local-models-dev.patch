@@ -1,4 +1,3 @@
-
 diff --git i/packages/opencode/src/provider/models-macro.ts w/packages/opencode/src/provider/models-macro.ts
 index 91a0348..4f60069 100644
 --- i/packages/opencode/src/provider/models-macro.ts

@@ -20,7 +20,7 @@
     # ./nvim.nix
     inputs.zen-browser.homeModules.twilight
     ../common
-    # ../../modules/home-manager/cosmic.nix
+    ../../modules/home-manager/hyprland.nix
   ];
 
   nixpkgs = {
@@ -69,7 +69,7 @@
   home.packages = with pkgs; [
     # (lib.hiPrio (pkgs.callPackage ./../../pkgs/windsurf/default.nix {inherit inputs;}))
     # jetbrains.idea-community-bin
-    elixir-ls
+    beamMinimal28Packages.elixir
     bottom
     calibre
     xan
@@ -81,6 +81,7 @@
     # code-cursor
     ares-cli
     (lib.hiPrio (pkgs.callPackage ./../../pkgs/opencode/package.nix {}))
+    # opencode
     uv
     pgadmin4-desktopmode
     git-crypt
@@ -135,6 +136,7 @@
     nerd-fonts.gohufont
     nerd-fonts.symbols-only
     nerd-fonts.jetbrains-mono
+    monaspace
   ];
 
   # programs.wezterm = {
@@ -167,6 +169,7 @@
 
   programs.zen-browser = {
     enable = true;
+    nativeMessagingHosts = [pkgs.firefoxpwa];
     policies = {
       AutofillAddressEnabled = true;
       AutofillCreditCardEnabled = false;
@@ -419,10 +422,11 @@
     ".config/ghostty/config" = {
       text = ''
         # font-family = Geist Mono
-        font-family = Terminess Nerd Font Mono
-        font-size = 20
+        # font-family = Terminess Nerd Font Mono
+        font-family = Monaspace Krypton Frozen
+        font-size = 16
         command = fish
-        theme = flexoki-dark
+        theme = Atom One Dark
       '';
     };
   };

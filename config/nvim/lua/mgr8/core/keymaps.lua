@@ -1,5 +1,5 @@
-vim.g.mapleader = ' '
-vim.g.maplocalleader = ' '
+vim.g.mapleader = " "
+vim.g.maplocalleader = " "
 
 local keymap = vim.keymap
 
@@ -14,3 +14,4 @@ keymap.set("n", "x", '"_x')
 
 keymap.set("v", ">", ">gv", { desc = "indent " })
 keymap.set("v", "<", "<gv", { desc = "outdent " })
+keymap.set("v", "P", '"_dP', { desc = "Paste without copying" })

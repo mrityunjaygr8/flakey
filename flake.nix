@@ -14,12 +14,19 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    expert = {
+      inputs.nixpkgs.follows = "nixpkgs";
+      url = "github:elixir-lang/expert";
+    };
     # Home manager
     home-manager.url = "github:nix-community/home-manager/master";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
     disko.url = "github:nix-community/disko";
     disko.inputs.nixpkgs.follows = "nixpkgs";
+
+    sherlock.url = "github:Skxxtz/sherlock";
+    sherlock.inputs.nixpkgs.follows = "nixpkgs";
 
     # TODO: Add any other flake you might need
     # hardware.url = "github:nixos/nixos-hardware";
@@ -37,8 +44,10 @@
     self,
     nixpkgs,
     home-manager,
+    expert,
     zen-browser,
     disko,
+    sherlock,
     ...
   } @ inputs: let
     inherit (self) outputs;

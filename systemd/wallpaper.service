@@ -1,0 +1,7 @@
+[Unit]
+Description=Change wallpaper periodically
+
+[Service]
+Type=oneshot
+ExecStart=/home/mgr8/flakey/scripts/random_wallpaper.sh
+

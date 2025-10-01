@@ -1,0 +1,12 @@
+[Unit]
+Description=Timer for changing wallpaper
+
+[Timer]
+# Run 1 minute after boot
+OnBootSec=1min
+# Run every 30 minutes thereafter
+OnUnitActiveSec=5min
+Unit=wallpaper.service
+
+[Install]
+WantedBy=timers.target
