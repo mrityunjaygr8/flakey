@@ -136,6 +136,7 @@
     nerd-fonts.gohufont
     nerd-fonts.symbols-only
     nerd-fonts.jetbrains-mono
+    monaspace
   ];
 
   # programs.wezterm = {
@@ -421,10 +422,11 @@
     ".config/ghostty/config" = {
       text = ''
         # font-family = Geist Mono
-        font-family = Terminess Nerd Font Mono
-        font-size = 20
+        # font-family = Terminess Nerd Font Mono
+        font-family = Monaspace Krypton Frozen
+        font-size = 16
         command = fish
-        theme = flexoki-dark
+        theme = Atom One Dark
       '';
     };
   };
