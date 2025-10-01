@@ -130,6 +130,7 @@
         "owner": "nix-community",
         "repo": "home-manager",
         "rev": "5a21f4819ee1be645f46d6b255d49f4271ef6723",
+
         "type": "github"
       },
       "original": {
