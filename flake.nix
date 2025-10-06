@@ -7,47 +7,20 @@
     # at the same time. Here's an working example:
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     # Also see the 'unstable-packages' overlay at 'overlays/default.nix'.
-    zen-browser = {
-      url = "github:0xc000022070/zen-browser-flake";
-      # IMPORTANT: we're using "libgbm" and is only available in unstable so ensure
-      # to have it up-to-date or simply don't specify the nixpkgs input
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
 
-    expert = {
-      inputs.nixpkgs.follows = "nixpkgs";
-      url = "github:elixir-lang/expert";
-    };
     # Home manager
     home-manager.url = "github:nix-community/home-manager/master";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
     disko.url = "github:nix-community/disko";
     disko.inputs.nixpkgs.follows = "nixpkgs";
-
-    sherlock.url = "github:Skxxtz/sherlock";
-    sherlock.inputs.nixpkgs.follows = "nixpkgs";
-
-    # TODO: Add any other flake you might need
-    # hardware.url = "github:nixos/nixos-hardware";
-
-    # Shameless plug: looking for a way to nixify your themes and make
-    # everything match nicely? Try nix-colors!
-    # nix-colors.url = "github:misterio77/nix-colors";
-
-    # ghostty = {
-    #   url = "git+ssh://git@github.com/ghostty-org/ghostty";
-    # };
   };
 
   outputs = {
     self,
     nixpkgs,
     home-manager,
-    expert,
-    zen-browser,
     disko,
-    sherlock,
     ...
   } @ inputs: let
     inherit (self) outputs;

@@ -37,7 +37,6 @@ in {
     ripgrep
     sesh
     geist-font
-    inputs.expert.packages."x86_64-linux".default
     ty
     ruff
     basedpyright
