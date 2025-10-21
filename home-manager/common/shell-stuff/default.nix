@@ -40,6 +40,9 @@ in {
     ty
     ruff
     basedpyright
+    gnumake
+    inotify-tools
+    postgresql
   ];
 
   programs = {
