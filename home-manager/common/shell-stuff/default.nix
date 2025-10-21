@@ -62,10 +62,12 @@ in {
     };
     git = {
       enable = true;
-      userName = "Mrityunjay Saxena";
-      userEmail = "mrityunjaysaxena1996@gmail.com";
 
-      extraConfig = {
+      settings = {
+        user = {
+          name = "Mrityunjay Saxena";
+          email = "mrityunjaysaxena1996@gmail.com";
+        };
         init = {
           defaultBranch = "main";
         };
