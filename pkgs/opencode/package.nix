@@ -2,196 +2,180 @@
   lib,
   stdenv,
   stdenvNoCC,
-  buildGoModule,
   bun,
+  cacert,
   fetchFromGitHub,
+  fzf,
   makeBinaryWrapper,
   models-dev,
   nix-update-script,
+  nodejs,
+  ripgrep,
   testers,
   writableTmpDirAsHomeHook,
-}: let
-  bun-target = {
-    "aarch64-darwin" = "bun-darwin-arm64";
-    "aarch64-linux" = "bun-linux-arm64";
-    "x86_64-darwin" = "bun-darwin-x64";
-    "x86_64-linux" = "bun-linux-x64";
+}:
+stdenvNoCC.mkDerivation (finalAttrs: {
+  pname = "opencode";
+  version = "1.0.15";
+  src = fetchFromGitHub {
+    owner = "sst";
+    repo = "opencode";
+    tag = "v${finalAttrs.version}";
+    hash = "sha256-2iZOw6oOrmzIKWdCe+nLjpWtRyS4YDmafjfALwWgYtE=";
   };
-in
-  stdenvNoCC.mkDerivation (finalAttrs: {
-    pname = "opencode";
-    version = "0.6.4";
-    src = fetchFromGitHub {
-      owner = "sst";
-      repo = "opencode";
-      tag = "v${finalAttrs.version}";
-      hash = "sha256-o7SzDGbWgCh8cMNK+PeLxAw0bQMKFouHdedUslpA6gw=";
-    };
 
-    tui = buildGoModule {
-      pname = "opencode-tui";
-      inherit (finalAttrs) version src;
+  src-with-node_modules = stdenvNoCC.mkDerivation {
+    pname = "opencode-src-with-node_modules";
+    inherit (finalAttrs) version src;
 
-      modRoot = "packages/tui";
-
-      vendorHash = "sha256-8pwVQVraLSE1DRL6IFMlQ/y8HQ8464N/QwAS8Faloq4=";
-
-      subPackages = ["cmd/opencode"];
-
-      env.CGO_ENABLED = 0;
-
-      ldflags = [
-        "-s"
-        "-X=main.Version=${finalAttrs.version}"
+    impureEnvVars =
+      lib.fetchers.proxyImpureEnvVars
+      ++ [
+        "GIT_PROXY_COMMAND"
+        "SOCKS_SERVER"
       ];
-
-      installPhase = ''
-        runHook preInstall
-
-        install -Dm755 $GOPATH/bin/opencode $out/bin/tui
-
-        runHook postInstall
-      '';
-    };
-
-    node_modules = stdenvNoCC.mkDerivation {
-      pname = "opencode-node_modules";
-      inherit (finalAttrs) version src;
-
-      impureEnvVars =
-        lib.fetchers.proxyImpureEnvVars
-        ++ [
-          "GIT_PROXY_COMMAND"
-          "SOCKS_SERVER"
-        ];
-
-      nativeBuildInputs = [
-        bun
-        writableTmpDirAsHomeHook
-      ];
-
-      dontConfigure = true;
-
-      buildPhase = ''
-        runHook preBuild
-
-         export BUN_INSTALL_CACHE_DIR=$(mktemp -d)
-
-         # Disable post-install scripts to avoid shebang issues
-         bun install \
-           --filter=opencode \
-           --force \
-           --frozen-lockfile \
-           --ignore-scripts \
-           --no-progress \
-           --production
-
-        runHook postBuild
-      '';
-
-      installPhase = ''
-        runHook preInstall
-
-        mkdir -p $out/node_modules
-        cp -R ./node_modules $out
-
-        runHook postInstall
-      '';
-
-      # Required else we get errors that our fixed-output derivation references store paths
-      dontFixup = true;
-
-      outputHash = "sha256-PmLO0aU2E7NlQ7WtoiCQzLRw4oKdKxS5JI571lvbhHo=";
-      outputHashAlgo = "sha256";
-      outputHashMode = "recursive";
-    };
 
     nativeBuildInputs = [
       bun
-      makeBinaryWrapper
-      models-dev
+      nodejs
+      writableTmpDirAsHomeHook
     ];
 
     patches = [
-      # Patch `packages/opencode/src/provider/models-macro.ts` to get contents of
-      # `_api.json` from the file bundled with `bun build`.
-      ./local-models-dev.patch
+      # NOTE: Adds --npm-pack-only and --no-npm-pack flags to separate dependency fetching from compilation
+      ./build-script.patch
     ];
 
-    configurePhase = ''
-      runHook preConfigure
-
-      cp -R ${finalAttrs.node_modules}/node_modules .
-
-      runHook postConfigure
-    '';
-
-    env.MODELS_DEV_API_JSON = "${models-dev}/dist/_api.json";
+    dontConfigure = true;
 
     buildPhase = ''
       runHook preBuild
 
-      bun build \
-        --define OPENCODE_TUI_PATH="'${finalAttrs.tui}/bin/tui'" \
-        --define OPENCODE_VERSION="'${finalAttrs.version}'" \
-        --compile \
-        --compile-exec-argv="--" \
-        --target=${bun-target.${stdenvNoCC.hostPlatform.system}} \
-        --outfile=opencode \
-        ./packages/opencode/src/index.ts \
+      export BUN_INSTALL_CACHE_DIR=$(mktemp -d)
+      export SSL_CERT_FILE=${cacert}/etc/ssl/certs/ca-bundle.crt
+      export NODE_EXTRA_CA_CERTS=${cacert}/etc/ssl/certs/ca-bundle.crt
+
+      # NOTE: Disabling post-install scripts with `--ignore-scripts` to avoid
+      # shebang issues
+      bun install \
+        --filter=opencode \
+        --force \
+        --frozen-lockfile \
+        --ignore-scripts \
+        --no-progress
+
+      pushd packages/opencode
+        OPENCODE_CHANNEL=latest  OPENCODE_VERSION=${finalAttrs.version}  bun run ./script/build.ts --single --npm-pack-only
+      popd
 
       runHook postBuild
     '';
 
-    dontStrip = true;
-
     installPhase = ''
       runHook preInstall
 
-      install -Dm755 opencode $out/bin/opencode
+      cp -R . $out
 
       runHook postInstall
     '';
 
-    # Execution of commands using bash-tool fail on linux with
-    # Error [ERR_DLOPEN_FAILED]: libstdc++.so.6: cannot open shared object file: No such
-    # file or directory
-    # Thus, we add libstdc++.so.6 manually to LD_LIBRARY_PATH
-    postFixup = ''
-      wrapProgram $out/bin/opencode \
-        --set LD_LIBRARY_PATH "${lib.makeLibraryPath [stdenv.cc.cc.lib]}"
-    '';
+    # NOTE: Required else we get errors that our fixed-output derivation references store paths
+    dontFixup = true;
 
-    passthru = {
-      tests.version = testers.testVersion {
-        package = finalAttrs.finalPackage;
-        command = "HOME=$(mktemp -d) opencode --version";
-        inherit (finalAttrs) version;
+    outputHash =
+      {
+        x86_64-linux = "";
+        aarch64-linux = "sha256-XDsCHlAhduxT/m/HZbZKqgy73QiC2fORyJWRokTTFw4=";
+        x86_64-darwin = "sha256-QkhfoNCX6hg/9RD4OPiWcWjEx4zrT+2Ljx797HlPpwU=";
+        aarch64-darwin = "sha256-VpSncsyeBWTPYjpb7Vp+Kct5i45JtCSVYBhEgS/24vA=";
+      }
+      .${
+        stdenv.hostPlatform.system
       };
-      updateScript = nix-update-script {
-        extraArgs = [
-          "--subpackage"
-          "tui"
-          "--subpackage"
-          "node_modules"
-        ];
-      };
+    outputHashAlgo = "sha256";
+    outputHashMode = "recursive";
+  };
+
+  nativeBuildInputs = [
+    bun
+    makeBinaryWrapper
+  ];
+
+  unpackPhase = ''
+    runHook preUnpack
+
+    cp -R --no-preserve=mode ${finalAttrs.src-with-node_modules}/. .
+
+    runHook postUnpack
+  '';
+
+  patches = [
+    # NOTE: Patch `packages/opencode/src/provider/models-macro.ts` to get contents of
+    # `_api.json` from the file bundled with `bun build`.
+    ./local-models-dev.patch
+  ];
+
+  dontConfigure = true;
+
+  buildPhase = ''
+    runHook preBuild
+
+    export MODELS_DEV_API_JSON=${models-dev}/dist/_api.json
+    cd packages/opencode
+    OPENCODE_CHANNEL=latest  OPENCODE_VERSION=${finalAttrs.version}  bun run ./script/build.ts --single --no-npm-pack
+
+    runHook postBuild
+  '';
+
+  dontStrip = true;
+
+  installPhase = ''
+    runHook preInstall
+
+    install -Dm755 opencode $out/bin/opencode
+
+    runHook postInstall
+  '';
+
+  postInstall = ''
+    wrapProgram $out/bin/opencode \
+      --prefix PATH : ${
+      lib.makeBinPath [
+        fzf
+        ripgrep
+      ]
+    }
+  '';
+
+  passthru = {
+    tests.version = testers.testVersion {
+      package = finalAttrs.finalPackage;
+      command = "HOME=$(mktemp -d) opencode --version";
+      inherit (finalAttrs) version;
     };
-
-    meta = {
-      description = "AI coding agent built for the terminal";
-      longDescription = ''
-        OpenCode is a terminal-based agent that can build anything.
-        It combines a TypeScript/JavaScript core with a Go-based TUI
-        to provide an interactive AI coding experience.
-      '';
-      homepage = "https://github.com/sst/opencode";
-      license = lib.licenses.mit;
-      platforms = lib.platforms.unix;
-      maintainers = with lib.maintainers; [
-        zestsystem
-        delafthi
+    updateScript = nix-update-script {
+      extraArgs = [
+        "--subpackage"
+        "src-with-node_modules"
       ];
-      mainProgram = "opencode";
     };
-  })
+  };
+
+  meta = {
+    description = "AI coding agent built for the terminal";
+    changelog = "https://github.com/sst/opencode/releases/tag/${finalAttrs.src.tag}";
+    longDescription = ''
+      OpenCode is a terminal-based agent that can build anything.
+      It combines a TypeScript/JavaScript core with a Go-based TUI
+      to provide an interactive AI coding experience.
+    '';
+    homepage = "https://github.com/sst/opencode";
+    license = lib.licenses.mit;
+    platforms = lib.platforms.unix;
+    maintainers = with lib.maintainers; [
+      zestsystem
+      delafthi
+    ];
+    mainProgram = "opencode";
+  };
+})

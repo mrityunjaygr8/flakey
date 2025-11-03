@@ -66,6 +66,7 @@
   home.stateVersion = "23.05";
 
   home.packages = with pkgs; [
+    (lib.hiPrio (pkgs.callPackage ./../../pkgs/opencode/package.nix {}))
     # (lib.hiPrio (pkgs.callPackage ./../../pkgs/windsurf/default.nix {inherit inputs;}))
     # jetbrains.idea-community-bin
     beamMinimal28Packages.elixir
@@ -79,7 +80,7 @@
     atkinson-hyperlegible
     # code-cursor
     ares-cli
-    opencode
+    # opencode
     uv
     pgadmin4-desktopmode
     git-crypt
