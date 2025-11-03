@@ -83,6 +83,7 @@
     uv
     pgadmin4-desktopmode
     git-crypt
+    gemini-cli
     # ollama
     # start for crafting interpretters
     # jetbrains.clion
