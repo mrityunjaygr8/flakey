@@ -84,7 +84,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
     outputHash =
       {
-        x86_64-linux = "";
+        x86_64-linux = "sha256-eML3T1FQ5ziRWIuLDirnHvxLEKMtKDy3op47JnfFU6w=";
         aarch64-linux = "sha256-XDsCHlAhduxT/m/HZbZKqgy73QiC2fORyJWRokTTFw4=";
         x86_64-darwin = "sha256-QkhfoNCX6hg/9RD4OPiWcWjEx4zrT+2Ljx797HlPpwU=";
         aarch64-darwin = "sha256-VpSncsyeBWTPYjpb7Vp+Kct5i45JtCSVYBhEgS/24vA=";
