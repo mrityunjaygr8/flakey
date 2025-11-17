@@ -64,6 +64,8 @@ in {
     brightnessctl
     walker
     pipewire
+    wf-recorder
+    pulseaudio # used for hyprpanel screen record script
     wireplumber
     fastfetch
     swww
