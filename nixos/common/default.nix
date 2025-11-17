@@ -85,6 +85,8 @@
   # Enable CUPS to print documents.
   services.printing.enable = true;
 
+  services.speechd.enable = lib.mkForce false;
+
   security.rtkit.enable = true;
   # TODO: Configure your system-wide user settings (groups, etc), add more users as needed.
   users.users = {
