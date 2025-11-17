@@ -117,7 +117,6 @@
     # zed-editor
     jq
     unzip
-    toybox
     go
     pika-backup
     firefox
