@@ -66,7 +66,8 @@
   home.stateVersion = "23.05";
 
   home.packages = with pkgs; [
-    (lib.hiPrio (pkgs.callPackage ./../../pkgs/opencode/package.nix {}))
+    opencode
+    (pkgs.callPackage ./../../pkgs/iloader.nix {})
     # (lib.hiPrio (pkgs.callPackage ./../../pkgs/windsurf/default.nix {inherit inputs;}))
     # jetbrains.idea-community-bin
     beamMinimal28Packages.elixir
