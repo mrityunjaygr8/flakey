@@ -82,6 +82,8 @@
   services.xserver.xkb.variant = "eng";
   services.xserver.xkb.options = "caps:escape";
 
+  services.usbmuxd.enable = true;
+
   # Enable CUPS to print documents.
   services.printing.enable = true;
 
