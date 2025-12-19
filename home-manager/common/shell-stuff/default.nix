@@ -135,6 +135,7 @@ in {
         prettierd
         ruff
         stylua
+        (callPackage ../../../pkgs/ty.nix {})
         nixd
         alejandra
         ### LSPs end

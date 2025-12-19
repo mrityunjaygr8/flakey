@@ -59,8 +59,8 @@ return {
 				nixd = {},
 				bashls = {},
 				terraformls = {},
-				-- ty = {},
-				basedpyright = {},
+				ty = {},
+				-- basedpyright = {},
 				elixirls = {
 					cmd = { "elixir-ls" },
 				},
