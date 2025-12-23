@@ -53,22 +53,15 @@ return {
 		opts = {
 			servers = {
 				lua_ls = {},
-				-- pyright = {},
 				gopls = {},
 				ts_ls = {},
 				nixd = {},
 				bashls = {},
 				terraformls = {},
 				ty = {},
-				-- basedpyright = {},
 				elixirls = {
 					cmd = { "elixir-ls" },
 				},
-				-- expert = {
-				-- 	cmd = { "expert" },
-				-- 	root_markers = { "mix.exs", ".git" },
-				-- 	filetypes = { "elixir", "eelixir", "heex" },
-				-- },
 			},
 		},
 		config = function(_, opts)

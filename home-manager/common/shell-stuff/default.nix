@@ -39,7 +39,7 @@ in {
     geist-font
     ty
     ruff
-    basedpyright
+    # basedpyright
     gnumake
     inotify-tools
     postgresql
@@ -135,7 +135,6 @@ in {
         prettierd
         ruff
         stylua
-        (callPackage ../../../pkgs/ty.nix {})
         nixd
         alejandra
         ### LSPs end
