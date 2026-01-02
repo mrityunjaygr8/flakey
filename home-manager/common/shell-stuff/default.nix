@@ -163,7 +163,7 @@ in {
         bind-key -T copy-mode-vi 'v' send -X begin-selection # start selecting text with "v"
         bind-key -T copy-mode-vi 'y' send -X copy-selection # copy text with "y"
         unbind -T copy-mode-vi MouseDragEnd1Pane # don't exit copy mode after dragging with mouse
-
+        bind y set-window-option synchronize-panes \; display-message "synchronize-panes is now #{?pane_synchronized,on,off}"
         unbind r
         bind r source-file ~/.config/tmux/tmux.conf
 
@@ -263,7 +263,7 @@ in {
         set -g status-justify "left"
         set -g status-left-length "100"
         set -g status-right-length "100"
-
+        set -g status-right "#{?pane_synchronized,#[bg=red] SYNC ON #[default],} %H:%M %d-%b-%y"
         # messages
         set -g message-style "fg=$color_tx_1,bg=$color_bg_2,align=centre"
         set -g message-command-style "fg=$color_tx_1,bg=$color_ui_2,align=centre"
