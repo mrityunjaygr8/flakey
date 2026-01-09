@@ -7,6 +7,21 @@
   # You can change versions, add patches, set compilation flags, anything really.
   # https://nixos.wiki/wiki/Overlays
   modifications = final: prev: {
+    hyprlandPlugins =
+      prev.hyprlandPlugins
+      // {
+        hyprsplit = prev.hyprlandPlugins.hyprsplit.overrideAttrs (oldAttrs: rec {
+          version = "0.53.1";
+          src = final.fetchFromGitHub {
+            owner = "shezdy";
+            repo = "hyprsplit";
+            rev = "v${version}"; # Or use a specific commit hash
+            # Leave this hash empty or use lib.fakeHash first;
+            # Nix will error and give you the correct one.
+            hash = "sha256-seA9mz0Yej4yYZVgzd7yKoHwuueKhfQPu0CyB7EL8No=";
+          };
+        });
+      };
     # example = prev.example.overrideAttrs (oldAttrs: rec {
     # ...
     # });
