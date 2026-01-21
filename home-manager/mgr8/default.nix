@@ -66,7 +66,8 @@
   home.stateVersion = "23.05";
 
   home.packages = with pkgs; [
-    opencode
+    inputs.opencode.packages.${pkgs.system}.default
+    antigravity
     (pkgs.callPackage ./../../pkgs/iloader.nix {})
     # (lib.hiPrio (pkgs.callPackage ./../../pkgs/windsurf/default.nix {inherit inputs;}))
     # jetbrains.idea-community-bin
