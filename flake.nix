@@ -12,6 +12,8 @@
     home-manager.url = "github:nix-community/home-manager/master";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
+    opencode.url = "github:anomalyco/opencode";
+    opencode.inputs.nixpkgs.follows = "nixpkgs";
     disko.url = "github:nix-community/disko";
     disko.inputs.nixpkgs.follows = "nixpkgs";
   };
@@ -21,6 +23,7 @@
     nixpkgs,
     home-manager,
     disko,
+    opencode,
     ...
   } @ inputs: let
     inherit (self) outputs;
