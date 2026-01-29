@@ -120,7 +120,7 @@
     jq
     unzip
     go
-    pika-backup
+    # pika-backup
     firefox
     # pnpm_8
     pnpm_9
