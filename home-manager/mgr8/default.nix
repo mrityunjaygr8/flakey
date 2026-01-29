@@ -123,6 +123,7 @@
     # pika-backup
     firefox
     # pnpm_8
+    yarn
     pnpm_9
     # pnpm_10
     # nodePackages.npm
