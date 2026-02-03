@@ -85,6 +85,7 @@
     # opencode
     uv
     pgadmin4-desktopmode
+    shellcheck
     git-crypt
     gemini-cli
     # ollama
