@@ -23,7 +23,6 @@
     nixpkgs,
     home-manager,
     disko,
-    opencode,
     ...
   } @ inputs: let
     inherit (self) outputs;
