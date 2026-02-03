@@ -96,8 +96,8 @@ in {
       Description = "Timer for changing wallpaper";
     };
     Timer = {
-      # Run 1 minute after boot/login
-      OnBootSec = "1min";
+      # Run 1 second after boot/login
+      OnBootSec = "1seconds";
       # Run every 2 minutes thereafter
       OnUnitActiveSec = "2min";
       Unit = "wallpaper-changer.service";
