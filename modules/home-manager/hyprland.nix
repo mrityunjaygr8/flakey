@@ -217,20 +217,22 @@ in {
           persistent_workspaces = true;
         };
       };
-      windowrulev2 =
+      windowrule =
         [
           # These rules are for pinning the Picture-in-Picture window
-          "float, title:^(Picture-in-Picture|firefox)$"
-          "size 800 450,title:^(Picture-in-Picture|firefox)$"
-          "content video,title:^(Picture-in-Picture|firefox)$"
-          "pin, title:^(Picture-in-Picture|firefox)$"
+          "float on, size 800 450, content video, pin on, match:title ^(Picture-in-Picture|firefox)$"
+        ]
+        ++ [
+          # Ignore maximize requests from apps. You'll probably like this.
+          "suppress_event maximize, match:class .*"
+
+          # Fix some dragging issues with XWayland
+          "no_focus on,match:class ^$,match:title ^$,match:xwayland 1,match:float 1,match:fullscreen 0,match:pin 0"
         ]
         ++
         # For the clipboard TUI
         [
-          "float, class:(window.clipse.output)"
-          "size 622 652, class:(window.clipse.output)"
-          "stayfocused, class:(window.clipse.output)"
+          "float on, size 622 652, stay_focused on, match:class (window.clipse.output)"
         ];
       animations = {
         enabled = true;
@@ -244,13 +246,6 @@ in {
         ];
       };
       monitor = [",preffered,auto,1" "DP-2,preffered,auto,1,transform,3"];
-      windowrule = [
-        # Ignore maximize requests from apps. You'll probably like this.
-        "suppress_event maximize, match:class .*"
-
-        # Fix some dragging issues with XWayland
-        "no_focus on,match:class ^$,match:title ^$,match:xwayland 1,match:float 1,match:fullscreen 0,match:pin 0"
-      ];
       bindm =
         # Move/resize windows with mainMod + LMB/RMB and dragging
         [
