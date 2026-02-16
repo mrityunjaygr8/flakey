@@ -67,7 +67,6 @@
 
   home.packages = with pkgs; [
     inputs.opencode.packages.${pkgs.system}.default
-    antigravity
     (pkgs.callPackage ./../../pkgs/iloader.nix {})
     # (lib.hiPrio (pkgs.callPackage ./../../pkgs/windsurf/default.nix {inherit inputs;}))
     # jetbrains.idea-community-bin
@@ -128,7 +127,6 @@
     pnpm_9
     # pnpm_10
     # nodePackages.npm
-    obsidian
     pre-commit
     uget
     postman
