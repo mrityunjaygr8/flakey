@@ -53,6 +53,7 @@ return {
 		opts = {
 			servers = {
 				lua_ls = {},
+				rust_analyzer = {},
 				gopls = {},
 				ts_ls = {},
 				nixd = {},
