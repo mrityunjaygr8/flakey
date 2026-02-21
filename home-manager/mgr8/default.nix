@@ -85,6 +85,7 @@
     uv
     pgadmin4-desktopmode
     shellcheck
+    posting
     git-crypt
     gemini-cli
     # ollama
