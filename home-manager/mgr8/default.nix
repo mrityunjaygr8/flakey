@@ -67,12 +67,13 @@
 
   home.packages = with pkgs; [
     inputs.opencode.packages.${pkgs.system}.default
-    (pkgs.callPackage ./../../pkgs/iloader.nix {})
+    # (pkgs.callPackage ./../../pkgs/iloader.nix {})
     # (lib.hiPrio (pkgs.callPackage ./../../pkgs/windsurf/default.nix {inherit inputs;}))
     # jetbrains.idea-community-bin
     beamMinimal28Packages.elixir
     bottom
-    calibre
+    # calibre
+    (pkgs.callPackage ./../../pkgs/calibre {})
     xan
     ghostty
     restic
