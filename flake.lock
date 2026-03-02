@@ -1,5 +1,21 @@
 {
   "nodes": {
+    "bun-unstable": {
+      "locked": {
+        "lastModified": 1772091128,
+        "narHash": "sha256-TnrYykX8Mf/Ugtkix6V+PjW7miU2yClA6uqWl/v6KWM=",
+        "owner": "arch-fan",
+        "repo": "nixpkgs",
+        "rev": "3f0336406035444b4a24b942788334af5f906259",
+        "type": "github"
+      },
+      "original": {
+        "owner": "arch-fan",
+        "ref": "bun-1.3.10",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
     "disko": {
       "inputs": {
         "nixpkgs": [
@@ -60,7 +76,7 @@
     "opencode": {
       "inputs": {
         "nixpkgs": [
-          "nixpkgs"
+          "bun-unstable"
         ]
       },
       "locked": {
@@ -79,6 +95,7 @@
     },
     "root": {
       "inputs": {
+        "bun-unstable": "bun-unstable",
         "disko": "disko",
         "home-manager": "home-manager",
         "nixpkgs": "nixpkgs",

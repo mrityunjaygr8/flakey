@@ -12,8 +12,10 @@
     home-manager.url = "github:nix-community/home-manager/master";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
+    bun-unstable.url = "github:arch-fan/nixpkgs/bun-1.3.10";
     opencode.url = "github:anomalyco/opencode";
-    opencode.inputs.nixpkgs.follows = "nixpkgs";
+    # opencode.inputs.nixpkgs.follows = "nixpkgs";
+    opencode.inputs.nixpkgs.follows = "bun-unstable";
     disko.url = "github:nix-community/disko";
     disko.inputs.nixpkgs.follows = "nixpkgs";
   };

@@ -7,7 +7,17 @@
   config,
   pkgs,
   ...
-}: {
+}: let
+  opencodePackage = inputs.opencode.packages.${pkgs.stdenv.hostPlatform.system}.default;
+  patchedOpencodePackage = opencodePackage.overrideAttrs (old: {
+    preBuild =
+      (old.preBuild or "")
+      + ''
+        mkdir -p .github
+        cp ${inputs.opencode}/.github/TEAM_MEMBERS .github/TEAM_MEMBERS
+      '';
+  });
+in {
   # You can import other home-manager modules here
   imports = [
     # If you want to use modules your own flake exports (from modules/home-manager):
@@ -66,7 +76,6 @@
   home.stateVersion = "23.05";
 
   home.packages = with pkgs; [
-    inputs.opencode.packages.${pkgs.system}.default
     # (pkgs.callPackage ./../../pkgs/iloader.nix {})
     # (lib.hiPrio (pkgs.callPackage ./../../pkgs/windsurf/default.nix {inherit inputs;}))
     # jetbrains.idea-community-bin
@@ -177,6 +186,10 @@
     };
   };
 
+  programs.opencode = {
+    enable = true;
+    package = patchedOpencodePackage;
+  };
   programs.alacritty = {
     enable = true;
     settings = {
