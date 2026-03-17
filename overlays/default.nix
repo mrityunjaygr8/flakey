@@ -7,21 +7,32 @@
   # You can change versions, add patches, set compilation flags, anything really.
   # https://nixos.wiki/wiki/Overlays
   modifications = final: prev: {
-    # hyprlandPlugins =
-    #   prev.hyprlandPlugins
-    #   // {
-    #     hyprsplit = prev.hyprlandPlugins.hyprsplit.overrideAttrs (oldAttrs: rec {
-    #       version = "0.53.1";
-    #       src = final.fetchFromGitHub {
-    #         owner = "shezdy";
-    #         repo = "hyprsplit";
-    #         rev = "v${version}"; # Or use a specific commit hash
-    #         # Leave this hash empty or use lib.fakeHash first;
-    #         # Nix will error and give you the correct one.
-    #         hash = "sha256-seA9mz0Yej4yYZVgzd7yKoHwuueKhfQPu0CyB7EL8No=";
-    #       };
-    #     });
-    #   };
+    hyprlandPlugins =
+      prev.hyprlandPlugins
+      // {
+        hyprsplit = let
+          version = "0.54.1";
+        in
+          prev.hyprlandPlugins.hyprsplit.overrideAttrs (oldAttrs: {
+            # patches =
+            #   (oldAttrs.patches or [])
+            #   ++ [
+            #     (final.fetchpatch {
+            #       # Replace 12345 with the actual PR number you are tracking
+            #       url = "https://github.com/NixOS/nixpkgs/pull/486486.diff";
+            #       # Initial hash - change this after the first failed build attempt
+            #       hash = "sha256-DUQXnZhejpVgSKRoQozNxxFUHiEvztdUCk3bA3AKsmA=";
+            #     })
+            #   ];
+            version = version;
+            src = final.fetchFromGitHub {
+              owner = "shezdy";
+              repo = "hyprsplit";
+              tag = "v${version}";
+              hash = "sha256-IksjbT24cgWl2h6ZV4bPxoORmHCQ7h/M/OLQ4epReAE=";
+            };
+          });
+      };
     # example = prev.example.overrideAttrs (oldAttrs: rec {
     # ...
     # });
