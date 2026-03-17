@@ -8,15 +8,15 @@
   pkgs,
   ...
 }: let
-  opencodePackage = inputs.opencode.packages.${pkgs.stdenv.hostPlatform.system}.default;
-  patchedOpencodePackage = opencodePackage.overrideAttrs (old: {
-    preBuild =
-      (old.preBuild or "")
-      + ''
-        mkdir -p .github
-        cp ${inputs.opencode}/.github/TEAM_MEMBERS .github/TEAM_MEMBERS
-      '';
-  });
+  # opencodePackage = inputs.opencode.packages.${pkgs.stdenv.hostPlatform.system}.default;
+  # patchedOpencodePackage = opencodePackage.overrideAttrs (old: {
+  #   preBuild =
+  #     (old.preBuild or "")
+  #     + ''
+  #       mkdir -p .github
+  #       cp ${inputs.opencode}/.github/TEAM_MEMBERS .github/TEAM_MEMBERS
+  #     '';
+  # });
 in {
   # You can import other home-manager modules here
   imports = [
@@ -81,8 +81,8 @@ in {
     # jetbrains.idea-community-bin
     beamMinimal28Packages.elixir
     bottom
-    # calibre
-    (pkgs.callPackage ./../../pkgs/calibre {})
+    calibre
+    # (pkgs.callPackage ./../../pkgs/calibre {})
     xan
     ghostty
     restic
@@ -126,7 +126,7 @@ in {
     nodejs
     vscodium
     bind
-    neofetch
+    fastfetch
     # zed-editor
     jq
     unzip
@@ -188,7 +188,7 @@ in {
 
   programs.opencode = {
     enable = true;
-    package = patchedOpencodePackage;
+    # package = patchedOpencodePackage;
   };
   programs.alacritty = {
     enable = true;
