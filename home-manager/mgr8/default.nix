@@ -188,7 +188,7 @@ in {
 
   programs.opencode = {
     enable = true;
-    # package = patchedOpencodePackage;
+    package = inputs.opencode.packages.${pkgs.stdenv.hostPlatform.system}.default;
   };
   programs.alacritty = {
     enable = true;
