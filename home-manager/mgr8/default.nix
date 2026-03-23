@@ -89,6 +89,7 @@ in {
     nmap
     kazam
     atkinson-hyperlegible
+    onlyoffice-desktopeditors
     # code-cursor
     ares-cli
     # opencode
