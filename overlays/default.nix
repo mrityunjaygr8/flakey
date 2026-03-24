@@ -11,7 +11,7 @@
       prev.hyprlandPlugins
       // {
         hyprsplit = let
-          version = "0.54.1";
+          version = "0.54.2";
         in
           prev.hyprlandPlugins.hyprsplit.overrideAttrs (oldAttrs: {
             # patches =
@@ -29,7 +29,7 @@
               owner = "shezdy";
               repo = "hyprsplit";
               tag = "v${version}";
-              hash = "sha256-IksjbT24cgWl2h6ZV4bPxoORmHCQ7h/M/OLQ4epReAE=";
+              hash = "sha256-NFMLZmM6lM7v6WFcewOp7pKPlr6ampX/MB/kGxt/gPE=";
             };
           });
       };
