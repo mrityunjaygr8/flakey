@@ -7,6 +7,17 @@
   # You can change versions, add patches, set compilation flags, anything really.
   # https://nixos.wiki/wiki/Overlays
   modifications = final: prev: {
+    bun = let
+      version = "1.3.11";
+    in
+      prev.bun.overrideAttrs (oldAttrs: {
+        version = version;
+        src = final.fetchurl {
+          url = "https://github.com/oven-sh/bun/releases/download/bun-v${version}/bun-linux-x64.zip";
+          # Set to empty string first, run build, then copy the "got" hash here
+          hash = "sha256-hhG6k1r4hvBabzh0ChUWAybBXl1dB63vlmEwtEk2B+0=";
+        };
+      });
     hyprlandPlugins =
       prev.hyprlandPlugins
       // {
