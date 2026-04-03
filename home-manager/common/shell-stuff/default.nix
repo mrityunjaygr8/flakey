@@ -128,8 +128,8 @@ in {
       extraPackages = with pkgs; [
         ### LSPs start
         lua-language-server
-        nodePackages.typescript-language-server
-        nodePackages.bash-language-server
+        typescript-language-server
+        bash-language-server
         vimPlugins.nvim-treesitter-parsers.templ
         elixir-ls
         pyright
@@ -142,6 +142,10 @@ in {
         alejandra
         ### LSPs end
       ];
+    };
+    zellij = {
+      enable = true;
+      # enableFishIntegration = true;
     };
     tmux = {
       enable = true;
