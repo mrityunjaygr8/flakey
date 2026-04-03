@@ -12,7 +12,7 @@
     # --- A BIT OF SETUP ---
     # Get the necessary binaries from the Nix store. This makes the script portable
     # and independent of the user's PATH.
-    SWWW="${pkgs.swww}/bin/swww"
+    AWWW="${pkgs.awww}/bin/awww"
     FIND="${pkgs.fd}/bin/fd"
     SHUF="${pkgs.coreutils}/bin/shuf"
 
@@ -35,10 +35,10 @@
       exit 1
     fi
 
-    # Set the wallpaper using swww with a random transition
-    # swww needs a running Wayland compositor and the swww-daemon (swww init)
+    # Set the wallpaper using awww with a random transition
+    # awww needs a running Wayland compositor and the awww-daemon (awww init)
     # The command will fail if it cannot connect to the daemon.
-    $SWWW img "$RANDOM_WALLPAPER" \
+    $AWWW img "$RANDOM_WALLPAPER" \
         --transition-type "any" \
         --transition-duration 0.7
 
@@ -58,7 +58,7 @@ in {
     pulseaudio # used for hyprpanel screen record script
     wireplumber
     fastfetch
-    swww
+    awww
     fd
     rose-pine-hyprcursor
     hyprcursor
@@ -206,7 +206,7 @@ in {
         "hypridle"
         "hyprpanel"
         "systemctl --user start hyprpolkitagent"
-        "swww-daemon"
+        "awww-daemon"
         "hyprctl setcursor rose-pine-hyprcursor 32"
         # "dunst"
       ];
