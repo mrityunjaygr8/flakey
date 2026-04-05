@@ -141,6 +141,9 @@ in {
         nixd
         alejandra
         ### LSPs end
+        ### Extra packages Start
+        tree-sitter
+        ### Extra packages End
       ];
     };
     zellij = {
