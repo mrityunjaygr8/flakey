@@ -1,7 +1,10 @@
 vim.g.have_nerd_font = true
 
 -- For UFO Start
-vim.o.foldcolumn = "1"
+vim.o.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
+vim.o.foldmethod = 'expr'
+vim.o.foldcolumn = "0"
+vim.o.foldtext = ""
 vim.o.foldlevel = 99
 vim.o.foldlevelstart = 99
 vim.o.foldenable = true
