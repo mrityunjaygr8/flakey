@@ -8,5 +8,5 @@ vim.g.db_ui_use_nerd_fonts = 1
 
 local wk = require("which-key")
 wk.add({
-	{ "<leader>d", "<cmd>DBUI<cr>", group = "[D]adbod", desc = "Database UI Toggle" },
+	{ "<leader>d", "<cmd>DBUIToggle<cr>", group = "[D]adbod", desc = "Database UI Toggle" },
 })
