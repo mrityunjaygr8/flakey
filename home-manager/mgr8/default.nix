@@ -343,7 +343,7 @@ in {
         font-family = 0xProto Nerd Font Mono
         font-size = 16
         command = fish
-        theme = Kanagawa Wave
+        theme = Ayu Mirage
       '';
     };
   };
