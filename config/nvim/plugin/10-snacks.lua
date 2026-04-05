@@ -39,7 +39,6 @@ wk.add({
 			s.picker.buffers()
 		end,
 		desc = "Buffers",
-		group = "[S]earch",
 	},
 	{
 		"<leader>sf",
@@ -47,7 +46,6 @@ wk.add({
 			s.picker.files()
 		end,
 		desc = "Find Files",
-		group = "[S]earch",
 	},
 	{
 		"<leader>ss",
@@ -55,7 +53,6 @@ wk.add({
 			s.picker.grep()
 		end,
 		desc = "Grep",
-		group = "[S]earch",
 	},
 	{
 		"<leader><space>",
@@ -63,6 +60,5 @@ wk.add({
 			s.picker.smart()
 		end,
 		desc = "Smart Find Files",
-		group = "[S]earch",
 	},
 })
