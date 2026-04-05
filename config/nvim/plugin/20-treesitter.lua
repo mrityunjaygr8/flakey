@@ -6,24 +6,18 @@ vim.api.nvim_create_autocmd('PackChanged', { callback = function(ev)
   end
 end })
 
-vim.pack.add({ 'https://github.com/nvim-treesitter/nvim-treesitter' , version = "main" })
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = { '<filetype>' },
+  callback = function() 
+    vim.treesitter.start()
+    vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+  end
+})
 
-local ts = require("nvim-treesitter.configs")
-ts.setup({
-			sync_install = true,
-			auto_install = true,
-			ignore_install = {},
-			modules = {},
-			highlight = {
-				enable = true,
-			},
-			indent = {
-				enable = true,
-			},
-			autotag = {
-				enable = true,
-			},
-			ensure_installed = {
+
+vim.pack.add({ { src = 'https://github.com/nvim-treesitter/nvim-treesitter' , version = "main" }})
+
+require("nvim-treesitter").install({
 				"lua",
 				"vim",
 				"python",
@@ -44,7 +38,48 @@ ts.setup({
 				"fish",
 				"json",
 				"json5",
-				"jsonc",
 				"nix",
 				"toml",
 })
+
+-- local tsc = require("nvim-treesitter.config")
+-- tsc.setup({
+-- 			sync_install = true,
+-- 			auto_install = true,
+-- 			ignore_install = {},
+-- 			modules = {},
+-- 			highlight = {
+-- 				enable = true,
+-- 			},
+-- 			indent = {
+-- 				enable = true,
+-- 			},
+-- 			autotag = {
+-- 				enable = true,
+-- 			},
+-- 			ensure_installed = {
+-- 				"lua",
+-- 				"vim",
+-- 				"python",
+-- 				"go",
+-- 				"typescript",
+-- 				"tsx",
+-- 				"yaml",
+-- 				"html",
+-- 				"css",
+-- 				"markdown",
+-- 				"markdown_inline",
+-- 				"bash",
+-- 				"dockerfile",
+-- 				"gitignore",
+-- 				"rust",
+-- 				"sql",
+-- 				"csv",
+-- 				"fish",
+-- 				"json",
+-- 				"json5",
+-- 				"jsonc",
+-- 				"nix",
+-- 				"toml",
+--       }
+-- })
