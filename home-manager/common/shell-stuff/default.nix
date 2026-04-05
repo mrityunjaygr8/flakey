@@ -369,7 +369,7 @@ in {
         # http://fishshell.com/docs/current/index.html#variables-color
         set fish_color_autosuggestion brblack
 
-        fish_config theme choose "flexoki-dark"
+        fish_config theme choose "kanagawa"
         set -Ux GIT_ASKPASS ""
         set VIRTUALFISH_PYTHON_EXEC $(which python)
         set FLAKE $HOME/flakey

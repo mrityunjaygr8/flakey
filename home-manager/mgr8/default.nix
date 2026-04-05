@@ -343,7 +343,7 @@ in {
         font-family = 0xProto Nerd Font Mono
         font-size = 16
         command = fish
-        theme = Atom One Dark
+        theme = Kanagawa Wave
       '';
     };
   };
