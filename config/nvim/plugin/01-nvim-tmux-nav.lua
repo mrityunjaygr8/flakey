@@ -1,15 +1,12 @@
 vim.pack.add({"https://github.com/alexghergh/nvim-tmux-navigation"})
 
-require("nvim-tmux-navigation").setup({
-  keybinds = {
-					left = "<C-h>",
-					down = "<C-j>",
-					up = "<C-k>",
-					right = "<C-l>",
-					last_active = "<C-\\>",
-					next = "<C-Space>",
+local ntn = require("nvim-tmux-navigation")
+ntn.setup({})
 
-  }
+local wk = require("which-key")
+wk.add({
+  {"<c-h>", function() ntn.NvimTmuxNavigateLeft() end},
+  {"<c-l>", function() ntn.NvimTmuxNavigateRight() end},
+  {"<c-j>", function() ntn.NvimTmuxNavigateDown() end},
+  {"<c-k>", function() ntn.NvimTmuxNavigateUp() end},
 })
-
-
