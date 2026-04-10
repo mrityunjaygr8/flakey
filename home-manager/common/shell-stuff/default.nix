@@ -125,6 +125,8 @@ in {
       viAlias = true;
       vimAlias = true;
       vimdiffAlias = true;
+      withPython3 = true;
+      withRuby = false;
       extraPackages = with pkgs; [
         ### LSPs start
         lua-language-server
