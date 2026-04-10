@@ -155,6 +155,9 @@ in {
     tmux = {
       enable = true;
       clock24 = true;
+      tmuxinator = {
+        enable = true;
+      };
       prefix = "C-a";
       baseIndex = 1;
       sensibleOnTop = false;
