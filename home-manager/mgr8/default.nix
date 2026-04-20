@@ -136,8 +136,8 @@ in {
     firefox
     # pnpm_8
     yarn
-    pnpm_9
-    # pnpm_10
+    # pnpm_9
+    pnpm_10
     # nodePackages.npm
     pre-commit
     uget
@@ -190,7 +190,7 @@ in {
   };
 
   programs.opencode = {
-    enable = true;
+    enable = false;
     package = inputs.opencode.packages.${pkgs.stdenv.hostPlatform.system}.default.override {
       inherit (pkgs) bun;
     };

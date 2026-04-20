@@ -181,6 +181,8 @@ in {
         bind y set-window-option synchronize-panes \; display-message "synchronize-panes is now #{?pane_synchronized,on,off}"
         unbind r
         bind r source-file ~/.config/tmux/tmux.conf
+        set -g extended-keys on
+        set -g extended-keys-format csi-u
 
         bind x kill-pane
         set -g detach-on-destroy off
