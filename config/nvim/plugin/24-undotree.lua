@@ -1,5 +1,3 @@
--- require("undotree").enable()
--- require("difftool").enable()
 vim.cmd("packadd nvim.undotree")
 
 local u = require("undotree")
