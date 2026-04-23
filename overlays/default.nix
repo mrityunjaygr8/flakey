@@ -8,14 +8,14 @@
   # https://nixos.wiki/wiki/Overlays
   modifications = final: prev: {
     bun = let
-      version = "1.3.11";
+      version = "1.3.13";
     in
       prev.bun.overrideAttrs (oldAttrs: {
         version = version;
         src = final.fetchurl {
           url = "https://github.com/oven-sh/bun/releases/download/bun-v${version}/bun-linux-x64.zip";
           # Set to empty string first, run build, then copy the "got" hash here
-          hash = "sha256-hhG6k1r4hvBabzh0ChUWAybBXl1dB63vlmEwtEk2B+0=";
+          hash = "sha256-ecB3H6i5LDOq5B4VoODTB+qZ0OLwAxfHHGxTI3p44lo=";
         };
       });
     hyprlandPlugins =
