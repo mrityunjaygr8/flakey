@@ -25,8 +25,11 @@
     skills = {
       graphify = ../../config/opencode/skills/graphify;
     };
+    agents = {
+      graphify = ../../config/opencode/agents/graphify.md;
+    };
     settings = {
-      plugins = ["./opencode/plugins/graphify"];
+      plugin = ["./opencode/plugins/graphify"];
     };
   };
   programs.mcp = {
