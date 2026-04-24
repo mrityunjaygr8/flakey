@@ -30,6 +30,7 @@ in {
     # ./nvim.nix
     ../common
     ../../modules/home-manager/hyprland.nix
+    ../../modules/home-manager/opencode.nix
   ];
 
   nixpkgs = {
