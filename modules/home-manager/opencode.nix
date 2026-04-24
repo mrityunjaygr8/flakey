@@ -22,7 +22,12 @@
         '';
     });
     enableMcpIntegration = true;
-    settings = {};
+    skills = {
+      graphify = ../../config/opencode/skills/graphify;
+    };
+    settings = {
+      plugins = ["./opencode/plugins/graphify"];
+    };
   };
   programs.mcp = {
     enable = true;
@@ -37,6 +42,13 @@
         command = "npx";
         args = ["-y" "chrome-devtools-mcp@latest" "--executablePath=${pkgs.chromium}/bin/chromium"];
       };
+    };
+  };
+
+  xdg.configFile = {
+    "opencode/plugins" = {
+      source = ../../config/opencode/plugins;
+      recursive = true;
     };
   };
 }
