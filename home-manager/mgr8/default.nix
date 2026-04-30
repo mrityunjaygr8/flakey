@@ -95,6 +95,7 @@ in {
     ares-cli
     # opencode
     uv
+    trivy
     pgadmin4-desktopmode
     shellcheck
     posting
