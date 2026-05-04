@@ -43,6 +43,7 @@ in {
     gnumake
     inotify-tools
     postgresql
+    zip
   ];
 
   programs = {
