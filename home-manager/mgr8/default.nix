@@ -132,7 +132,7 @@ in {
     vscodium
     bind
     fastfetch
-    # zed-editor
+    zed-editor
     jq
     unzip
     go
