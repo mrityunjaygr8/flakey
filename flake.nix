@@ -12,6 +12,8 @@
     home-manager.url = "github:nix-community/home-manager/master";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
+    nixpkgs-master.url = "github:NixOS/nixpkgs/master";
+
     # bun-unstable.url = "github:arch-fan/nixpkgs/bun-1.3.10";
     opencode.url = "github:anomalyco/opencode";
     opencode.inputs.nixpkgs.follows = "nixpkgs";
@@ -23,6 +25,7 @@
   outputs = {
     self,
     nixpkgs,
+    nixpkgs-master,
     home-manager,
     disko,
     ...
@@ -91,7 +94,7 @@
       # FIXME replace with your username@hostname
       "mgr8" = home-manager.lib.homeManagerConfiguration {
         pkgs = nixpkgs.legacyPackages.x86_64-linux; # Home-manager requires 'pkgs' instance
-        extraSpecialArgs = {inherit inputs outputs;};
+        extraSpecialArgs = {inherit inputs outputs nixpkgs-master;};
         modules = [
           # > Our main home-manager configuration file <
           ./home-manager/mgr8

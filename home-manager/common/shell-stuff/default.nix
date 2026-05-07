@@ -6,6 +6,7 @@
   lib,
   config,
   pkgs,
+  nixpkgs-master,
   ...
 }: let
   catppuccin-fish = pkgs.fetchFromGitHub {
@@ -13,6 +14,10 @@
     repo = "fish";
     rev = "a3b9eb5eaf2171ba1359fe98f20d226c016568cf";
     hash = "sha256-shQxlyoauXJACoZWtRUbRMxmm10R8vOigXwjxBhG8ng=";
+  };
+  pkgs-master = import nixpkgs-master {
+    system = pkgs.system;
+    config.allowUnfree = true;
   };
 in {
   # You can import other home-manager modules here
@@ -28,23 +33,25 @@ in {
     # inputs.expert.packages."x86_64-linux".default
   ];
 
-  home.packages = with pkgs; [
-    difftastic
-    nh
-    wl-clipboard
-    lazydocker
-    fd
-    ripgrep
-    sesh
-    geist-font
-    ty
-    ruff
-    # basedpyright
-    gnumake
-    inotify-tools
-    postgresql
-    zip
-  ];
+  home.packages = with pkgs;
+    [
+      difftastic
+      nh
+      wl-clipboard
+      lazydocker
+      fd
+      ripgrep
+      sesh
+      geist-font
+      ty
+      ruff
+      # basedpyright
+      gnumake
+      inotify-tools
+      postgresql
+      zip
+    ]
+    ++ [pkgs-master.devenv];
 
   programs = {
     fzf = {
@@ -190,7 +197,6 @@ in {
         bind C-l send-keys 'C-l'
         bind C-a send-keys 'C-a'
 
-        devenv hook fish | source
 
         # Smart pane switching with awareness of Vim splits.
         # See: https://github.com/christoomey/vim-tmux-navigator
@@ -389,6 +395,9 @@ in {
         fish_add_path $HOME/.local/bin
 
         bind \cs 'sesh connect (sesh list | fzf)'
+
+        set DEVENV ${pkgs-master.devenv}/bin/devenv
+        ${pkgs-master.devenv}/bin/devenv hook fish | source
 
         set -gx EDITOR nvim
         # The WAYLAND_DISPLAY env is not being set in terminals other than GNOME CONSOLE.

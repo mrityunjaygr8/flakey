@@ -124,7 +124,6 @@ in {
     bruno
     git-credential-manager
     chromium
-    devenv
     dust
     bottom
     html-tidy
