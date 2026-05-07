@@ -190,6 +190,8 @@ in {
         bind C-l send-keys 'C-l'
         bind C-a send-keys 'C-a'
 
+        devenv hook fish | source
+
         # Smart pane switching with awareness of Vim splits.
         # See: https://github.com/christoomey/vim-tmux-navigator
 
