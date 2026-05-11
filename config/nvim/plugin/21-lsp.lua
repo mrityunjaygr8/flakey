@@ -63,6 +63,7 @@ local servers = {
 	bashls = {},
 	terraformls = {},
 	ty = {},
+	tinymist = {},
 	elixirls = {
 		cmd = { "elixir-ls" },
 	},

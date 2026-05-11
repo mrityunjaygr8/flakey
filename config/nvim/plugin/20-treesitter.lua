@@ -43,6 +43,7 @@ require("nvim-treesitter").install({
 	"json5",
 	"nix",
 	"toml",
+	"typst",
 })
 
 -- local tsc = require("nvim-treesitter.config")

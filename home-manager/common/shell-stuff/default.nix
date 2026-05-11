@@ -137,6 +137,7 @@ in {
       withRuby = false;
       extraPackages = with pkgs; [
         ### LSPs start
+        tinymist
         lua-language-server
         typescript-language-server
         bash-language-server
