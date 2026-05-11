@@ -8,6 +8,10 @@
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     # Also see the 'unstable-packages' overlay at 'overlays/default.nix'.
 
+    # iloader
+    iloader.url = "github:nab138/iloader/e47555ef240c921e55df969bf9d9e613ef36c454";
+    iloader.inputs.nixpkgs.follows = "nixpkgs";
+
     # Home manager
     home-manager.url = "github:nix-community/home-manager/master";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
@@ -27,6 +31,7 @@
     nixpkgs,
     nixpkgs-master,
     home-manager,
+    iloader,
     disko,
     ...
   } @ inputs: let
