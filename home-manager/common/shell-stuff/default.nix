@@ -154,6 +154,7 @@ in {
         ### LSPs end
         ### Extra packages Start
         tree-sitter
+        websocat
         ### Extra packages End
       ];
     };
