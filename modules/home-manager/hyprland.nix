@@ -192,6 +192,7 @@ in {
   programs.hyprlock.enable = true;
   wayland.windowManager.hyprland = {
     ### Using the package from nixos module for betting setting up
+    configType = "hyprlang";
     package = null;
     portalPackage = null;
     enable = true;
