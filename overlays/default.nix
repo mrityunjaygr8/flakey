@@ -23,6 +23,7 @@
       // {
         hyprsplit = let
           version = "0.54.2";
+          commit = "ea230fc65b4bd591451d2305140a2e3fbce894ca";
         in
           prev.hyprlandPlugins.hyprsplit.overrideAttrs (oldAttrs: {
             # patches =
@@ -39,8 +40,9 @@
             src = final.fetchFromGitHub {
               owner = "shezdy";
               repo = "hyprsplit";
-              tag = "v${version}";
-              hash = "sha256-NFMLZmM6lM7v6WFcewOp7pKPlr6ampX/MB/kGxt/gPE=";
+              # tag = "v${version}";
+              rev = commit;
+              hash = "sha256-VeVHk55Vg9+0BfUS+GleE7vZfa7ssb4yM+p+noJ349w=";
             };
           });
       };
