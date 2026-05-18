@@ -19,7 +19,7 @@
     nixpkgs-master.url = "github:NixOS/nixpkgs/master";
 
     # bun-unstable.url = "github:arch-fan/nixpkgs/bun-1.3.10";
-    opencode.url = "github:anomalyco/opencode";
+    opencode.url = "github:anomalyco/opencode?ref=tags/v1.15.4";
     opencode.inputs.nixpkgs.follows = "nixpkgs";
     # opencode.inputs.nixpkgs.follows = "bun-unstable";
     disko.url = "github:nix-community/disko";
