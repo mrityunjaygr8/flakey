@@ -18,6 +18,8 @@
 
     nixpkgs-master.url = "github:NixOS/nixpkgs/master";
 
+    llm-agents.url = "github:numtide/llm-agents.nix";
+    llm-agents.inputs.nixpkgs.follows = "nixpkgs";
     # bun-unstable.url = "github:arch-fan/nixpkgs/bun-1.3.10";
     opencode.url = "github:anomalyco/opencode?ref=tags/v1.15.4";
     opencode.inputs.nixpkgs.follows = "nixpkgs";
