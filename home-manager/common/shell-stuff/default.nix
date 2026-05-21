@@ -51,7 +51,7 @@ in {
       postgresql
       zip
     ]
-    ++ [pkgs-master.devenv];
+    ++ [pkgs.devenv];
 
   programs = {
     fzf = {
@@ -398,8 +398,8 @@ in {
 
         bind \cs 'sesh connect (sesh list | fzf)'
 
-        set DEVENV ${pkgs-master.devenv}/bin/devenv
-        ${pkgs-master.devenv}/bin/devenv hook fish | source
+        set DEVENV ${pkgs.devenv}/bin/devenv
+        ${pkgs.devenv}/bin/devenv hook fish | source
 
         set -gx EDITOR nvim
         # The WAYLAND_DISPLAY env is not being set in terminals other than GNOME CONSOLE.
