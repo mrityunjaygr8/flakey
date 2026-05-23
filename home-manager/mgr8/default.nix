@@ -81,7 +81,7 @@ in {
     # (lib.hiPrio (pkgs.callPackage ./../../pkgs/windsurf/default.nix {inherit inputs;}))
     # jetbrains.idea-community-bin
     typst
-    inputs.iloader.packages.${pkgs.stdenv.hostPlatform.system}.default
+    # inputs.iloader.packages.${pkgs.stdenv.hostPlatform.system}.default
     beamMinimal28Packages.elixir
     bottom
     calibre
