@@ -33,6 +33,13 @@
         command = "npx";
         args = ["-y" "chrome-devtools-mcp@latest" "--executablePath=${pkgs.chromium}/bin/chromium"];
       };
+      github = {
+        type = "remote";
+        url = "https://api.githubcopilot.com/mcp/";
+        headers = {
+          Authorization = "Bearer {env:GITHUB_TOKEN}";
+        };
+      };
     };
   };
 
