@@ -151,6 +151,7 @@ in {
         stylua
         nixd
         alejandra
+        pyrefly
         ### LSPs end
         ### Extra packages Start
         tree-sitter
