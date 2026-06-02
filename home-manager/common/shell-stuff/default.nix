@@ -50,6 +50,7 @@ in {
       inotify-tools
       postgresql
       zip
+      inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.omp
     ]
     ++ [pkgs.devenv];
 
