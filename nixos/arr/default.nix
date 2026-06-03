@@ -62,6 +62,7 @@
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
+  boot.supportedFilesystems = ["ntfs"];
 
   programs.nix-ld = {
     enable = true;
@@ -129,9 +130,17 @@
     docker-compose
     dive
     dig
+    ntfs3g
     # podman-compose
   ];
   virtualisation.docker.enable = true;
+  # virtualisation.docker.daemonConfig.ipv6 = true;
+  # virtualisation.docker.daemonConfig."fixed-cidr-v6" = "fd00::/80";
+  virtualisation.docker.daemon.settings = {
+    fixed-cidr-v6 = "fd00::/80";
+    ipv6 = true;
+    live-restore = true;
+  };
   # virtualisation.containers.enable = true;
   # virtualisation = {
   #   podman = {
