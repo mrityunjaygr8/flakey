@@ -14,7 +14,7 @@
     ./hardware-configuration.nix
 
     ../../modules/nixos/nix-conf.nix
-    ../../modules/nixos/k8s.nix
+    ../../modules/nixos/k3s.nix
   ];
 
   environment.etc =
