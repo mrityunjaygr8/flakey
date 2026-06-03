@@ -12,6 +12,7 @@
   imports = [
     ../../modules/nixos/nix-conf.nix
     ../../modules/nixos/sound.nix
+    ../../modules/nixos/keebs.nix
   ];
   nixpkgs = {
     # You can add overlays here
