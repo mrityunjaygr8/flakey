@@ -354,11 +354,11 @@ in {
   home.file = {
     ".config/ghostty/config" = {
       text = ''
-        # font-family = Geist Mono
+        font-family = Geist Mono
         # font-family = Terminess Nerd Font Mono
         # font-family = Monaspace Krypton Frozen
         # font-family = Lilex Nerd Font
-        font-family = 0xProto Nerd Font Mono
+        # font-family = 0xProto Nerd Font Mono
         font-size = 16
         command = fish
         theme = Ayu Mirage
