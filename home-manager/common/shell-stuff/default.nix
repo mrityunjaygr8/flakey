@@ -35,6 +35,7 @@ in {
 
   home.packages = with pkgs;
     [
+      k9s
       difftastic
       nh
       wl-clipboard
