@@ -36,6 +36,8 @@ in {
   home.packages = with pkgs;
     [
       k9s
+      kubeseal
+      kubernetes-helm
       difftastic
       nh
       wl-clipboard
