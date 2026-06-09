@@ -31,13 +31,11 @@ in {
     # You can also split up your configuration and import pieces of it here:
     # ./nvim.nix
     # inputs.expert.packages."x86_64-linux".default
+    ../../../modules/home-manager/k8s-tools.nix
   ];
 
   home.packages = with pkgs;
     [
-      k9s
-      kubeseal
-      kubernetes-helm
       difftastic
       nh
       wl-clipboard
