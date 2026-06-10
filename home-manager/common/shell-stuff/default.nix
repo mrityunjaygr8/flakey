@@ -36,6 +36,8 @@ in {
 
   home.packages = with pkgs;
     [
+      sops
+      age
       difftastic
       nh
       wl-clipboard
