@@ -1,0 +1,12 @@
+{
+  "hosts": {
+    "arr": {
+      "host": "192.168.29.193",
+      "username": "arr"
+    },
+    "kharkanas": {
+      "host": "192.168.29.200",
+      "username": "mgr8"
+    }
+  }
+}
