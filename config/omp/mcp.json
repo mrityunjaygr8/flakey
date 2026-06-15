@@ -13,7 +13,7 @@
       "args": [
         "-y",
         "chrome-devtools-mcp@latest",
-        "--executablePath=/home/mgr8/.nix-profile/bin/chromium"
+        "--executablePath=@chromium@"
       ]
     }
   },
