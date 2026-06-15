@@ -5,10 +5,18 @@
   ...
 }: let
   cfg = config.home.homeDirectory;
+  lspPackages = import ../../home-manager/common/lsp-packages.nix pkgs;
+  omp-wrapped = pkgs.symlinkJoin {
+    name = "omp-wrapped";
+    paths = [inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.omp];
+    buildInputs = [pkgs.makeWrapper];
+    postBuild = ''
+      wrapProgram $out/bin/omp \
+        --prefix PATH : ${pkgs.lib.makeBinPath lspPackages}
+    '';
+  };
 in {
-  home.packages = [
-    inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.omp
-  ];
+  home.packages = [omp-wrapped];
 
   sops.secrets."harness-api-keys" = {
     format = "dotenv";

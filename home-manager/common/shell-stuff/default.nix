@@ -19,6 +19,7 @@
     system = pkgs.stdenv.hostPlatform.system;
     config.allowUnfree = true;
   };
+  lspPackages = import ../lsp-packages.nix pkgs;
 in {
   # You can import other home-manager modules here
   imports = [
@@ -142,29 +143,17 @@ in {
       withRuby = false;
       extraPackages = with pkgs; [
         ### LSPs start
-        tinymist
-        lua-language-server
-        typescript-language-server
-        bash-language-server
+      ] ++ lspPackages ++ (with pkgs; [
         vimPlugins.nvim-treesitter-parsers.templ
-        elixir-ls
-        pyright
-        tofu-ls
-        yaml-language-server
-        vscode-json-languageserver
-        gopls
         prettierd
-        ruff
         stylua
-        nixd
         alejandra
-        pyrefly
         ### LSPs end
         ### Extra packages Start
         tree-sitter
         websocat
         ### Extra packages End
-      ];
+      ]);
     };
     zellij = {
       enable = true;
