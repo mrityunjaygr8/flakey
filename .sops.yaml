@@ -1,0 +1,18 @@
+keys:
+  - &mgr8 age1axee2zwq3tdf2kmq9nq5q52wxva78nmhtsrwt9fwxjqalps3ss2qe3tdrh
+  - &kharkanas age1wxgsmypxej9j7fxpk34qarkycphntz0v2df3flkp5z0xl8g52flq3gdkr2
+  - &arr age17q9384cjlpgg660288tquqzva0dk5ckqeq5sh5k2zlwsaalavgzshluxtc
+  - &black-coral age186wd9kcmkkqpys6et7uzrjywkryrfhfrtrrzdkmgduk4l5w4tdlsf3l7tv
+
+creation_rules:
+  - path_regex: secrets/home/[^/]+/[^/]+\.(yaml|json|env|ini)$
+    key_groups:
+      - age:
+          - *mgr8
+  - path_regex: secrets/[^/]+\.(yaml|json|env|ini)$
+    key_groups:
+      - age:
+          - *mgr8
+          - *kharkanas
+          - *arr
+          - *black-coral
