@@ -143,6 +143,38 @@
 
   # Enable the OpenSSH daemon.
   services.openssh.enable = true;
+  services.nginx = {
+    enable = true;
+
+    # Stream (layer 4 TCP proxy) for SNI-based routing on 443
+    streamConfig = ''
+      map $ssl_preread_server_name $backend_tls {
+        ~\.k8s\.imparham\.in$     127.0.0.1:9443;
+        ~\.local\.imparham\.in$   127.0.0.1:7443;
+        default                   127.0.0.1:7443;
+      }
+      server {
+        listen 443;
+        ssl_preread on;
+        proxy_pass $backend_tls;
+      }
+    '';
+
+    virtualHosts."catchall" = {
+      listen = [
+        {
+          addr = "0.0.0.0";
+          port = 80;
+        }
+      ];
+      serverName = "_";
+      serverAliases = ["*.imparham.in"];
+      onlySSL = false;
+      extraConfig = ''
+        return 301 https://$host$request_uri;
+      '';
+    };
+  };
 
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];
