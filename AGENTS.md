@@ -8,9 +8,6 @@ This is a Nix flake configuration repository for managing NixOS systems and home
 # Format all nix files (uses alejandra)
 nix fmt
 
-# Check flake validity and imports
-nix flake check
-
 # Build a specific package from pkgs/
 nix build .#windsurf
 
@@ -20,11 +17,15 @@ nix build .#<package-name>
 # Test a module
 nix-instantiate --eval --strict -E 'import ./nixos/common { outputs = {}; lib = <nixpkgs/lib>; config = {}; pkgs = {}; }'
 
-# Dry-run NixOS rebuild (kharkanas host)
+# Dry-run NixOS rebuild
 sudo nixos-rebuild dry-build --flake .#kharkanas
+sudo nixos-rebuild dry-build --flake .#black-coral
+sudo nixos-rebuild dry-build --flake .#arr
 
 # Apply NixOS configuration
 sudo nixos-rebuild switch --flake .#kharkanas
+sudo nixos-rebuild switch --flake .#black-coral
+sudo nixos-rebuild switch --flake .#arr
 
 # Apply home-manager configuration
 home-manager --flake .#mgr8 switch
@@ -48,8 +49,25 @@ nix flake check --show-trace
 # Check module syntax
 nix-instantiate --parse ./nixos/common/default.nix
 
-# Test overlay syntax
-nix-instantiate --eval --strict -E 'import ./overlays { inputs = {}; }'
+# Test overlay syntax (parse check)
+nix-instantiate --parse ./overlays/default.nix
+```
+
+## Disko (declarative partitioning)
+
+```bash
+# Apply disko partitioning (destructive — wipes target disk)
+sudo disko --mode disko ./nixos/kharkanas/disko-config.nix
+```
+
+## Secrets (sops-nix)
+
+```bash
+# Edit host-wide secrets
+sops secrets/common.env
+
+# Edit user-specific secrets
+sops secrets/home/mgr8/harness-api-keys.env
 ```
 
 ## Code Style Guidelines
@@ -105,6 +123,7 @@ lib.mapAttrs' (name: value: {
 
 ### Module Structure
 ```nix
+# The function arguments depend on what the module uses — omit any you don't need.
 { inputs, outputs, lib, config, pkgs, ... }: {
   imports = [ ./path/to/module.nix ];
   options = { };
@@ -131,5 +150,4 @@ pkgs: { my-package = pkgs.callPackage ./my-package { }; }
 - Share common config in `nixos/common/` and `home-manager/common/`
 - Reusable modules go in `modules/nixos/` or `modules/home-manager/`
 - Use `FIXME`/`TODO` comments for items needing attention
-- Include `hardware-configuration.nix` from `nixos-generate-config`
-- Set `system.stateVersion` appropriately (e.g., "23.05")
+- Set `system.stateVersion` to the NixOS version at install time and never change it manually (see [NixOS wiki](https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion))
