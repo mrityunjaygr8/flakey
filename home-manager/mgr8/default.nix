@@ -116,7 +116,7 @@ in {
     ibmcloud-cli
     kubernetes-helm
     keypunch
-    # azure-cli
+    azure-cli
     # beekeeper-studio
     opentofu
     # httpie-desktop
