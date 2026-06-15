@@ -148,7 +148,9 @@ in {
         vimPlugins.nvim-treesitter-parsers.templ
         elixir-ls
         pyright
-        terraform-ls
+        tofu-ls
+        yaml-language-server
+        vscode-json-languageserver
         gopls
         prettierd
         ruff

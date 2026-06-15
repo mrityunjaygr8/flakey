@@ -2,6 +2,7 @@ vim.pack.add({
 	"https://github.com/folke/lazydev.nvim",
 	"https://github.com/saghen/blink.cmp",
 	"https://github.com/neovim/nvim-lspconfig",
+	"https://github.com/b0o/SchemaStore.nvim",
 })
 
 require("lazydev").setup({})
@@ -61,12 +62,26 @@ local servers = {
 	ts_ls = {},
 	nixd = {},
 	bashls = {},
-	terraformls = {},
+	tofu_ls = {},
+	-- terraformls = {
+	-- 	cmd = { "terraform-ls", "serve", "-path", "tofu" },
+	-- },
 	-- ty = {},
 	pyrefly = {},
 	tinymist = {},
 	elixirls = {
 		cmd = { "elixir-ls" },
+	},
+	jsonls = {
+		schemas = require("schemastore").json.schemas(),
+		validate = { enable = true },
+	},
+	yamlls = {
+		schemastore = {
+			enable = false,
+			url = "",
+		},
+		schemas = require("schemastore").yaml.schemas(),
 	},
 }
 
