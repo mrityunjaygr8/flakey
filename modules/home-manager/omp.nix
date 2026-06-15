@@ -16,15 +16,19 @@ in {
     path = "${cfg}/.omp/agent/.env";
   };
 
-  home.file.".omp/agent/config.yml".source = ../../config/omp/config.yml;
+  home.file = {
+    ".omp/agent/config.yml".source = ../../config/omp/config.yml;
+    ".omp/agent/ssh.json".source = ../../config/omp/ssh.json;
+    # ".omp/agent/APPEND_SYSTEM.md".source = ../../config/omp/APPEND_SYSTEM.md;
+    ".omp/agent/mcp.json".text =
+      builtins.replaceStrings
+      ["@chromium@"]
+      ["${pkgs.chromium}/bin/chromium"]
+      (builtins.readFile ../../config/omp/mcp.json);
 
-  home.file.".omp/agent/ssh.json".source = ../../config/omp/ssh.json;
-  home.file.".omp/agent/mcp.json".text =
-
-    builtins.replaceStrings
-    ["@chromium@"]
-    ["${pkgs.chromium}/bin/chromium"]
-    (builtins.readFile ../../config/omp/mcp.json);
-
-  home.file.".omp/agent/APPEND_SYSTEM.md".source = ../../config/omp/APPEND_SYSTEM.md;
+    ".omp/agent/rules" = {
+      source = ../../config/omp/rules;
+      recursive = true;
+    };
+  };
 }
