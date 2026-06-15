@@ -9,19 +9,12 @@
       }
     },
     "chrome-devtools": {
-      "command": "npx",
+      "command": "pnpx",
       "args": [
         "-y",
         "chrome-devtools-mcp@latest",
-        "--executablePath=chromium"
+        "--executablePath=/home/mgr8/.nix-profile/bin/chromium"
       ]
-    },
-    "github": {
-      "type": "http",
-      "url": "https://api.githubcopilot.com/mcp/",
-      "headers": {
-        "Authorization": "!printf 'Bearer %s' \"$GITHUB_TOKEN\""
-      }
     }
   },
   "disabledServers": []
