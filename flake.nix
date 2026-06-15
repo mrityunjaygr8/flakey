@@ -26,6 +26,9 @@
     # opencode.inputs.nixpkgs.follows = "bun-unstable";
     disko.url = "github:nix-community/disko";
     disko.inputs.nixpkgs.follows = "nixpkgs";
+
+    sops-nix.url = "github:Mic92/sops-nix";
+    sops-nix.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs = {
@@ -34,6 +37,7 @@
     nixpkgs-master,
     home-manager,
     iloader,
+    sops-nix,
     disko,
     ...
   } @ inputs: let
@@ -75,6 +79,7 @@
         modules = [
           # > Our main nixos configuration file <
           ./nixos/kharkanas
+          ./modules/nixos/sops.nix
           disko.nixosModules.disko
         ];
       };
@@ -83,6 +88,7 @@
         modules = [
           # > Our main nixos configuration file <
           ./nixos/black-coral
+          ./modules/nixos/sops.nix
           disko.nixosModules.disko
         ];
       };
@@ -91,6 +97,7 @@
         modules = [
           # > Our main nixos configuration file <
           ./nixos/arr
+          ./modules/nixos/sops.nix
         ];
       };
     };

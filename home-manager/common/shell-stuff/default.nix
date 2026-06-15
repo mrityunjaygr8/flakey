@@ -38,6 +38,7 @@ in {
     [
       sops
       age
+      ssh-to-age
       difftastic
       nh
       wl-clipboard

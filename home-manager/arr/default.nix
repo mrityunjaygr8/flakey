@@ -19,6 +19,7 @@
     # You can also split up your configuration and import pieces of it here:
     # ./nvim.nix
     ../common
+    ../../modules/home-manager/sops.nix
   ];
 
   nixpkgs = {
@@ -54,9 +55,9 @@
     homeDirectory = "/home/arr";
   };
 
-    # Nicely reload system units when changing configs
+  # Nicely reload system units when changing configs
   systemd.user.startServices = "sd-switch";
 
   # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
   home.stateVersion = "23.05";
-  }
+}
