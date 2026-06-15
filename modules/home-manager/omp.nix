@@ -19,4 +19,5 @@ in {
   home.file.".omp/agent/config.yml".source = ../../config/omp/config.yml;
 
   home.file.".omp/agent/ssh.json".source = ../../config/omp/ssh.json;
+  home.file.".omp/agent/mcp.json".source = ../../config/omp/mcp.json;
 }
