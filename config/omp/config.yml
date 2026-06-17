@@ -4,7 +4,7 @@ theme:
   light: light
 setupVersion: 1
 modelRoles:
-  default: opencode-go/deepseek-v4-flash
+  default: opencode-go/kimi-k2.7-code
   plan: opencode-go/kimi-k2.7-code
   advisor: opencode-go/minimax-m3
 
