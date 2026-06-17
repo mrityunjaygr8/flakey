@@ -88,6 +88,7 @@ in {
     calibre
     # (pkgs.callPackage ./../../pkgs/calibre {})
     xan
+    tesseract
     ghostty
     restic
     nmap
