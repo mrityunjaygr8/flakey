@@ -7,8 +7,8 @@ modelRoles:
   default: opencode-go/deepseek-v4-flash
   plan: opencode-go/kimi-k2.7-code
   advisor: opencode-go/minimax-m3
-plan:
-  enabled: true
+
+mode: plan
 
 agent:
   advisor: true
