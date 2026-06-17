@@ -8,7 +8,9 @@ modelRoles:
   plan: opencode-go/kimi-k2.7-code
   advisor: opencode-go/minimax-m3
 
-mode: plan
+plan:
+  defaultOnStartup: true
+  enabled: true
 
 agent:
   advisor: true
