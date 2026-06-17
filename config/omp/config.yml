@@ -4,9 +4,14 @@ theme:
   light: light
 setupVersion: 1
 modelRoles:
-  default: opencode-go/deepseek-v4-pro:xhigh
-  plan: opencode-go/deepseek-v4-pro
-  slow: opencode-go/deepseek-v4-pro:xhigh
+  default: opencode-go/deepseek-v4-flash
+  plan: opencode-go/kimi-k2.7-code
+  advisor: opencode-go/minimax-m3
+plan:
+  enabled: true
+
+agent:
+  advisor: true
 task:
   disabledAgents: []
 defaultThinkingLevel: auto
