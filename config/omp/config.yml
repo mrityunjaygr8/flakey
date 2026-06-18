@@ -12,8 +12,9 @@ modelRoles:
 #   defaultOnStartup: true
 #   enabled: true
 
-agent:
-  advisor: true
+advisor:
+  enabled: true
+
 task:
   disabledAgents: []
 defaultThinkingLevel: auto
