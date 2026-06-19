@@ -87,6 +87,7 @@ in {
     bottom
     calibre
     # (pkgs.callPackage ./../../pkgs/calibre {})
+    obsidian
     xan
     tesseract
     ghostty
