@@ -1,4 +1,5 @@
-pkgs: with pkgs; [
+pkgs:
+with pkgs; [
   tinymist
   lua-language-server
   typescript-language-server
@@ -12,4 +13,5 @@ pkgs: with pkgs; [
   nixd
   pyrefly
   ruff
+  helm-ls
 ]
