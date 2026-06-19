@@ -44,6 +44,7 @@ require("nvim-treesitter").install({
 	"nix",
 	"toml",
 	"typst",
+	"helm",
 })
 
 -- local tsc = require("nvim-treesitter.config")

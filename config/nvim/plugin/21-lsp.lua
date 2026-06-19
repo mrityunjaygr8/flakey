@@ -62,6 +62,7 @@ local servers = {
 	ts_ls = {},
 	nixd = {},
 	bashls = {},
+	helm_ls = {},
 	tofu_ls = {},
 	-- terraformls = {
 	-- 	cmd = { "terraform-ls", "serve", "-path", "tofu" },
