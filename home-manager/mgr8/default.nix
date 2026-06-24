@@ -128,7 +128,6 @@ in {
     less
     bruno
     git-credential-manager
-    chromium
     dust
     bottom
     html-tidy
@@ -216,6 +215,11 @@ in {
   #       '';
   #   });
   # };
+  programs.chromium = {
+    enable = true;
+    commandLineArgs = ["--enable-features=UseOzonePlatform" "--ozone-platform=wayland"];
+  };
+
   programs.alacritty = {
     enable = true;
     settings = {
