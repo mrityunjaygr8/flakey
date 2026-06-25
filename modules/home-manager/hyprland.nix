@@ -4,6 +4,12 @@
   config,
   ...
 }: let
+  fixedSizeFloatScript = pkgs.writeShellScriptBin "fixed-size-float" ''
+    WIDTH=1280
+    HEIGHT=720
+
+    hyprctl dispatch resizewindowpixel exact $WIDTH $HEIGHT,address:$(hypractivewindow -j | jq -r '.address')
+  '';
   wallpaperScript = pkgs.writeShellScriptBin "random-wallpaper" ''
     #!/usr/bin/env bash
     set -o pipefail
@@ -263,6 +269,7 @@ in {
           "$mod, C, exec, chromium"
           "$mod SHIFT, L, exec, hyprlock"
           "$mod SHIFT, W, exec, ${wallpaperScript}/bin/random-wallpaper"
+          "$mod SHIFT, R, exec, ${fixedSizeFloatScript}/bin/fixed-size-float"
           ", Print, exec, grimblast copy area"
         ]
         ++ [
