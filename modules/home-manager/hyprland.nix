@@ -5,14 +5,13 @@
   ...
 }: let
   fixedSizeFloatScript = pkgs.writeShellScriptBin "fixed-size-float" ''
-    #!/usr/bin/env bash
     set -o pipefail
     set -eux
 
     WIDTH=1280
     HEIGHT=720
 
-    hyprctl dispatch resizewindowpixel exact $WIDTH $HEIGHT,address:$(hypractivewindow -j | jq -r '.address')
+    hyprctl dispatch resizewindowpixel exact $WIDTH $HEIGHT,address:$(hyprctl activewindow -j | jq -r '.address')
   '';
   wallpaperScript = pkgs.writeShellScriptBin "random-wallpaper" ''
     #!/usr/bin/env bash
