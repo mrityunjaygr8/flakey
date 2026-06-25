@@ -11,7 +11,11 @@
     WIDTH=1280
     HEIGHT=720
 
-    hyprctl dispatch resizewindowpixel exact $WIDTH $HEIGHT,address:$(hyprctl activewindow -j | jq -r '.address')
+    ADDR=$(hyprctl activewindow -j | jq -r '.address')
+
+    hyprctl dispatch setfloating address:$ADDR
+    hyprctl dispatch resizewindowpixel exact $WIDTH $HEIGHT,address:$ADDR
+    hyprctl dispatch centerwindow address:0x$ADDR
   '';
   wallpaperScript = pkgs.writeShellScriptBin "random-wallpaper" ''
     #!/usr/bin/env bash
