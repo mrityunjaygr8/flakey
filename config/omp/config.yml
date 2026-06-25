@@ -4,7 +4,7 @@ theme:
   light: light
 setupVersion: 1
 modelRoles:
-  default: opencode-go/minimax-m3
+  default: opencode-go/minimax-m3:off
   plan: opencode-go/minimax-m3
   advisor: opencode-go/kimi-k2.7-code
 
