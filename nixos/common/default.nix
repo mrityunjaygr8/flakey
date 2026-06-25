@@ -148,7 +148,7 @@
 
   # Open ports in the firewall.
   # port 9090 is for calibre content server
-  networking.firewall.allowedTCPPorts = [8000 3000 9090 8000 9323];
+  networking.firewall.allowedTCPPorts = [8000 3000 9090 8080 9323];
   networking.firewall.allowedUDPPorts = [9090];
 
   # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
