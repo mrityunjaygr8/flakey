@@ -5,6 +5,10 @@
   ...
 }: let
   fixedSizeFloatScript = pkgs.writeShellScriptBin "fixed-size-float" ''
+    #!/usr/bin/env bash
+    set -o pipefail
+    set -eux
+
     WIDTH=1280
     HEIGHT=720
 
