@@ -87,6 +87,8 @@ in {
     bottom
     calibre
     # (pkgs.callPackage ./../../pkgs/calibre {})
+    awscli2
+    bun
     obsidian
     xan
     tesseract
