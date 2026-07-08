@@ -4,9 +4,9 @@ theme:
   light: light
 setupVersion: 1
 modelRoles:
-  default: opencode-go/minimax-m3:off
+  default: opencode-go/deepseek-v4-flash
   plan: opencode-go/minimax-m3
-  advisor: opencode-go/kimi-k2.7-code
+  advisor: opencode-go/glm-5.2
 
 # plan:
 #   defaultOnStartup: true
