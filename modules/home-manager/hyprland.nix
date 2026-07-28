@@ -240,133 +240,25 @@ in {
   programs.hyprlock.enable = true;
   wayland.windowManager.hyprland = {
     ### Using the package from nixos module for betting setting up
-    configType = "hyprlang";
+    configType = "lua";
     package = null;
     portalPackage = null;
     enable = true;
     systemd.variables = ["--all"];
-    plugins = [pkgs.hyprlandPlugins.hyprsplit];
-    settings = {
-      env = ["HYPRCURSOR_THEME,rose-pine-hyprcursor"];
-      "exec-once" = [
-        # "waybar"
-        "clipse -listen"
-        "hyprsunset"
-        "hypridle"
-        # "hyprpanel"
-        "systemctl --user start hyprpolkitagent"
-        "awww-daemon"
-        "hyprctl setcursor rose-pine-hyprcursor 32"
-        # "dunst"
-      ];
-      "$mod" = "SUPER";
-      plugin = {
-        hyprsplit = {
-          num_workspaces = 4;
-          persistent_workspaces = true;
-        };
+    extraLuaFiles = {
+      "hyprsplit/init" = {
+        autoLoad = false;
+        content = builtins.readFile "${inputs.hyprsplit.packages.${pkgs.system}.hyprsplitlua}/share/hyprsplit/init.lua";
       };
-      windowrule =
-        [
-          # These rules are for pinning the Picture-in-Picture window
-          "float on, size 800 450, content video, pin on, match:title ^(Picture-in-Picture|firefox)$"
-        ]
-        ++ [
-          # Ignore maximize requests from apps. You'll probably like this.
-          "suppress_event maximize, match:class .*"
-
-          # Fix some dragging issues with XWayland
-          "no_focus on,match:class ^$,match:title ^$,match:xwayland 1,match:float 1,match:fullscreen 0,match:pin 0"
-        ]
-        ++
-        # For the clipboard TUI
-        [
-          "float on, size 622 652, stay_focused on, match:class (window.clipse.output)"
-        ];
-      animations = {
-        enabled = true;
-        bezier = "myBezier, 0.05, 0.9, 0.1, 1.05";
-        animation = [
-          "windows, 1, 2, myBezier"
-          "windowsOut, 1, 2, default, popin 80%"
-          "border, 1, 3, default"
-          "fade, 1, 2, default"
-          "workspaces, 1, 2, default"
-        ];
+      "hyprload" = {
+        autoLoad = true;
+        content =
+          builtins.readFile ../../config/hyprland/default.lua
+          + ''
+            hl.bind(mod .. " + SHIFT + W", hl.dsp.exec_cmd("${wallpaperScript}/bin/random-wallpaper"))
+            hl.bind(mod .. " + SHIFT + R", hl.dsp.exec_cmd("${fixedSizeFloatScript}/bin/fixed-size-float"))
+          '';
       };
-      monitor = [",preffered,auto,1" "DP-2,preffered,auto,1,transform,3"];
-      bindm =
-        # Move/resize windows with mainMod + LMB/RMB and dragging
-        [
-          "$mod,mouse:272, movewindow"
-          "$mod,mouse:273, resizewindowpixel"
-        ];
-      bind =
-        [
-          "Control_L,SPACE,exec,sherlock"
-          "$mod, Q, killactive"
-          "$mod, V, togglefloating"
-          "$mod, RETURN, exec, [workspace 1 silent] ghostty"
-          "$mod, B, exec, firefox"
-          "$mod, C, exec, chromium"
-          "$mod SHIFT, L, exec, hyprlock"
-          "$mod SHIFT, W, exec, ${wallpaperScript}/bin/random-wallpaper"
-          "$mod SHIFT, R, exec, ${fixedSizeFloatScript}/bin/fixed-size-float"
-          ", Print, exec, grimblast copy area"
-        ]
-        ++ [
-          "$mod SHIFT, V, exec, ghostty --class=window.clipse.output -e clipse"
-        ]
-        ++
-        # Focus Switching keybinds
-        [
-          "$mod,h,movefocus,l"
-          "$mod,l,movefocus,r"
-          "$mod,j,movefocus,d"
-          "$mod,k,movefocus,u"
-        ]
-        ++
-        # Switching workspaces using ASDF
-        [
-          "$mod, A, split:workspace, 1"
-          "$mod SHIFT, A, split:movetoworkspacesilent, 1"
-          "$mod, S, split:workspace, 2"
-          "$mod SHIFT, S, split:movetoworkspacesilent, 2"
-          "$mod, D, split:workspace, 3"
-          "$mod SHIFT, D, split:movetoworkspacesilent, 3"
-          "$mod, F, split:workspace, 4"
-          "$mod SHIFT, F, split:movetoworkspacesilent, 4"
-        ]
-        ++
-        # Swap focus and windows between monitors
-        [
-          "$mod, O, focusmonitor, +1"
-          "$mod SHIFT, O, movewindow, mon:+1"
-        ]
-        ++
-        # Volume Stuff
-        [
-          # Laptop multimedia keys for volume and LCD brightness
-          ",XF86AudioRaiseVolume, exec, wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%+"
-          ",XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"
-          ",XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
-          ",XF86AudioMicMute, exec, wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"
-          ",XF86MonBrightnessUp, exec, brightnessctl -e4 -n2 set 5%+"
-          ",XF86MonBrightnessDown, exec, brightnessctl -e4 -n2 set 5%-"
-        ]
-        ++ (
-          # workspaces
-          # binds $mod + [shift +] {1..9} to [move to] workspace {1..9}
-          builtins.concatLists (builtins.genList (
-              i: let
-                ws = i + 1;
-              in [
-                "$mod, code:1${toString i}, split:workspace, ${toString ws}"
-                "$mod SHIFT, code:1${toString i}, split:movetoworkspacesilent, ${toString ws}"
-              ]
-            )
-            4)
-        );
     };
   };
 }
