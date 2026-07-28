@@ -141,47 +141,82 @@ in {
       ];
     };
   };
-  programs.hyprpanel = {
+  services.wayle = {
     enable = true;
-    # Configure and theme almost all options from the GUI.
-    # See 'https://hyprpanel.com/configuration/settings.html'.
-    # Default: <same as gui>
+    autoInstallDependencies = true;
     settings = {
-      # Configure bar layouts for monitors.
-      # See 'https://hyprpanel.com/configuration/panel.html'.
-      # Default: null
-      layout = {
-        bar.layouts = {
-          "0" = {
-            left = ["dashboard" "workspaces"];
-            middle = ["media"];
-            right = ["volume" "systray" "notifications"];
-          };
+      bar = {
+        layout = [
+          # add more attribute sets with different monitors if wayle should
+          # have different layouts on each
+          {
+            monitor = "*"; # replace "DP-1" with "*" for all monitors
+            show = true;
+            center = [
+              "clock"
+              "weather"
+            ];
+            left = ["dashboard"];
+            right = ["volume"];
+          } # this is a 'list' of 'attribute sets', no semi-colons after the closing braces needed
+        ];
+      };
+      modules = {
+        clock = {
+          format = "%H:%M:%S";
+          dropdown-show-seconds = false;
+        };
+        weather = {
+          location = "Pune";
+          units = "metric";
         };
       };
-
-      bar.launcher.autoDetectIcon = true;
-      bar.workspaces.show_icons = true;
-
-      menus.clock = {
-        time = {
-          military = true;
-          hideSeconds = true;
-        };
-        weather.unit = "metric";
-      };
-
-      menus.dashboard.directories.enabled = false;
-      menus.dashboard.stats.enable_gpu = true;
-
-      theme.bar.transparent = true;
-
-      theme.font = {
-        name = "CaskaydiaCove NF";
-        size = "16px";
+      osd = {
+        monitor = "DP-1";
       };
     };
   };
+  # programs.hyprpanel = {
+  #   enable = true;
+  #   # Configure and theme almost all options from the GUI.
+  #   # See 'https://hyprpanel.com/configuration/settings.html'.
+  #   # Default: <same as gui>
+  #   settings = {
+  #     # Configure bar layouts for monitors.
+  #     # See 'https://hyprpanel.com/configuration/panel.html'.
+  #     # Default: null
+  #     layout = {
+  #       bar.layouts = {
+  #         "0" = {
+  #           left = ["dashboard" "workspaces"];
+  #           middle = ["media"];
+  #           right = ["volume" "systray" "notifications"];
+  #         };
+  #       };
+  #     };
+  #
+  #     bar.launcher.autoDetectIcon = true;
+  #     bar.workspaces.show_icons = true;
+  #
+  #     menus.clock = {
+  #       time = {
+  #         military = true;
+  #         hideSeconds = true;
+  #       };
+  #       weather.unit = "metric";
+  #     };
+  #
+  #     menus.dashboard.directories.enabled = false;
+  #     menus.dashboard.stats.enable_gpu = true;
+  #
+  #     theme.bar.transparent = true;
+  #
+  #     theme.font = {
+  #       name = "CaskaydiaCove NF";
+  #       size = "16px";
+  #     };
+  #   };
+  # };
   xdg.configFile = {
     "hypr/hyprsunset.conf" = {
       enable = true;
@@ -218,7 +253,7 @@ in {
         "clipse -listen"
         "hyprsunset"
         "hypridle"
-        "hyprpanel"
+        # "hyprpanel"
         "systemctl --user start hyprpolkitagent"
         "awww-daemon"
         "hyprctl setcursor rose-pine-hyprcursor 32"
