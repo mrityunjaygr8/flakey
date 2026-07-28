@@ -29,6 +29,10 @@
 
     sops-nix.url = "github:Mic92/sops-nix";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
+
+    hyprland.url = "github:hyprwm/Hyprland";
+    hyprsplit.url = "github:shezdy/hyprsplit";
+    hyprsplit.inputs.hyprland.follows = "hyprland";
   };
 
   outputs = {
