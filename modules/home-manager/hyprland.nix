@@ -146,6 +146,7 @@ in {
     autoInstallDependencies = true;
     settings = {
       bar = {
+        button-variant = "basic";
         layout = [
           # add more attribute sets with different monitors if wayle should
           # have different layouts on each
@@ -153,11 +154,11 @@ in {
             monitor = "*"; # replace "DP-1" with "*" for all monitors
             show = true;
             center = [
-              "clock"
-              "weather"
+              "notifications"
+              "window-title"
             ];
-            left = ["dashboard"];
-            right = ["volume"];
+            left = ["dashboard" "hyprland-workspaces"];
+            right = ["microphone" "volume" "bluetooth" "network" "cpu" "ram" "brightness" "battery" "weather" "clock"];
           } # this is a 'list' of 'attribute sets', no semi-colons after the closing braces needed
         ];
       };
