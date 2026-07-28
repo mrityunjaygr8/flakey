@@ -18,34 +18,34 @@
     #       hash = "sha256-lR7iruhV8IWVruxiJSJqKY0/6oOj3NZGXAnLzN9+hI8=";
     #     };
     #   });
-    hyprlandPlugins =
-      prev.hyprlandPlugins
-      // {
-        hyprsplit = let
-          version = "0.54.2";
-          commit = "ea230fc65b4bd591451d2305140a2e3fbce894ca";
-        in
-          prev.hyprlandPlugins.hyprsplit.overrideAttrs (oldAttrs: {
-            # patches =
-            #   (oldAttrs.patches or [])
-            #   ++ [
-            #     (final.fetchpatch {
-            #       # Replace 12345 with the actual PR number you are tracking
-            #       url = "https://github.com/NixOS/nixpkgs/pull/486486.diff";
-            #       # Initial hash - change this after the first failed build attempt
-            #       hash = "sha256-DUQXnZhejpVgSKRoQozNxxFUHiEvztdUCk3bA3AKsmA=";
-            #     })
-            #   ];
-            version = version;
-            src = final.fetchFromGitHub {
-              owner = "shezdy";
-              repo = "hyprsplit";
-              # tag = "v${version}";
-              rev = commit;
-              hash = "sha256-VeVHk55Vg9+0BfUS+GleE7vZfa7ssb4yM+p+noJ349w=";
-            };
-          });
-      };
+    # hyprlandPlugins =
+    #   prev.hyprlandPlugins
+    #   // {
+    #     hyprsplit = let
+    #       version = "0.54.2";
+    #       commit = "ea230fc65b4bd591451d2305140a2e3fbce894ca";
+    #     in
+    #       prev.hyprlandPlugins.hyprsplit.overrideAttrs (oldAttrs: {
+    #         # patches =
+    #         #   (oldAttrs.patches or [])
+    #         #   ++ [
+    #         #     (final.fetchpatch {
+    #         #       # Replace 12345 with the actual PR number you are tracking
+    #         #       url = "https://github.com/NixOS/nixpkgs/pull/486486.diff";
+    #         #       # Initial hash - change this after the first failed build attempt
+    #         #       hash = "sha256-DUQXnZhejpVgSKRoQozNxxFUHiEvztdUCk3bA3AKsmA=";
+    #         #     })
+    #         #   ];
+    #         version = version;
+    #         src = final.fetchFromGitHub {
+    #           owner = "shezdy";
+    #           repo = "hyprsplit";
+    #           # tag = "v${version}";
+    #           rev = commit;
+    #           hash = "sha256-VeVHk55Vg9+0BfUS+GleE7vZfa7ssb4yM+p+noJ349w=";
+    #         };
+    #       });
+    #   };
   };
 
   # When applied, the unstable nixpkgs set (declared in the flake inputs) will
