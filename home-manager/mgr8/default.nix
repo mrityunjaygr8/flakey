@@ -160,6 +160,7 @@ in {
     nerd-fonts.jetbrains-mono
     nerd-fonts._0xproto
     nerd-fonts.lilex
+    ioskeley-mono.normal-term-NF
     monaspace
   ];
 
@@ -363,7 +364,8 @@ in {
   home.file = {
     ".config/ghostty/config" = {
       text = ''
-        font-family = Geist Mono
+        font-family = IoskeleyMonoTerm Nerd Font
+        # font-family = Geist Mono
         # font-family = Terminess Nerd Font Mono
         # font-family = Monaspace Krypton Frozen
         # font-family = Lilex Nerd Font
@@ -374,85 +376,4 @@ in {
       '';
     };
   };
-
-  # dconf.settings = let
-  #   custom_shortcuts = let
-  #     inherit (builtins) length head tail listToAttrs genList;
-  #     range = a: b:
-  #       if a < b
-  #       then [a] ++ range (a + 1) b
-  #       else [];
-  #     globalPath = "org/gnome/settings-daemon/plugins/media-keys";
-  #     path = "${globalPath}/custom-keybindings";
-  #     mkPath = id: "${globalPath}/custom${toString id}";
-  #     isEmpty = list: length list == 0;
-  #     mkSettings = settings: let
-  #       checkSettings = {
-  #         name,
-  #         command,
-  #         binding,
-  #       } @ this:
-  #         this;
-  #       aux = i: list:
-  #         if isEmpty list
-  #         then []
-  #         else let
-  #           hd = head list;
-  #           tl = tail list;
-  #           name = mkPath i;
-  #         in
-  #           aux (i + 1) tl
-  #           ++ [
-  #             {
-  #               name = mkPath i;
-  #               value = checkSettings hd;
-  #             }
-  #           ];
-  #       settingsList = aux 0 settings;
-  #     in
-  #       listToAttrs (settingsList
-  #         ++ [
-  #           {
-  #             name = globalPath;
-  #             value = {
-  #               custom-keybindings = genList (i: "/${mkPath i}/") (length settingsList);
-  #             };
-  #           }
-  #         ]);
-  #   in
-  #     mkSettings [
-  #       {
-  #         name = "Launch Terminal";
-  #         command = "ghostty";
-  #         binding = "<Super>Return";
-  #       }
-  #       {
-  #         name = "Launch Firefox";
-  #         command = "firefox";
-  #         binding = "<Super>b";
-  #       }
-  #     ];
-  #
-  #   wm_keybinds = {
-  #     "org/gnome/shell/keybindings" = {
-  #       toggle-message-tray = [];
-  #     };
-  #     "org/gnome/settings-daemon/plugins/media-keys" = {
-  #       volume-down = ["<Control><Alt>minus" "XF86AudioLowerVolume"];
-  #       volume-mute = ["<Control><Alt>0" "XF86AudioMute"];
-  #       volume-up = ["<Control><Alt>equal" "XF86AudioRaiseVolume"];
-  #     };
-  #     "org/gnome/desktop/wm/keybindings" = {
-  #       close = ["<Shift><Super>c"];
-  #       toggle-maximized = ["<Super>m"];
-  #     };
-  #   };
-  #
-  #   app_menu_config = {
-  #     "org/gnome/desktop/wm/preferences" = {
-  #       button-layout = "appmenu:minimize,maximize,close";
-  #     };
-  #   };
-  # in
-  #   lib.mkMerge [custom_shortcuts wm_keybinds app_menu_config];
 }
