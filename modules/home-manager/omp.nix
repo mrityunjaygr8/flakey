@@ -16,7 +16,7 @@
     '';
   };
 in {
-  home.packages = [omp-wrapped inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.junie];
+  home.packages = [omp-wrapped];
 
   sops.secrets."harness-api-keys" = {
     format = "dotenv";
