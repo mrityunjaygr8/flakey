@@ -64,13 +64,21 @@ in {
       enable = true;
       enableFishIntegration = true;
     };
+    difftastic = {
+      enable = true;
+      git = {
+        enable = true;
+        mode = "both";
+      };
+    };
     lazygit = {
       enable = true;
       settings = {
         git = {
           diffRenderers = [
             {
-              command = "difft --color=always";
+              type = "extDiff";
+              command = "difft --color=always --context={{diffContext}}";
             }
           ];
         };
