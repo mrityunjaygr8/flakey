@@ -151,3 +151,26 @@ pkgs: { my-package = pkgs.callPackage ./my-package { }; }
 - Reusable modules go in `modules/nixos/` or `modules/home-manager/`
 - Use `FIXME`/`TODO` comments for items needing attention
 - Set `system.stateVersion` to the NixOS version at install time and never change it manually (see [NixOS wiki](https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion))
+
+### devenv Dev Shells — GC Root Cleanup
+devenv registers a **permanent GC root per project** under `~/.nix/var/nix/gcroots/per-user/<user>/devenv-projects/`, pinning the project's full dev-shell closure (often 1–9 GiB each) forever. This is the #1 cause of Nix store bloat on this machine. To reclaim space, remove roots for projects you no longer use, then GC:
+
+```bash
+# List every project devenv is pinning
+ls ~/.nix/var/nix/gcroots/per-user/mgr8/devenv-projects/
+
+# Remove roots for dead projects (or all of them — roots are recreated
+# automatically the next time you run `devenv shell`/`devenv up`)
+rm ~/.nix/var/nix/gcroots/per-user/mgr8/devenv-projects/*
+
+# Reclaim the freed closures (requires sudo)
+sudo nix-collect-garbage -d
+
+# Verify devenv roots are gone
+nix-store --gc --print-roots | rg devenv-projects   # expect no matches
+```
+
+Also prune stale generations so auto-GC can actually reclaim (devenv + home-manager + profiles):
+```bash
+sudo nix-collect-garbage --delete-older-than 7d
+```
