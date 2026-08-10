@@ -68,9 +68,9 @@ in {
       enable = true;
       settings = {
         git = {
-          pagers = [
+          diffRenderers = [
             {
-              externalDiffCommand = "difft --color=always";
+              command = "difft --color=always";
             }
           ];
         };
@@ -141,19 +141,22 @@ in {
       vimdiffAlias = true;
       withPython3 = true;
       withRuby = false;
-      extraPackages = with pkgs; [
-        ### LSPs start
-      ] ++ lspPackages ++ (with pkgs; [
-        vimPlugins.nvim-treesitter-parsers.templ
-        prettierd
-        stylua
-        alejandra
-        ### LSPs end
-        ### Extra packages Start
-        tree-sitter
-        websocat
-        ### Extra packages End
-      ]);
+      extraPackages = with pkgs;
+        [
+          ### LSPs start
+        ]
+        ++ lspPackages
+        ++ (with pkgs; [
+          vimPlugins.nvim-treesitter-parsers.templ
+          prettierd
+          stylua
+          alejandra
+          ### LSPs end
+          ### Extra packages Start
+          tree-sitter
+          websocat
+          ### Extra packages End
+        ]);
     };
     zellij = {
       enable = true;
