@@ -106,8 +106,6 @@ in {
     pgadmin4-desktopmode
     shellcheck
     posting
-    playwright-test
-    playwright-mcp
     git-crypt
     gemini-cli
     # ollama
@@ -115,12 +113,10 @@ in {
     # jetbrains.clion
     # jetbrains.idea-ultimate
     # kotlin
-    cypress
     # end for crafting interpretters
     kubectl
     ibmcloud-cli
     kubernetes-helm
-    keypunch
     azure-cli
     # beekeeper-studio
     opentofu
