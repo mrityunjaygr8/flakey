@@ -33,7 +33,7 @@ in {
     # ./nvim.nix
     # inputs.expert.packages."x86_64-linux".default
     ../../../modules/home-manager/k8s-tools.nix
-    ../../../modules/home-manager/omp.nix
+    # ../../../modules/home-manager/omp.nix
   ];
 
   home.packages = with pkgs;

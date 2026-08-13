@@ -107,7 +107,6 @@ in {
     shellcheck
     posting
     git-crypt
-    gemini-cli
     # ollama
     # start for crafting interpretters
     # jetbrains.clion
@@ -133,7 +132,7 @@ in {
     vscodium
     bind
     fastfetch
-    zed-editor
+    # zed-editor
     jq
     unzip
     go
