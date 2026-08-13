@@ -157,7 +157,7 @@ in {
               "notifications"
               "window-title"
             ];
-            left = ["dashboard" "hyprland-workspaces"];
+            left = ["dashboard" "custom-workspaces"];
             right = ["microphone" "volume" "bluetooth" "network" "cpu" "ram" "brightness" "battery" "weather" "clock"];
           } # this is a 'list' of 'attribute sets', no semi-colons after the closing braces needed
         ];

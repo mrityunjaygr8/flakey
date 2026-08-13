@@ -30,6 +30,8 @@ in {
     # ./nvim.nix
     ../common
     ../../modules/home-manager/hyprland.nix
+    ../../modules/home-manager/river.nix
+    ../../modules/home-manager/wayle-workspaces.nix
     ../../modules/home-manager/opencode.nix
     ../../modules/home-manager/sops.nix
   ];
