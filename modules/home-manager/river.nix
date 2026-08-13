@@ -86,8 +86,8 @@ in {
       ${pkgs.awww}/bin/awww-daemon &
       ${pkgs.wlsunset}/bin/wlsunset -l 18.52 -L 73.85 &
 
-      # Default tiling layout generator.
-      rivercarro &
+      # Default tiling layout generator (ships with river-classic).
+      rivertile &
     '';
   };
 

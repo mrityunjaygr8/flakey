@@ -7,7 +7,8 @@
   # --- Tag / workspace indicator shared by both Hyprland and river sessions.
   # The compositor is chosen at login (GDM), so this adapts at runtime:
   # it reads state via `hyprctl` when Hyprland is running and via
-  # `riverctl` otherwise.
+  # `riverctl` (from river-classic) otherwise.
+  riverctl = "${pkgs.river-classic}/bin/riverctl";
   stateScript = pkgs.writeShellScriptBin "wayle-workspaces" ''
     #!/usr/bin/env bash
     set -euo pipefail
@@ -24,8 +25,8 @@
       done
       printf '%s\n' "''${out# }"
     else
-      focused="$("${pkgs.river}/bin/riverctl" get-focused-tags 2>/dev/null || echo 0)"
-      view="$("${pkgs.river}/bin/riverctl" get-view-tags 2>/dev/null || echo 0)"
+      focused="$(${riverctl} get-focused-tags 2>/dev/null || echo 0)"
+      view="$(${riverctl} get-view-tags 2>/dev/null || echo 0)"
       out=""
       for i in 1 2 3 4; do
         bit=$((1 << (i - 1)))
@@ -52,7 +53,7 @@
     next=$((cur + step))
     if [ "$next" -lt 1 ]; then next=4; fi
     if [ "$next" -gt 4 ]; then next=1; fi
-    "${pkgs.river}/bin/riverctl" set-focused-tags $((1 << (next - 1)))
+    ${riverctl} set-focused-tags $((1 << (next - 1)))
   '';
 
   actionScript = pkgs.writeShellScriptBin "wayle-workspace-action" ''
@@ -72,10 +73,10 @@
           ;;
       esac
     else
-      focused="$("${pkgs.river}/bin/riverctl" get-focused-tags 2>/dev/null || echo 1)"
+      focused="$(${riverctl} get-focused-tags 2>/dev/null || echo 1)"
       case "$action" in
         left-click)
-          "${pkgs.river}/bin/riverctl" set-focused-tags "$focused"
+          ${riverctl} set-focused-tags "$focused"
           ;;
         scroll-up)
           ${cycle}

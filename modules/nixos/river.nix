@@ -8,12 +8,13 @@
   # home-manager module (modules/home-manager/river.nix).
 
   # Official NixOS river module: installs the compositor and registers a
-  # GDM session (pkgs.river ships share/wayland-sessions/river.desktop).
+  # GDM session (pkgs.river-classic ships share/wayland-sessions/river.desktop).
+  # NOTE: use river-classic (monolithic, ships riverctl), NOT mainline river
+  # 0.4.x, which is non-monolithic and dropped riverctl.
   programs.river-classic = {
     enable = true;
-    package = pkgs.river;
+    package = pkgs.river-classic;
     extraPackages = with pkgs; [
-      rivercarro # tiling layout generator (maintained fork of rivertile)
       wlopm # wlr-output-power-management (dpms for swayidle)
       wlsunset
     ];
