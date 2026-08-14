@@ -77,11 +77,9 @@ in {
   home.stateVersion = "23.05";
 
   home.packages = with pkgs; [
-    # (pkgs.callPackage ./../../pkgs/iloader.nix {})
-    # (lib.hiPrio (pkgs.callPackage ./../../pkgs/windsurf/default.nix {inherit inputs;}))
+    iloader
     # jetbrains.idea-community-bin
     typst
-    # inputs.iloader.packages.${pkgs.stdenv.hostPlatform.system}.default
     beamMinimal28Packages.elixir
     bottom
     calibre
