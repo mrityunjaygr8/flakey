@@ -6,7 +6,6 @@
     # You can access packages and modules from different nixpkgs revs
     # at the same time. Here's an working example:
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-    # Also see the 'unstable-packages' overlay at 'overlays/default.nix'.
 
     # iloader
     iloader.url = "github:nab138/iloader/e47555ef240c921e55df969bf9d9e613ef36c454";
@@ -21,9 +20,6 @@
     llm-agents.url = "github:numtide/llm-agents.nix";
     llm-agents.inputs.nixpkgs.follows = "nixpkgs";
     # bun-unstable.url = "github:arch-fan/nixpkgs/bun-1.3.10";
-    opencode.url = "github:anomalyco/opencode?ref=tags/v1.15.4";
-    opencode.inputs.nixpkgs.follows = "nixpkgs";
-    # opencode.inputs.nixpkgs.follows = "bun-unstable";
     disko.url = "github:nix-community/disko";
     disko.inputs.nixpkgs.follows = "nixpkgs";
 
