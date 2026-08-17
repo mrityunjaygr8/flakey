@@ -129,9 +129,11 @@
     zmkbatx
   ];
 
-  hardware.logitech.wireless = {
+  programs.solaar = {
     enable = true;
-    enableGraphical = true;
+    userService = {
+      enable = true;
+    };
   };
 
   # This setups a SSH server. Very important if you're setting up a headless system.
