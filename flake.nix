@@ -7,10 +7,6 @@
     # at the same time. Here's an working example:
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
-    # iloader
-    iloader.url = "github:nab138/iloader/e47555ef240c921e55df969bf9d9e613ef36c454";
-    iloader.inputs.nixpkgs.follows = "nixpkgs";
-
     # Home manager
     home-manager.url = "github:nix-community/home-manager/master";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
@@ -36,7 +32,6 @@
     nixpkgs,
     nixpkgs-master,
     home-manager,
-    iloader,
     sops-nix,
     disko,
     ...
@@ -44,11 +39,8 @@
     inherit (self) outputs;
     # Supported systems for your flake packages, shell, etc.
     systems = [
-      "aarch64-linux"
-      "i686-linux"
       "x86_64-linux"
-      "aarch64-darwin"
-      "x86_64-darwin"
+      # "aarch64-darwin"
     ];
     # This is a function that generates an attribute by calling a function you
     # pass to it, with each system as an argument
