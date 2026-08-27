@@ -14,8 +14,8 @@ local mod = "SUPER"
 local hs = require("hyprsplit")
 hs.config({ num_workspaces = 4, persistent_workspaces = true })
 
-hl.monitor({ output = "", mode = "preferred", position = "auto", scale = "auto" })
-hl.monitor({ output = "DP-2", mode = "preferred", position = "auto", scale = "auto", transform = 3 })
+hl.monitor({ output = "", mode = "preferred", position = "auto-right", scale = "auto" })
+hl.monitor({ output = "DP-2", mode = "preferred", position = "auto-left", scale = "auto", transform = 3 })
 
 hl.curve("myBezier", { type = "bezier", points = { {0.05, 0.9}, {0.1, 1.05} } })
 hl.animation({ leaf = "windows",    enabled = true, speed = 2, bezier = "myBezier" })
