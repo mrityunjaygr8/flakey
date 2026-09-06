@@ -54,6 +54,7 @@ in {
       # basedpyright
       gnumake
       inotify-tools
+      jq
       postgresql
       zip
     ]
@@ -471,8 +472,18 @@ in {
           body = "mkdir -p $argv[1]; and z $argv[1]";
         };
         herdr-sesh = {
-          description = "Fuzzy-attach herdr session or open zoxide dir as new workspace (sesh replacement)";
+          description = "Fuzzy-attach herdr session/workspace or zoxide dir (sesh replacement)";
           body = ''
+            if set -q HERDR_ENV
+              set pick (begin; herdr workspace list 2>/dev/null | jq -r '.result.workspaces[] | "\(.label)\t\(.workspace_id)"'; zoxide query -l; end | fzf)
+              test -z "$pick"; and return
+              set id (string split \t -- "$pick")[2]
+              if test -n "$id"; and herdr workspace focus "$id" >/dev/null 2>&1
+              else if test -d "$pick"
+                herdr workspace create --cwd "$pick" --label (basename "$pick") --focus >/dev/null 2>&1
+              end
+              return
+            end
             set pick (begin; herdr session list 2>/dev/null | tail -n +2 | cut -d" " -f1; zoxide query -l; end | fzf)
             test -z "$pick"; and return
             if not test -d "$pick"
@@ -480,9 +491,7 @@ in {
               return
             end
             if herdr workspace create --cwd "$pick" --label (basename "$pick") --focus >/dev/null 2>&1
-              if not set -q HERDR_ENV
-                herdr
-              end
+              herdr
             else
               herdr --session (basename "$pick")
             end
