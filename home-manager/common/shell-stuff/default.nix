@@ -170,6 +170,16 @@ in {
       enable = true;
       # enableFishIntegration = true;
     };
+    herdr = {
+      enable = true;
+      settings = {
+        keys.prefix = "ctrl+a";
+        keys.split_vertical = ["prefix+v" "prefix+|"];
+        keys.goto = "prefix+s";
+        keys.settings = "prefix+shift+s";
+        terminal.default_shell = "${lib.getExe pkgs.fish}";
+      };
+    };
     tmux = {
       enable = true;
       clock24 = true;
@@ -404,7 +414,8 @@ in {
 
         fish_add_path $HOME/.local/bin
 
-        bind \cs 'sesh connect (sesh list | fzf)'
+        # bind \cs 'sesh connect (sesh list | fzf)'
+        bind \cs 'herdr-sesh'
 
         set DEVENV ${pkgs.devenv}/bin/devenv
         ${pkgs.devenv}/bin/devenv hook fish | source
@@ -458,6 +469,24 @@ in {
         mkdcd = {
           description = "Make a directory tree and enter it";
           body = "mkdir -p $argv[1]; and z $argv[1]";
+        };
+        herdr-sesh = {
+          description = "Fuzzy-attach herdr session or open zoxide dir as new workspace (sesh replacement)";
+          body = ''
+            set pick (begin; herdr session list 2>/dev/null | tail -n +2 | cut -d" " -f1; zoxide query -l; end | fzf)
+            test -z "$pick"; and return
+            if not test -d "$pick"
+              herdr session attach "$pick"
+              return
+            end
+            if herdr workspace create --cwd "$pick" --label (basename "$pick") --focus >/dev/null 2>&1
+              if not set -q HERDR_ENV
+                herdr
+              end
+            else
+              herdr --session (basename "$pick")
+            end
+          '';
         };
         y = {
           description = "Wrapper for yazi to change CWD when exiting";
