@@ -178,6 +178,8 @@ in {
         keys.split_vertical = ["prefix+v" "prefix+|"];
         keys.goto = "prefix+s";
         keys.settings = "prefix+shift+s";
+        ui.sidebar_start_collapsed = true;
+        ui.sidebar_collapsed_mode = "hidden";
         terminal.default_shell = "${lib.getExe pkgs.fish}";
       };
     };
