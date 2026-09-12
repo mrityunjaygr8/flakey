@@ -55,7 +55,7 @@ hl.bind(mod .. " + RETURN", hl.dsp.exec_cmd("ghostty"))
 hl.bind(mod .. " + B", hl.dsp.exec_cmd("firefox"))
 hl.bind(mod .. " + C", hl.dsp.exec_cmd("chromium"))
 hl.bind(mod .. " + SHIFT + L", hl.dsp.exec_cmd("hyprlock"))
-hl.bind("Print", hl.dsp.exec_cmd("grimblast copy area"))
+hl.bind("Print", hl.dsp.exec_cmd("HQF_MODE=window HQF_ACTION=temp hyprquickframe"))
 hl.bind(mod .. " + SHIFT + V", hl.dsp.exec_cmd("ghostty --class=window.clipse.output -e clipse"))
 
 hl.bind(mod .. " + H", hl.dsp.focus({ direction = "left" }))

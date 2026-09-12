@@ -25,6 +25,10 @@
     hyprland.url = "github:hyprwm/Hyprland";
     hyprsplit.url = "github:shezdy/hyprsplit";
     hyprsplit.inputs.hyprland.follows = "hyprland";
+
+    # Quickshell-based screenshot overlay for Hyprland
+    hyprquickframe.url = "github:Ronin-CK/HyprQuickFrame";
+    hyprquickframe.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs = {
