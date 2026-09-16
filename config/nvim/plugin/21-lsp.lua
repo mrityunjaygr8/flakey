@@ -86,6 +86,85 @@ local servers = {
 	},
 }
 
+-- --- effect-tsgo (Effect LSP for TypeScript-Go), opt-in per project ---
+-- Find the nearest ancestor project that has @effect/tsgo installed locally.
+local function effect_tsgo_project_root(bufnr)
+	local name = vim.api.nvim_buf_get_name(bufnr)
+	local dir = name ~= "" and vim.fs.dirname(name) or vim.uv.cwd()
+	while dir do
+		if vim.uv.fs_stat(dir .. "/node_modules/@effect/tsgo/package.json") then
+			return dir
+		end
+		local parent = vim.fs.dirname(dir)
+		if parent == dir or parent == nil then
+			return nil
+		end
+		dir = parent
+	end
+end
+
+-- Resolve the native effect-tsgo binary for a project (cached per root).
+local effect_tsgo_exe_cache = {}
+local function effect_tsgo_exe(root)
+	local cached = effect_tsgo_exe_cache[root]
+	if cached ~= nil then
+		return cached
+	end
+	local bin = vim.fs.joinpath(root, "node_modules", ".bin", "effect-tsgo")
+	if vim.fn.executable(bin) ~= 1 then
+		effect_tsgo_exe_cache[root] = false
+		return false
+	end
+	local res = vim.system({ bin, "get-exe-path" }, { cwd = root, text = true }):wait()
+	local exe = false
+	if res.code == 0 then
+		for line in (res.stdout or ""):gmatch("[^\r\n]+") do
+			line = vim.trim(line)
+			if line ~= "" then
+				exe = line
+			end
+		end
+	else
+		vim.notify("effect-tsgo get-exe-path failed:\n" .. (res.stderr or ""), vim.log.levels.ERROR)
+	end
+	effect_tsgo_exe_cache[root] = exe
+	return exe
+end
+
+local ts_ls_default = vim.lsp.config["ts_ls"]
+
+vim.lsp.config("tsgo", {
+	capabilities = blink.get_lsp_capabilities(),
+	cmd = function(dispatchers, config)
+		local exe = config.root_dir and effect_tsgo_exe(config.root_dir)
+		if not exe then
+			vim.notify("effect-tsgo: could not resolve executable", vim.log.levels.ERROR)
+			return
+		end
+		return vim.lsp.rpc.start({ exe, "--lsp", "--stdio" }, dispatchers)
+	end,
+	root_dir = function(bufnr, on_dir)
+		local root = effect_tsgo_project_root(bufnr)
+		if root then
+			on_dir(root)
+		end
+	end,
+})
+vim.lsp.enable("tsgo")
+
+-- Keep ts_ls as the default, but skip it inside effect-tsgo projects.
+-- If effect-tsgo is present but cannot resolve its binary, fall back to ts_ls
+-- so the project still gets a working TypeScript LSP.
+servers.ts_ls = {
+	root_dir = function(bufnr, on_dir)
+		local root = effect_tsgo_project_root(bufnr)
+		if root and effect_tsgo_exe(root) then
+			return
+		end
+		ts_ls_default.root_dir(bufnr, on_dir)
+	end,
+}
+
 for server, config in pairs(servers) do
 	config.capabilities = blink.get_lsp_capabilities()
 	vim.lsp.config(server, config)
