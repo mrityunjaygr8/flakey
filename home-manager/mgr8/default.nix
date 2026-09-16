@@ -336,8 +336,9 @@ in {
     tealdeer = {
       enable = true;
       settings = {
-        update = {
-          auto_update = false;
+        updates = {
+          auto_update = true;
+          auto_update_interval_hours = 24;
         };
       };
     };
