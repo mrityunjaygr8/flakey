@@ -10,6 +10,13 @@
     #   inherit (pkgs) bun;
     # };
     enableMcpIntegration = true;
+    settings = {
+      # OpenCode auto-discovers a vLLM server at 127.0.0.1:8000 (vLLM's default
+      # port) every 30s via /health + /v1/models. Point that discovery at an
+      # unused port so it stops probing the local Django dev server on 8000.
+      provider.vllm.options.baseURL = "http://127.0.0.1:18099/v1";
+      disabled_providers = ["vllm"];
+    };
     package = pkgs.symlinkJoin {
       name = "op";
       paths = [inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.opencode2];
