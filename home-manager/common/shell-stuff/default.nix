@@ -181,6 +181,7 @@ in {
         ui.sidebar_start_collapsed = true;
         ui.sidebar_collapsed_mode = "hidden";
         terminal.default_shell = "${lib.getExe pkgs.fish}";
+        onboarding = false;
       };
     };
     tmux = {
