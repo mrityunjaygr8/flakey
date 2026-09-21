@@ -77,6 +77,7 @@ in {
   home.stateVersion = "23.05";
 
   home.packages = with pkgs; [
+    amazon-ecr-credential-helper
     iloader
     # jetbrains.idea-community-bin
     typst
