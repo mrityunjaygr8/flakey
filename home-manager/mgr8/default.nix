@@ -127,7 +127,6 @@ in {
     bottom
     html-tidy
     nodejs
-    vscodium
     bind
     fastfetch
     # zed-editor
@@ -154,7 +153,6 @@ in {
     nerd-fonts._0xproto
     nerd-fonts.lilex
     ioskeley-mono.normal-term-NF
-    monaspace
   ];
 
   programs.zed-editor = {
@@ -361,7 +359,6 @@ in {
         font-family = IoskeleyMonoTerm Nerd Font
         # font-family = Geist Mono
         # font-family = Terminess Nerd Font Mono
-        # font-family = Monaspace Krypton Frozen
         # font-family = Lilex Nerd Font
         # font-family = 0xProto Nerd Font Mono
         font-size = 16
