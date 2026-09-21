@@ -85,6 +85,7 @@ in {
     calibre
     # (pkgs.callPackage ./../../pkgs/calibre {})
     awscli2
+    ssm-session-manager-plugin
     bun
     obsidian
     xan
