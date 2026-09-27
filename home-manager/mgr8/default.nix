@@ -153,7 +153,7 @@ in {
     nerd-fonts.jetbrains-mono
     nerd-fonts._0xproto
     nerd-fonts.lilex
-    ioskeley-mono.normal-term-NF
+    ioskeley-mono.term-nf
   ];
 
   programs.zed-editor = {
