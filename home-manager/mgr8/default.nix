@@ -78,7 +78,7 @@ in {
 
   home.packages = with pkgs; [
     amazon-ecr-credential-helper
-    iloader
+    inputs.iloader.packages.${pkgs.system}.default
     # jetbrains.idea-community-bin
     typst
     beamMinimal28Packages.elixir
@@ -357,8 +357,8 @@ in {
   home.file = {
     ".config/ghostty/config" = {
       text = ''
-        font-family = IoskeleyMonoTerm Nerd Font
-        # font-family = Geist Mono
+        # font-family = IoskeleyMonoTerm Nerd Font
+        font-family = Geist Mono
         # font-family = Terminess Nerd Font Mono
         # font-family = Lilex Nerd Font
         # font-family = 0xProto Nerd Font Mono

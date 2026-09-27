@@ -29,6 +29,9 @@
     # Quickshell-based screenshot overlay for Hyprland
     hyprquickframe.url = "github:Ronin-CK/HyprQuickFrame";
     hyprquickframe.inputs.nixpkgs.follows = "nixpkgs";
+
+    iloader.url = "github:nab138/iloader";
+    iloader.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs = {
@@ -37,6 +40,7 @@
     nixpkgs-master,
     home-manager,
     sops-nix,
+    iloader,
     disko,
     ...
   } @ inputs: let
