@@ -83,6 +83,8 @@
   services.xserver.xkb.options = "caps:escape";
 
   services.usbmuxd.enable = true;
+  services.usbmuxd.user = "mgr8";
+  services.usbmuxd.package = pkgs.usbmuxd2;
 
   # Enable CUPS to print documents.
   services.printing.enable = true;
