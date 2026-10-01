@@ -78,7 +78,8 @@ in {
 
   home.packages = with pkgs; [
     amazon-ecr-credential-helper
-    inputs.iloader.packages.${pkgs.system}.default
+    iloader
+    # inputs.iloader.packages.${pkgs.system}.default
     # jetbrains.idea-community-bin
     typst
     beamMinimal28Packages.elixir
