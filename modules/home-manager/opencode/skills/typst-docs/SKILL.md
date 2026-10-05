@@ -75,13 +75,20 @@ Bold-header table with `inset: 6pt` and `stroke: 0.5pt`:
 
 ```typ
 #table(
-  columns: (auto, 1fr, 1fr),
+  columns: (1fr, 1.6fr, 1.6fr),
   inset: 6pt,
   stroke: 0.5pt,
   table.header([*Option*], [*Pros*], [*Cons*]),
   [Row label], [prose], [prose],
 )
 ```
+
+Do **not** use `auto` for a column holding prose or code. `auto` sizes to the
+widest unbreakable run, so one long identifier or sentence makes that column eat
+the page and the `1fr` columns collide. Use proportional widths throughout:
+`(1fr, 1.6fr, 1.6fr)` for pros/cons tables, `(1.2fr, 2fr, 1.2fr)` when the
+middle column is the long one. `auto` is only safe when every cell is short,
+such as a cost table of numbers.
 
 Some existing docs use the lighter style instead:
 `stroke: (y: 0.5pt + luma(200))` with `[*Col*]` cells and no `table.header`.
@@ -99,6 +106,9 @@ hosting/
 ```
 ````
 
+Code blocks wrap at roughly 78 characters, and a wrapped tree looks broken.
+Keep lines shorter than that, or restructure the diagram so nothing runs wide.
+
 ## Typst gotchas (these fail silently)
 
 - Wrap every identifier containing `_` in backticks. Bare `least_outstanding_requests`
@@ -106,7 +116,19 @@ hosting/
 - `$` starts math mode. Write money in backticks (`` `$17` ``) or escape it as `\$17`.
 - `~` is a non-breaking space, not "approximately". Write "about" or "approx.".
 - `#` starts code and `@` starts a reference. Escape as `\#` and `\@` in prose.
+- Inline code does **not** wrap: a long identifier overflows a narrow cell. Add
+  the break rule below whenever cells or narrow columns carry long identifiers.
 - Keep the header block's order; `raw-text` must sit inside `ilm.with(...)`.
+
+Break rule for long inline code (renders it as mono text with a zero-width
+break opportunity after each underscore, used only when the line needs it):
+
+```typ
+#show raw.where(block: false): it => text(
+  font: "Geist Mono", size: 9pt,
+  it.text.replace("_", "_\u{200B}"),
+)
+```
 
 ## Output
 
