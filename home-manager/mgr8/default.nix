@@ -103,7 +103,7 @@ in {
     # opencode
     uv
     trivy
-    pgadmin4-desktopmode
+    # pgadmin4-desktopmode
     shellcheck
     posting
     git-crypt
