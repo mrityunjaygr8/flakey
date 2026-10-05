@@ -10,6 +10,11 @@
     #   inherit (pkgs) bun;
     # };
     enableMcpIntegration = true;
+    skills = ./opencode/skills;
+    context = ''
+      ## Typst documents
+      When creating or editing a `.typ` file, use the `typst-docs` skill.
+    '';
     settings = {
       # OpenCode auto-discovers a vLLM server at 127.0.0.1:8000 (vLLM's default
       # port) every 30s via /health + /v1/models. Point that discovery at an
