@@ -48,7 +48,7 @@ in {
       lazydocker
       fd
       ripgrep
-      sesh
+      # sesh
       geist-font
       ty
       ruff
@@ -521,10 +521,10 @@ in {
       source = ../../../config/nvim;
       recursive = true;
     };
-    sesh = {
-      source = ../../../config/sesh;
-      recursive = true;
-    };
+    # sesh = {
+    #   source = ../../../config/sesh;
+    #   recursive = true;
+    # };
     "fish/themes/Catppuccin Mocha.theme" = {
       source = "${catppuccin-fish}/themes/Catppuccin Mocha.theme";
     };
