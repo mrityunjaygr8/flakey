@@ -502,6 +502,124 @@ in {
             end
           '';
         };
+        wezterm-sesh = {
+          description = "Fuzzy-focus a WezTerm pane or create a workspace at a zoxide directory";
+          body = ''
+            if not set -q WEZTERM_PANE
+              echo "wezterm-sesh: run this from a WezTerm pane" >&2
+              return 1
+            end
+
+            for bin in wezterm jq python3 fzf zoxide
+              if not command -q $bin
+                echo "wezterm-sesh: '$bin' not found on PATH" >&2
+                return 1
+              end
+            end
+
+            set -l picker_pane $WEZTERM_PANE
+            set -l state (wezterm cli list --format json | string collect)
+            if test -z "$state"
+              echo "wezterm-sesh: couldn't query the WezTerm mux" >&2
+              return 1
+            end
+
+            # Fields: key<TAB>search/display label<TAB>cwd<TAB>workspace.
+            # WezTerm reports cwd as a file:// URL; Python decodes it for display and
+            # for exact comparison with zoxide's filesystem paths.
+            set -l rows (
+              printf '%s' "$state" | python3 -c '
+import json, os, sys
+from urllib.parse import unquote, urlparse
+
+picker = os.environ.get("WEZTERM_PANE", "")
+home = os.path.expanduser("~")
+for pane in json.load(sys.stdin):
+    if str(pane.get("pane_id")) == picker:
+        continue
+    raw = pane.get("cwd", "")
+    parsed = urlparse(raw)
+    cwd = unquote(parsed.path) if parsed.scheme == "file" else raw
+    shown_cwd = "~" + cwd[len(home):] if cwd == home or cwd.startswith(home + "/") else cwd
+    tab = pane.get("tab_title") or "tab " + str(pane.get("tab_id", "?"))
+    label = "{} › {} › {} — {}".format(pane.get("workspace", "default"), tab, pane.get("title", "pane"), shown_cwd)
+    print("p:{}\t{}\t{}\t{}".format(pane.get("pane_id"), label, cwd, pane.get("workspace", "default")))
+'
+            )
+
+            set -l open_cwds (printf '%s' "$state" | python3 -c '
+import json, sys
+from urllib.parse import unquote, urlparse
+for pane in json.load(sys.stdin):
+    raw = pane.get("cwd", "")
+    parsed = urlparse(raw)
+    cwd = unquote(parsed.path) if parsed.scheme == "file" else raw
+    if cwd:
+        print(cwd)
+')
+
+            # zoxide query -l is in rank order. Keep the first occurrence, and leave
+            # already-open directories represented by their pane rows above.
+            set -l seen_dirs
+            for dir in (zoxide query -l)
+              if contains -- "$dir" $seen_dirs
+                continue
+              end
+              set -a seen_dirs "$dir"
+              if test -d "$dir"; and not contains -- "$dir" $open_cwds
+                set -l label (string replace -- "$HOME" "~" "$dir")
+                set -l workspace (string replace -- "$HOME" "~" "$dir")
+                set -a rows (printf 'd:%s\t+ %s (new workspace)\t%s\t%s\n' "$dir" "$label" "$dir" "$workspace")
+              end
+            end
+
+            if test (count $rows) -eq 0
+              echo "wezterm-sesh: no panes or zoxide directories to show" >&2
+              wezterm cli kill-pane --pane-id "$picker_pane" >/dev/null 2>&1
+              return 0
+            end
+
+            set -l pick (printf '%s\n' $rows | fzf \
+              --delimiter='\t' \
+              --with-nth=2 \
+              --no-sort \
+              --reverse \
+              --height=100% \
+              --prompt='wezterm › ' \
+              --preview='eza --color=always --icons --group-directories-first --long -- {3} 2>/dev/null || ls -la --color=always -- {3}' \
+              --preview-window='right:45%')
+
+            if test -z "$pick"
+              wezterm cli kill-pane --pane-id "$picker_pane" >/dev/null 2>&1
+              return 0
+            end
+
+            set -l fields (string split \t -- "$pick")
+            set -l key "$fields[1]"
+            set -l target_workspace "$fields[4]"
+            set -l target_pane
+
+            if string match -q 'p:*' -- "$key"
+              set target_pane (string sub -s 3 -- "$key")
+            else
+              set -l dir (string sub -s 3 -- "$key")
+              # Use the path as the workspace name to avoid basename collisions.
+              set target_workspace (string replace -- "$HOME" "~" "$dir")
+              set target_pane (wezterm cli spawn --new-window --workspace "$target_workspace" --cwd "$dir" | string trim)
+            end
+
+            # Ask the GUI to switch workspaces first; cli activate-pane alone only
+            # activates within the currently visible workspace/window.
+            set -l encoded_workspace (printf '%s' "$target_workspace" | base64 -w 0)
+            printf '\033]1337;SetUserVar=WEZTERM_SESH_WORKSPACE=%s\007' "$encoded_workspace"
+            sleep 0.15
+
+            if test -n "$target_pane"
+              wezterm cli activate-pane --pane-id "$target_pane"
+            end
+            wezterm cli kill-pane --pane-id "$picker_pane" >/dev/null 2>&1
+          '';
+        };
         y = {
           description = "Wrapper for yazi to change CWD when exiting";
           body = ''
