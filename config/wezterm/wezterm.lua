@@ -3,6 +3,13 @@ local act = wezterm.action
 
 local config = wezterm.config_builder()
 
+-- Use the GCR agent from the graphical session as WezTerm's mux agent source.
+-- Without this, panes can inherit a WezTerm agent socket with no backing agent.
+local runtime_dir = os.getenv("XDG_RUNTIME_DIR")
+if runtime_dir then
+	config.default_ssh_auth_sock = runtime_dir .. "/gcr/ssh"
+end
+
 -- Explicitly use Fish as the login shell for new WezTerm panes/tabs.
 config.default_prog = { 'fish', '-l' }
 
