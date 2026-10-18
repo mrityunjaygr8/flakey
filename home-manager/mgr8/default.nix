@@ -93,6 +93,8 @@ in {
     xan
     tesseract
     ghostty
+    wezterm
+    kitty
     restic
     nmap
     kazam

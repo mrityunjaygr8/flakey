@@ -454,6 +454,7 @@ in {
         tmux = "tmux -u";
         ll = "eza -alhtaccessed";
         docker-compose = "docker compose";
+        kg = "KITTY_CONFIG_DIRECTORY=/tmp/opencode/kitty-trial kitty";
       };
       shellAbbrs = {
         k = "kubectl";
@@ -520,6 +521,9 @@ in {
     nvim = {
       source = ../../../config/nvim;
       recursive = true;
+    };
+    "wezterm/wezterm.lua" = {
+      source = ../../../config/wezterm/wezterm.lua;
     };
     # sesh = {
     #   source = ../../../config/sesh;
