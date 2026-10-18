@@ -15,6 +15,10 @@
       --replace-fail 'bind=SUPER,m,quit' 'bind=SUPER,m,togglemaximizescreen'
     sed -i '/^bind=.*[Aa][Ll][Tt]/d' "$out"
     sed -i '/^mousebind=NONE,btn_middle,togglemaximizescreen,0$/d' "$out"
+    sed -i \
+      -e '/^bind=CTRL+SHIFT,Left,movewin,-50,+0$/d' \
+      -e '/^bind=CTRL+SHIFT,Right,movewin,+50,+0$/d' \
+      "$out"
   '';
   windowScreenshot = pkgs.writeShellScriptBin "mango-window-screenshot" ''
     set -euo pipefail
