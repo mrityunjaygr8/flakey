@@ -30,6 +30,14 @@
     hyprquickframe.url = "github:Ronin-CK/HyprQuickFrame";
     hyprquickframe.inputs.nixpkgs.follows = "nixpkgs";
 
+    mangowm.url = "github:mangowm/mango";
+    mangowm.inputs.nixpkgs.follows = "nixpkgs";
+
+    waybar-src = {
+      url = "github:Alexays/Waybar";
+      flake = false;
+    };
+
     iloader.url = "github:nab138/iloader";
     iloader.inputs.nixpkgs.follows = "nixpkgs";
   };

@@ -26,6 +26,7 @@
     ../common
     ../../modules/nixos/gnome.nix
     ../../modules/nixos/hyprland.nix
+    ../../modules/nixos/mango.nix
   ];
 
   networking.hostName = "kharkanas";
