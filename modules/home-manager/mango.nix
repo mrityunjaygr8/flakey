@@ -57,6 +57,10 @@
     else if activeMangoShell == "waybar"
     then ""
     else throw "Unsupported Mango shell: ${activeMangoShell}";
+  lockCommand =
+    if activeMangoShell == "dms"
+    then "${config.programs.dank-material-shell.package}/bin/dms ipc call lock lock"
+    else "${pkgs.swaylock}/bin/swaylock -f";
   clipboardHistoryLaunch =
     if activeMangoShell == "dms"
     then "${pkgs.wl-clipboard}/bin/wl-paste --type text --watch ${pkgs.cliphist}/bin/cliphist store &"
@@ -117,7 +121,7 @@ in {
         "SUPER,return,spawn,wezterm start"
         "SUPER,b,spawn,firefox"
         "SUPER,c,spawn,chromium"
-        "SUPER+SHIFT,l,spawn,swaylock"
+        "SUPER+SHIFT,l,spawn,${lockCommand}"
         "NONE,Print,spawn,${windowScreenshot}/bin/mango-window-screenshot"
         "SUPER+SHIFT,v,spawn,ghostty --class=window.clipse.output -e clipse"
         "SUPER+SHIFT,w,spawn,dms ipc call wallpaper next"
@@ -257,7 +261,7 @@ in {
     timeouts = [
       {
         timeout = 900;
-        command = "${pkgs.swaylock}/bin/swaylock -f";
+        command = lockCommand;
       }
       {
         timeout = 1200;
@@ -266,8 +270,8 @@ in {
       }
     ];
     events = {
-      "before-sleep" = "${pkgs.swaylock}/bin/swaylock -f";
-      lock = "${pkgs.swaylock}/bin/swaylock -f";
+      "before-sleep" = lockCommand;
+      lock = lockCommand;
     };
   };
 
