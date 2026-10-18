@@ -115,7 +115,7 @@ in {
         "name:^DP-2$,x:2560,y:0,scale:1,rr:1"
       ];
       bind = [
-        "CTRL,space,spawn,sherlock"
+        "CTRL,space,spawn,dms ipc call spotlight toggle"
         "SUPER,q,killclient"
         "SUPER,v,togglefloating"
         "SUPER,return,spawn,wezterm start"
