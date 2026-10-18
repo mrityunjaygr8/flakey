@@ -94,6 +94,23 @@
         "type": "github"
       }
     },
+    "dank-qml-common": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1791392812,
+        "narHash": "sha256-id6Y5XNO5K3KfXSOsEYVUwiq1ygYGNX5LeKSgHM3GR8=",
+        "owner": "AvengeMedia",
+        "repo": "dank-qml-common",
+        "rev": "1ae722232da7110d26cd2c355b6615e078e94197",
+        "type": "github"
+      },
+      "original": {
+        "owner": "AvengeMedia",
+        "ref": "stable-1.6",
+        "repo": "dank-qml-common",
+        "type": "github"
+      }
+    },
     "disko": {
       "inputs": {
         "nixpkgs": [
@@ -114,6 +131,29 @@
         "type": "github"
       }
     },
+    "dms": {
+      "inputs": {
+        "dank-qml-common": "dank-qml-common",
+        "flake-compat": "flake-compat",
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1791395223,
+        "narHash": "sha256-yDBOoDewH8LwfsZrG4x5vaCstmp6w2vV70j9hC6dIuk=",
+        "owner": "AvengeMedia",
+        "repo": "DankMaterialShell",
+        "rev": "4a87e8227daf0840b3376fd5e7f891f5900165a6",
+        "type": "github"
+      },
+      "original": {
+        "owner": "AvengeMedia",
+        "ref": "stable",
+        "repo": "DankMaterialShell",
+        "type": "github"
+      }
+    },
     "flake-compat": {
       "flake": false,
       "locked": {
@@ -131,6 +171,22 @@
       }
     },
     "flake-compat_2": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1767039857,
+        "narHash": "sha256-vNpUSpF5Nuw8xvDLj2KCwwksIbjua2LZCqhV1LNRDns=",
+        "owner": "NixOS",
+        "repo": "flake-compat",
+        "rev": "5edf11c44bc78a0d334f6334cdaf7d60d732daab",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "repo": "flake-compat",
+        "type": "github"
+      }
+    },
+    "flake-compat_3": {
       "flake": false,
       "locked": {
         "lastModified": 1767039857,
@@ -610,7 +666,7 @@
     "iloader": {
       "inputs": {
         "bun2nix": "bun2nix",
-        "flake-compat": "flake-compat_2",
+        "flake-compat": "flake-compat_3",
         "nixpkgs": [
           "nixpkgs"
         ],
@@ -756,9 +812,29 @@
         "type": "github"
       }
     },
+    "noctalia": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1792284201,
+        "narHash": "sha256-WDPv4+G1RvqF+fc6+Ed/asNwftA/6Kc0G6avgMyOKHU=",
+        "owner": "noctalia-dev",
+        "repo": "noctalia",
+        "rev": "ce0e90c7e668401e800b05c09cd96a69ba4a4487",
+        "type": "github"
+      },
+      "original": {
+        "owner": "noctalia-dev",
+        "repo": "noctalia",
+        "type": "github"
+      }
+    },
     "pre-commit-hooks": {
       "inputs": {
-        "flake-compat": "flake-compat",
+        "flake-compat": "flake-compat_2",
         "nixpkgs": [
           "hyprland",
           "nixpkgs"
@@ -781,6 +857,7 @@
     "root": {
       "inputs": {
         "disko": "disko",
+        "dms": "dms",
         "home-manager": "home-manager",
         "hyprland": "hyprland",
         "hyprquickframe": "hyprquickframe",
@@ -790,6 +867,7 @@
         "mangowm": "mangowm",
         "nixpkgs": "nixpkgs_3",
         "nixpkgs-master": "nixpkgs-master",
+        "noctalia": "noctalia",
         "sops-nix": "sops-nix",
         "waybar-src": "waybar-src"
       }

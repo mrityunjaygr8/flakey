@@ -1,9 +1,14 @@
 {
+  config,
   inputs,
   pkgs,
   ...
 }: let
-  mangoPackage = inputs.mangowm.packages.${pkgs.stdenv.hostPlatform.system}.mango;
+  # Keep the desktop shell choice singular: install all candidates, run one.
+  activeMangoShell = "dms"; # "noctalia", "dms", or "waybar"
+  mangoPackage = pkgs.callPackage ../../pkgs/mango-dms-compat.nix {
+    mango = inputs.mangowm.packages.${pkgs.stdenv.hostPlatform.system}.mango;
+  };
   waybarPackage = pkgs.waybar.overrideAttrs (old: {
     src = inputs.waybar-src;
     mesonFlags = (old.mesonFlags or []) ++ ["-Dmango=true" "-Dwwan=disabled" "-Dcava=disabled"];
@@ -18,6 +23,8 @@
     sed -i \
       -e '/^bind=CTRL+SHIFT,Left,movewin,-50,+0$/d' \
       -e '/^bind=CTRL+SHIFT,Right,movewin,+50,+0$/d' \
+      -e '/^bind=CTRL,Left,viewtoleft_have_client,0$/d' \
+      -e '/^bind=CTRL,Right,viewtoright_have_client,0$/d' \
       "$out"
   '';
   windowScreenshot = pkgs.writeShellScriptBin "mango-window-screenshot" ''
@@ -42,15 +49,39 @@
           ${mangoPackage}/bin/mmsg dispatch "$action,$monitor"
         done
   '';
+  shellLaunch =
+    if activeMangoShell == "noctalia"
+    then "${config.programs.noctalia.package}/bin/noctalia --daemon"
+    else if activeMangoShell == "dms"
+    then "${config.programs.dank-material-shell.package}/bin/dms run"
+    else if activeMangoShell == "waybar"
+    then ""
+    else throw "Unsupported Mango shell: ${activeMangoShell}";
+  clipboardHistoryLaunch =
+    if activeMangoShell == "dms"
+    then "${pkgs.wl-clipboard}/bin/wl-paste --type text --watch ${pkgs.cliphist}/bin/cliphist store &"
+    else "";
 in {
   imports = [
     inputs.mangowm.hmModules.mango
+    inputs.noctalia.homeModules.default
+    inputs.dms.homeModules.dank-material-shell
   ];
+
+  programs.noctalia = {
+    enable = true;
+    systemd.enable = false;
+  };
+
+  programs.dank-material-shell = {
+    enable = true;
+    systemd.enable = false;
+  };
 
   wayland.windowManager.mango = {
     enable = true;
     package = mangoPackage;
-    topPrefixes = ["source"];
+    topPrefixes = ["source" "source_optional"];
     systemd.variables = [
       "DISPLAY"
       "WAYLAND_DISPLAY"
@@ -63,6 +94,16 @@ in {
     ];
     settings = {
       source = "${mangoDefaultConfig}";
+      source_optional = [
+        "~/.config/mango/dms/colors.conf"
+        "~/.config/mango/dms/layout.conf"
+      ];
+      env = [
+        "QT_QPA_PLATFORM,wayland"
+        "ELECTRON_OZONE_PLATFORM_HINT,auto"
+        "QT_QPA_PLATFORMTHEME,gtk3"
+      ];
+      auto_reload_config = 1;
       cursor_theme = "BreezeX-RosePine-Linux";
       cursor_size = 32;
       monitor_rule = [
@@ -73,13 +114,13 @@ in {
         "CTRL,space,spawn,sherlock"
         "SUPER,q,killclient"
         "SUPER,v,togglefloating"
-        "SUPER,return,spawn,ghostty"
+        "SUPER,return,spawn,wezterm start"
         "SUPER,b,spawn,firefox"
         "SUPER,c,spawn,chromium"
         "SUPER+SHIFT,l,spawn,swaylock"
         "NONE,Print,spawn,${windowScreenshot}/bin/mango-window-screenshot"
         "SUPER+SHIFT,v,spawn,ghostty --class=window.clipse.output -e clipse"
-        "SUPER+SHIFT,w,spawn,random-wallpaper"
+        "SUPER+SHIFT,w,spawn,dms ipc call wallpaper next"
         "SUPER,h,focusdir,left"
         "SUPER,l,focusdir,right"
         "SUPER,j,focusdir,down"
@@ -117,14 +158,21 @@ in {
         "is_floating:1,app_id:window.clipse.output"
       ];
     };
-    autostart_sh = "${pkgs.awww}/bin/awww-daemon";
+    autostart_sh = ''
+      ${clipboardHistoryLaunch}
+      ${shellLaunch}${
+        if shellLaunch == ""
+        then ""
+        else " &"
+      }
+    '';
   };
 
   programs.waybar = {
     enable = true;
     package = waybarPackage;
     systemd = {
-      enable = true;
+      enable = activeMangoShell == "waybar";
       targets = ["mango-session.target"];
     };
     settings.mainBar = {
@@ -235,7 +283,9 @@ in {
   };
 
   home.packages = with pkgs; [
+    cliphist
     rose-pine-cursor
     swaylock
+    wl-clipboard
   ];
 }

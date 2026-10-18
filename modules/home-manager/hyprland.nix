@@ -98,6 +98,7 @@ in {
   systemd.user.services.wallpaper-changer = {
     Unit = {
       Description = "Change wallpaper periodically";
+      PartOf = ["hyprland-session.target"];
     };
     Service = {
       Type = "oneshot";
@@ -108,6 +109,7 @@ in {
   systemd.user.timers.wallpaper-changer = {
     Unit = {
       Description = "Timer for changing wallpaper";
+      PartOf = ["hyprland-session.target"];
     };
     Timer = {
       # Run 1 second after boot/login
@@ -117,7 +119,7 @@ in {
       Unit = "wallpaper-changer.service";
     };
     Install = {
-      WantedBy = ["timers.target"];
+      WantedBy = ["hyprland-session.target"];
     };
   };
   services.hypridle = {
