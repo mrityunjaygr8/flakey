@@ -21,8 +21,25 @@ config.scrollback_lines = 10000
 
 -- Keep the tab bar visible: tabs are the tmux-window-like layer, panes are splits.
 config.enable_tab_bar = true
-config.use_fancy_tab_bar = false
+config.use_fancy_tab_bar = true
 config.hide_tab_bar_if_only_one_tab = false
+
+-- The fancy tab bar draws its own chrome from the window frame colours, so tint
+-- it to match Ayu Mirage instead of falling back to WezTerm's default purple.
+config.window_frame = {
+	font = wezterm.font({ family = "Lilex Nerd Font Mono", weight = "Bold" }),
+	font_size = 12.0,
+	active_titlebar_bg = "#1f2430",
+	inactive_titlebar_bg = "#1f2430",
+	active_titlebar_fg = "#cbccc6",
+	inactive_titlebar_fg = "#707a8c",
+	active_titlebar_border_bottom = "#2a3040",
+	inactive_titlebar_border_bottom = "#1f2430",
+	button_fg = "#707a8c",
+	button_bg = "#1f2430",
+	button_hover_fg = "#cbccc6",
+	button_hover_bg = "#2a3040",
+}
 
 local smart_splits = wezterm.plugin.require("https://github.com/smart-splits-nvim/backend-wezterm")
 
@@ -88,6 +105,67 @@ wezterm.on('user-var-changed', function(window, pane, name, value)
     wezterm.home_dir .. '/.nix-profile/bin/paplay',
     alert_sound,
   })
+end)
+
+-- Copy mode is a pane-local key table, so entering it by accident (Ctrl+Shift+X,
+-- or the plain Ctrl+X alias) leaves the terminal looking normal while typing no
+-- longer reaches Fish. Flag it in two places, since either can be missed:
+--   1. the tab itself turns amber (works with the fancy tab bar),
+--   2. a badge on the right of the tab bar.
+-- The fancy tab bar ignores color-scheme tab_bar colors but does honour
+-- format-tab-title styling, hence the amber tab below.
+config.status_update_interval = 500
+
+local mode_colors = {
+	copy_mode = { bg = "#ffb454", fg = "#1b1f27", label = " COPY " },
+	search_mode = { bg = "#95e6cb", fg = "#1b1f27", label = " SEARCH " },
+}
+
+-- Fancy tab bar calls this twice per tab, so keep it cheap and side-effect free.
+wezterm.on('format-tab-title', function(tab, tabs, panes, config, hover, max_width)
+	local title = tab.tab_title
+	if not title or #title == 0 then
+		title = tab.active_pane.title
+	end
+	-- Copy mode prefixes the pane title with "Copy mode: "; strip it so the
+	-- badge below carries that meaning instead of duplicating it.
+	title = title:gsub('^Copy mode: ', '')
+
+	local mode = nil
+	for _, pane in ipairs(tab.panes) do
+		local pane_title = pane.title or ''
+		if pane_title:match('^Copy mode: ') then
+			mode = mode_colors.copy_mode
+			break
+		elseif pane_title:match('^Search: ') then
+			mode = mode_colors.search_mode
+		end
+	end
+
+	if mode then
+		return {
+			{ Background = { Color = mode.bg } },
+			{ Foreground = { Color = mode.fg } },
+			{ Attribute = { Intensity = 'Bold' } },
+			{ Text = ' ' .. title .. ' ' },
+		}
+	end
+end)
+
+wezterm.on('update-status', function(window, pane)
+	local active = window:active_key_table()
+	local mode = mode_colors[active or '']
+	if not mode then
+		window:set_right_status('')
+		return
+	end
+
+	window:set_right_status(wezterm.format({
+		{ Background = { Color = mode.bg } },
+		{ Foreground = { Color = mode.fg } },
+		{ Attribute = { Intensity = 'Bold' } },
+		{ Text = mode.label },
+	}))
 end)
 
 local extra_keys = {

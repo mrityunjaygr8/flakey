@@ -27,13 +27,6 @@
       -e '/^bind=CTRL,Right,viewtoright_have_client,0$/d' \
       "$out"
   '';
-  windowScreenshot = pkgs.writeShellScriptBin "mango-window-screenshot" ''
-    set -euo pipefail
-    mkdir -p "$HOME/Pictures/Screenshots"
-    geometry=$(${mangoPackage}/bin/mmsg get focusing-client | ${pkgs.jq}/bin/jq -r '"\\(.x),\\(.y) \\(.width)x\\(.height)"')
-    [ -z "$geometry" ] && exit 1
-    ${pkgs.grim}/bin/grim -g "$geometry" "$HOME/Pictures/Screenshots/$(date +%Y%m%d%H%M%S).png"
-  '';
   monitorPower = pkgs.writeShellScriptBin "mango-monitor-power" ''
     set -euo pipefail
     action="''${1:?expected sleep_monitor or wakeup_monitor}"
@@ -57,9 +50,19 @@
     else if activeMangoShell == "waybar"
     then ""
     else throw "Unsupported Mango shell: ${activeMangoShell}";
+  dmsPackage = config.programs.dank-material-shell.package;
+  screenshotPickerQml = pkgs.writeText "mango-screenshot-picker.qml" (
+    builtins.replaceStrings
+    ["@DMS_EXECUTABLE@"]
+    ["${dmsPackage}/bin/dms"]
+    (builtins.readFile ../../config/quickshell/screenshot-picker.qml)
+  );
+  screenshotPicker = pkgs.writeShellScriptBin "mango-screenshot-picker" ''
+    exec ${pkgs.quickshell}/bin/quickshell -p ${screenshotPickerQml}
+  '';
   lockCommand =
     if activeMangoShell == "dms"
-    then "${config.programs.dank-material-shell.package}/bin/dms ipc call lock lock"
+    then "${dmsPackage}/bin/dms ipc call lock lock"
     else "${pkgs.swaylock}/bin/swaylock -f";
   clipboardHistoryLaunch =
     if activeMangoShell == "dms"
@@ -118,11 +121,14 @@ in {
         "CTRL,space,spawn,dms ipc call spotlight toggle"
         "SUPER,q,killclient"
         "SUPER,v,togglefloating"
+        # Keyboard route to the overview; Mango otherwise only exposes it via
+        # four-finger touchpad swipes. `grave` is the key left of 1.
+        "SUPER,grave,toggleoverview,"
         "SUPER,return,spawn,wezterm start"
         "SUPER,b,spawn,firefox"
         "SUPER,c,spawn,chromium"
         "SUPER+SHIFT,l,spawn,${lockCommand}"
-        "NONE,Print,spawn,${windowScreenshot}/bin/mango-window-screenshot"
+        "NONE,Print,spawn,${screenshotPicker}/bin/mango-screenshot-picker"
         "SUPER+SHIFT,v,spawn,ghostty --class=window.clipse.output -e clipse"
         "SUPER+SHIFT,w,spawn,dms ipc call wallpaper next"
         "SUPER,h,focusdir,left"
@@ -160,6 +166,15 @@ in {
       ];
       window_rule = [
         "is_floating:1,app_id:window.clipse.output"
+      ];
+      # The screenshot picker hides itself and then captures. Mango's default
+      # close animation is 800ms (animation_duration_close), which would still
+      # be fading the overlay out when dms screenshot grabs the frame, so the
+      # picker would appear in its own screenshot. Drop the animations for this
+      # layer only; the surface disappears immediately.
+      layer_rule = [
+        "animation_type_open:none,layer_name:mango-screenshot-picker"
+        "animation_type_close:none,layer_name:mango-screenshot-picker"
       ];
     };
     autostart_sh = ''
@@ -288,6 +303,7 @@ in {
 
   home.packages = with pkgs; [
     cliphist
+    quickshell
     rose-pine-cursor
     swaylock
     wl-clipboard
