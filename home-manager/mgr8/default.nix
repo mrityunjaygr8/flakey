@@ -29,6 +29,7 @@ in {
     # You can also split up your configuration and import pieces of it here:
     # ./nvim.nix
     ../common
+    ../../modules/home-manager/dank-material-shell.nix
     ../../modules/home-manager/hyprland.nix
     ../../modules/home-manager/mango.nix
     ../../modules/home-manager/opencode.nix

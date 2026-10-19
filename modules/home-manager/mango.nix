@@ -72,15 +72,9 @@ in {
   imports = [
     inputs.mangowm.hmModules.mango
     inputs.noctalia.homeModules.default
-    inputs.dms.homeModules.dank-material-shell
   ];
 
   programs.noctalia = {
-    enable = true;
-    systemd.enable = false;
-  };
-
-  programs.dank-material-shell = {
     enable = true;
     systemd.enable = false;
   };
