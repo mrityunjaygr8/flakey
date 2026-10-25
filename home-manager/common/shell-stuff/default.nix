@@ -579,10 +579,13 @@ for pane in json.load(sys.stdin):
               return 0
             end
 
+            # Sort by fzf match score so a contiguous/closer match outranks a
+            # scattered one; --tiebreak=index keeps the pane-first, zoxide-rank
+            # order (and the untouched order on an empty query) for equal scores.
             set -l pick (printf '%s\n' $rows | fzf \
               --delimiter='\t' \
               --with-nth=2 \
-              --no-sort \
+              --tiebreak=index \
               --reverse \
               --height=100% \
               --prompt='wezterm › ' \
