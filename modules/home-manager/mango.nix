@@ -4,15 +4,9 @@
   pkgs,
   ...
 }: let
-  # Keep the desktop shell choice singular: install all candidates, run one.
-  activeMangoShell = "dms"; # "noctalia", "dms", or "waybar"
   mangoPackage = pkgs.callPackage ../../pkgs/mango-dms-compat.nix {
     mango = inputs.mangowm.packages.${pkgs.stdenv.hostPlatform.system}.mango;
   };
-  waybarPackage = pkgs.waybar.overrideAttrs (old: {
-    src = inputs.waybar-src;
-    mesonFlags = (old.mesonFlags or []) ++ ["-Dmango=true" "-Dwwan=disabled" "-Dcava=disabled"];
-  });
   mangoDefaultConfig = pkgs.runCommand "mango-default-config.conf" {} ''
     cp ${mangoPackage}/etc/mango/config.conf "$out"
     substituteInPlace "$out" \
@@ -42,14 +36,6 @@
           ${mangoPackage}/bin/mmsg dispatch "$action,$monitor"
         done
   '';
-  shellLaunch =
-    if activeMangoShell == "noctalia"
-    then "${config.programs.noctalia.package}/bin/noctalia --daemon"
-    else if activeMangoShell == "dms"
-    then "${config.programs.dank-material-shell.package}/bin/dms run"
-    else if activeMangoShell == "waybar"
-    then ""
-    else throw "Unsupported Mango shell: ${activeMangoShell}";
   dmsPackage = config.programs.dank-material-shell.package;
   screenshotPickerQml = pkgs.writeText "mango-screenshot-picker.qml" (
     builtins.replaceStrings
@@ -60,24 +46,13 @@
   screenshotPicker = pkgs.writeShellScriptBin "mango-screenshot-picker" ''
     exec ${pkgs.quickshell}/bin/quickshell -p ${screenshotPickerQml}
   '';
-  lockCommand =
-    if activeMangoShell == "dms"
-    then "${dmsPackage}/bin/dms ipc call lock lock"
-    else "${pkgs.swaylock}/bin/swaylock -f";
-  clipboardHistoryLaunch =
-    if activeMangoShell == "dms"
-    then "${pkgs.wl-clipboard}/bin/wl-paste --type text --watch ${pkgs.cliphist}/bin/cliphist store &"
-    else "";
+  lockCommand = "${dmsPackage}/bin/dms ipc call lock lock";
+  clipboardHistoryLaunch = "${pkgs.wl-clipboard}/bin/wl-paste --type text --watch ${pkgs.cliphist}/bin/cliphist store &";
+  shellLaunch = "${dmsPackage}/bin/dms run";
 in {
   imports = [
     inputs.mangowm.hmModules.mango
-    inputs.noctalia.homeModules.default
   ];
-
-  programs.noctalia = {
-    enable = true;
-    systemd.enable = false;
-  };
 
   wayland.windowManager.mango = {
     enable = true;
@@ -173,94 +148,7 @@ in {
     };
     autostart_sh = ''
       ${clipboardHistoryLaunch}
-      ${shellLaunch}${
-        if shellLaunch == ""
-        then ""
-        else " &"
-      }
-    '';
-  };
-
-  programs.waybar = {
-    enable = true;
-    package = waybarPackage;
-    systemd = {
-      enable = activeMangoShell == "waybar";
-      targets = ["mango-session.target"];
-    };
-    settings.mainBar = {
-      layer = "top";
-      position = "top";
-      height = 32;
-      modules-left = ["mango/workspaces"];
-      modules-center = ["clock"];
-      modules-right = ["pulseaudio" "network" "cpu" "memory" "tray"];
-
-      "mango/workspaces" = {
-        format = "{icon}";
-        "format-icons" = {
-          "1" = "1";
-          "2" = "2";
-          "3" = "3";
-          "4" = "4";
-          active = "●";
-          default = "○";
-          urgent = "!";
-          empty = "·";
-        };
-        "on-click" = "activate";
-        "on-click-right" = "toggle";
-      };
-      clock = {
-        format = "{:%H:%M:%S}";
-        "tooltip-format" = "{:%A, %B %d, %Y}";
-      };
-      pulseaudio = {
-        format = "{icon} {volume}%";
-        "format-muted" = "muted";
-        "format-icons" = {
-          default = ["♪"];
-        };
-      };
-      network = {
-        "format-wifi" = "Wi-Fi {essid}";
-        "format-ethernet" = "Ethernet";
-        "format-disconnected" = "Offline";
-      };
-      cpu.format = "CPU {usage}%";
-      memory.format = "RAM {percentage}%";
-    };
-    style = ''
-      * {
-        border: none;
-        border-radius: 0;
-        font-family: "Geist Mono";
-        font-size: 13px;
-        min-height: 0;
-      }
-
-      window#waybar {
-        background: #1e1e2e;
-        color: #cdd6f4;
-      }
-
-      #workspaces button {
-        color: #cdd6f4;
-        padding: 0 8px;
-      }
-
-      #workspaces button.active {
-        color: #89b4fa;
-      }
-
-      #clock,
-      #pulseaudio,
-      #network,
-      #cpu,
-      #memory,
-      #tray {
-        padding: 0 8px;
-      }
+      ${shellLaunch} &
     '';
   };
 
@@ -299,7 +187,6 @@ in {
     cliphist
     quickshell
     rose-pine-cursor
-    swaylock
     wl-clipboard
   ];
 }
