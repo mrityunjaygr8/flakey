@@ -121,7 +121,7 @@ in {
     kubectl
     ibmcloud-cli
     kubernetes-helm
-    azure-cli
+    # azure-cli
     # beekeeper-studio
     opentofu
     # httpie-desktop
