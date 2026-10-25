@@ -84,6 +84,7 @@ in {
     # inputs.iloader.packages.${pkgs.system}.default
     # jetbrains.idea-community-bin
     typst
+    inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.claude-desktop
     beamMinimal28Packages.elixir
     bottom
     calibre
