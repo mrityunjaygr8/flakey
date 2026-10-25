@@ -118,7 +118,7 @@ in {
         # Keyboard route to the overview; Mango otherwise only exposes it via
         # four-finger touchpad swipes. `grave` is the key left of 1.
         "SUPER,grave,toggleoverview,"
-        "SUPER,return,spawn,wezterm start"
+        "SUPER,return,spawn,wezterm start --always-new-process"
         "SUPER,b,spawn,firefox"
         "SUPER,c,spawn,chromium"
         "SUPER+SHIFT,l,spawn,${lockCommand}"
