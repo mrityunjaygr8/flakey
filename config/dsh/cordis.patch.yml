@@ -1,0 +1,16 @@
+# Home-level deployer patch, applied by dsh after every profile layer.
+#
+# Models are intentionally NOT pinned here: a home patch outranks the profile
+# patch, and dsh's config editor refuses to save a model choice that a home
+# patch overrides. Pick any model with /model (or the Web UI) and it persists
+# in that profile's own cordis.patch.yml.
+#
+# Endpoints, protocols and the model catalog come from dsh's bundled pi-ai
+# catalog, so every OpenCode Go model and its per-model API stay available.
+- id: llm-pi-ai
+  name: "@deepseek-ai/dsh-llm-pi-ai"
+  config:
+    providers:
+      opencode-go:
+        displayName: OpenCode Go
+        apiKeyEnv: OPENCODE_API_KEY
