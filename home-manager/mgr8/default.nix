@@ -338,6 +338,30 @@ in {
   # };
 
   programs = {
+    ssh = {
+      enable = true;
+      enableDefaultConfig = false;
+      settings = {
+        # AceCloud Mumbai bastion (public entry point)
+        bastion = {
+          HostName = "103.189.172.248";
+          User = "ubuntu";
+          IdentityFile = "~/.ssh/vlcm-acecloud.pem";
+          ServerAliveInterval = 30;
+          StrictHostKeyChecking = "accept-new";
+        };
+        # VLCM GPU spot instance (private; reached through the bastion)
+        spot = {
+          HostName = "10.20.1.150";
+          User = "ubuntu";
+          IdentityFile = "~/.ssh/vlcm-acecloud.pem";
+          ProxyJump = "bastion";
+          ServerAliveInterval = 30;
+          StrictHostKeyChecking = "accept-new";
+        };
+      };
+    };
+
     home-manager = {
       enable = true;
     };
