@@ -347,14 +347,14 @@ Make the current Mango layout inspectable without a touchpad or manual `mmsg` ca
 - The active compositor is Mango (`mangowm`), declared in `modules/home-manager/mango.nix` under `wayland.windowManager.mango`. Runtime config resolves to `~/.config/mango/config.conf`, which sources the Nix-generated `mango-default-config.conf` plus DMS `source_optional` files.
 - Layout per tag is only visible via `mmsg get all-monitors` / `mmsg get all-tags`, or incidentally in the DMS/waybar status bar. Layout symbols (`mmsg get layouts`): `T` tile, `S` scroller, `G` grid, `M` monocle, `K` deck, `CT` center_tile, `RT` right_tile, `VS` vertical_scroller, `VT` vertical_tile, `VG` vertical_grid, `VK` vertical_deck, `DW` dwindle, `F` fair, `VF` vertical_fair.
 - Mango has a full overview (`toggleoverview`, `enter_overview`, `leave_overview`), but it is bound only to 4-finger touchpad swipes (`gesturebind=none,up,4,enteroverview`, `gesturebind=none,down,4,leaveoverview`). There is no keyboard binding.
-- Mango's own default `SUPER+h/j/k/l` maps to `focusdir`; WezTerm's smart-splits config in `config/wezterm/wezterm.lua` sets pane resize to `META` (an alias of `SUPER`) `+ hjkl`. Mango consumes those chords globally first, so the resize bindings never reach WezTerm.
+- Mango's own default `SUPER+h/j/k/l` maps to `focusdir`; WezTerm's smart-splits config in `config/wezterm/wezterm.lua` used to set pane resize to `META` (an alias of `SUPER`) `+ hjkl`, which Mango consumed globally before WezTerm saw them. Resize now uses `CTRL|SHIFT + hjkl` (workstream 8 may revisit for ergonomics).
 
 ### Proposed changes
 
 - Add a keyboard binding for the overview, e.g. `bind=SUPER,grave,toggleoverview,` in the mango module (confirm the key is free first), so the layout can be popped up on demand.
 - Optionally add or confirm a layout-cycle binding that also surfaces the resulting layout symbol (`SUPER+n` is already `switch_layout`); the symbol is what the overview and status bar should agree on.
 - Optionally add an active-layout-symbol indicator to the DMS shell or the `mango/workspaces` waybar module.
-- Resolve the smart-splits collision: move the WezTerm pane-resize modifier off `META`/`SUPER` (e.g. `CTRL|SHIFT` or `ALT`), or explicitly align the Mango and WezTerm layers so one owner per chord is clear.
+- ~~Resolve the smart-splits collision~~: done — the WezTerm pane-resize modifier moved off `META`/`SUPER` to `CTRL|SHIFT`. Workstream 8 still wants to judge that chord on the Corne's hand usage.
 
 ### Implementation phases
 
@@ -368,7 +368,7 @@ Make the current Mango layout inspectable without a touchpad or manual `mmsg` ca
 
 - **Done:** `SUPER,grave,toggleoverview,` added to the bind list in `modules/home-manager/mango.nix`. `grave` was verified free in the Mango defaults, the module bind list, and DMS settings.
 - **Done:** Layout-symbol indicator enabled by adding the `layout` widget id to `barConfigs[0].rightWidgets` in the runtime `~/.config/DankMaterialShell/settings.json`. DMS ships a Mango-aware `DWLLayout.qml` that reads `MangoService.getOutputState(name).layoutSymbol`; `layout_symbol` was confirmed populated live from `mmsg`. This was applied to the runtime file only (backup at `settings.json.bak-*`) because `settings.json` is still runtime-owned — see workstream 9 before making it declarative.
-- **Deferred by decision:** the smart-splits `META`→`ALT` change is intentionally *not* made yet. Keybind changes across Mango/WezTerm/DMS are to be decided holistically under workstream 8 rather than piecemeal here.
+- **Done:** smart-splits pane resize moved from `META` to `CTRL|SHIFT` in `config/wezterm/wezterm.lua` (Mango owns `SUPER+hjkl` for `focusdir`). WezTerm's `show-keys` confirms the plugin's `Ctrl+Shift+hjkl` callbacks are registered; the GCR `default_ssh_auth_sock` setting was left intact. Workstream 8 may still replace this chord for hand ergonomics.
 - **Related:** per-output default layout by orientation is broken out into workstream 10.
 
 ### Risks and decisions
@@ -519,7 +519,7 @@ Iterate the Mango, WezTerm, and DMS keybindings so common actions stop requiring
 - Chords that are awkward because mods and key are same-hand:
   - Mango: `SUPER+SHIFT,{a,s,d,f,1..4,o,l,v,w}`, `SUPER+CTRL,{a,s,d,f}`, `CTRL+SHIFT,{Up,Down}`.
   - WezTerm: `CTRL|SHIFT` (tabs, sesh, backspace), `CTRL|ALT` (split), `CTRL|SHIFT|ALT` defaults (adjust pane size), `Ctrl+Shift+W/T/S`.
-  - smart-splits: `CTRL` move / `META` resize (and the `META`=`SUPER` collision from workstream 4).
+  - smart-splits: `CTRL` move / `CTRL|SHIFT` resize (the `META`=`SUPER` collision from workstream 4 is fixed, but this chord is exactly the same-hand pattern this workstream wants to remove).
 - Holding `LCTRL`+`LSHFT` on the left pinky cluster while pressing a left-hand letter is the specific strain to remove.
 
 ### Proposed changes

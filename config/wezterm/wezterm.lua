@@ -56,7 +56,10 @@ smart_splits.apply_to_config(config, {
 
 	modifiers = {
 		move = "CTRL", -- e.g. CTRL+h to move left
-		resize = "META", -- e.g. META+h to resize left
+		-- Not META/SUPER: Mango consumes SUPER+hjkl globally for focusdir, so
+		-- resize chords never reached WezTerm. CTRL|SHIFT is otherwise free
+		-- (the other CTRL|SHIFT binds use s/t/w/Tab/Enter/arrows).
+		resize = "CTRL|SHIFT", -- e.g. CTRL+SHIFT+h to resize left
 	},
 
 	-- what happens when there's no WezTerm pane in that direction: both a *direct* keypress in a
