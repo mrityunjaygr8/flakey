@@ -359,6 +359,13 @@ in {
           ServerAliveInterval = 30;
           StrictHostKeyChecking = "accept-new";
         };
+        # NixOS LAN box (k3s control-plane node)
+        arr = {
+          HostName = "192.168.1.193";
+          User = "arr";
+          ServerAliveInterval = 30;
+          StrictHostKeyChecking = "accept-new";
+        };
       };
     };
 
