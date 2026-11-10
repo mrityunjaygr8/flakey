@@ -529,9 +529,39 @@ in {
             # for exact comparison with zoxide's filesystem paths.
             set -l rows (
               printf '%s' "$state" | python3 -c '
-import json, os, sys
+import json, os, re, subprocess, sys
 from urllib.parse import unquote, urlparse
 
+ACCENT = "\x1b[38;2;255;180;84m"  # Ayu Mirage amber, matches window_frame
+RESET = "\x1b[0m"
+
+# Agent binaries are nix wrappers, so argv[0] looks like .opencode2-wrapped_ or
+# .pi-wrapped rather than the plain command name.
+AGENT_RE = re.compile(r"^\.?(opencode\d*|pi|omp|dsh)([-_.][A-Za-z0-9_]*)?$")
+
+def agents_by_tty():
+    """pane tty (e.g. pts/8) -> agent name, from the processes on that tty."""
+    found = {}
+    try:
+        out = subprocess.run(
+            ["ps", "-eo", "tty=,comm=,args="],
+            capture_output=True, text=True, timeout=2,
+        ).stdout
+    except Exception:
+        return found
+    for line in out.splitlines():
+        parts = line.split(None, 2)
+        if len(parts) < 2:
+            continue
+        tty, comm = parts[0], parts[1]
+        argv0 = parts[2].split(None, 1)[0] if len(parts) > 2 else comm
+        for cand in (os.path.basename(argv0) or comm, comm):
+            match = AGENT_RE.match(cand)
+            if match:
+                found.setdefault(tty, match.group(1))
+    return found
+
+agents = agents_by_tty()
 picker = os.environ.get("WEZTERM_PANE", "")
 home = os.path.expanduser("~")
 for pane in json.load(sys.stdin):
@@ -542,8 +572,12 @@ for pane in json.load(sys.stdin):
     cwd = unquote(parsed.path) if parsed.scheme == "file" else raw
     shown_cwd = "~" + cwd[len(home):] if cwd == home or cwd.startswith(home + "/") else cwd
     tab = pane.get("tab_title") or "tab " + str(pane.get("tab_id", "?"))
+    tty = (pane.get("tty_name") or "").replace("/dev/", "", 1)
+    agent = agents.get(tty, "")
+    # Colour just the glyph and agent name; the rest keeps fzf normal colours.
+    tag = "{}◆ {}{} · ".format(ACCENT, agent, RESET) if agent else ""
     label = "{} › {} › {} — {}".format(pane.get("workspace", "default"), tab, pane.get("title", "pane"), shown_cwd)
-    print("p:{}\t{}\t{}\t{}".format(pane.get("pane_id"), label, cwd, pane.get("workspace", "default")))
+    print("p:{}\t{}{}\t{}\t{}".format(pane.get("pane_id"), tag, label, cwd, pane.get("workspace", "default")))
 '
             )
 
@@ -583,6 +617,7 @@ for pane in json.load(sys.stdin):
             # scattered one; --tiebreak=index keeps the pane-first, zoxide-rank
             # order (and the untouched order on an empty query) for equal scores.
             set -l pick (printf '%s\n' $rows | fzf \
+              --ansi \
               --delimiter='\t' \
               --with-nth=2 \
               --tiebreak=index \
