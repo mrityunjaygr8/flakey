@@ -97,13 +97,14 @@ local agent_alerts = {
 
 local alert_sound = wezterm.home_dir .. '/.local/share/sounds/wezterm-agent-alert.wav'
 
--- $XDG_RUNTIME_DIR is per-login and cleared automatically, so unread markers
--- don't survive a reboot. wezterm-sesh reads this same file.
-local alert_state_file = (runtime_dir or (wezterm.home_dir .. '/.cache'))
-  .. '/wezterm-agent-alerts.json'
+-- $XDG_RUNTIME_DIR is per-login and cleared automatically, so these markers
+-- don't survive a reboot. wezterm-sesh reads the alert file.
+local state_dir = runtime_dir or (wezterm.home_dir .. '/.cache')
+local alert_state_file = state_dir .. '/wezterm-agent-alerts.json'
+local pending_dir = state_dir .. '/wezterm-agent-pending'
 
-local function read_alerts()
-  local file = io.open(alert_state_file, 'r')
+local function read_json(path)
+  local file = io.open(path, 'r')
   if not file then
     return {}
   end
@@ -116,15 +117,23 @@ local function read_alerts()
   return {}
 end
 
-local function write_alerts(alerts)
-  local tmp = alert_state_file .. '.tmp'
+local function write_json(path, value)
+  local tmp = path .. '.tmp'
   local file = io.open(tmp, 'w')
   if not file then
     return
   end
-  file:write(wezterm.json_encode(alerts))
+  file:write(wezterm.json_encode(value))
   file:close()
-  os.rename(tmp, alert_state_file)
+  os.rename(tmp, path)
+end
+
+local function read_alerts()
+  return read_json(alert_state_file)
+end
+
+local function write_alerts(alerts)
+  write_json(alert_state_file, alerts)
 end
 
 local function clear_alert(pane_id)
@@ -135,53 +144,97 @@ local function clear_alert(pane_id)
   end
 end
 
-local function decode_alert(value)
-  local ok, parsed = pcall(wezterm.json_parse, value)
-  if ok and type(parsed) == 'table' then
-    return parsed.alert, parsed.session, parsed.pid
+local function any_gui_window()
+  local windows = wezterm.gui.gui_windows()
+  if not windows then
+    return nil
   end
-  return value, nil, nil
+  for _, window in ipairs(windows) do
+    if window:is_focused() then
+      return window
+    end
+  end
+  return windows[1]
 end
 
-wezterm.on('user-var-changed', function(window, pane, name, value)
-  if name ~= 'WEZTERM_AGENT_ALERT' then
-    return
-  end
-  local kind, session, pid = decode_alert(value)
-  local alert = agent_alerts[kind]
-  if not alert then
-    return
-  end
+-- Agent plugins append files here instead of emitting OSC user vars. WezTerm
+-- only delivers user-var-changed for panes in the focused window, so a bell
+-- from another workspace would otherwise be lost.
+local recent_alerts = {}
 
-  -- Only record an unread marker when the user isn't already looking at the
-  -- pane. The toast and sound still fire either way.
-  local active_pane = window:active_pane()
-  local focused = window:is_focused()
-    and active_pane ~= nil
-    and active_pane:pane_id() == pane:pane_id()
-  if not focused then
-    local alerts = read_alerts()
-    local record = {
-      alert = kind,
-      session = type(session) == 'string' and session or '',
-      updated = os.time(),
-    }
-    if type(pid) == 'number' then
-      record.pid = pid
+local function deliver_pending()
+  local names = wezterm.read_dir(pending_dir)
+  if not names then
+    return
+  end
+  table.sort(names)
+  for _, file in ipairs(names) do
+    if file:match('%.json$') then
+      local payload = read_json(file)
+      os.remove(file)
+
+      local alert = agent_alerts[payload.alert]
+      local pane_id = payload.pane
+      if alert and type(pane_id) == 'string' and pane_id ~= '' then
+        local key = pane_id
+          .. '|'
+          .. tostring(payload.owner or payload.session or '')
+          .. '|'
+          .. tostring(payload.alert or '')
+        local now = os.time()
+        if not recent_alerts[key] or now - recent_alerts[key] >= 5 then
+          local window = any_gui_window()
+          if window then
+            recent_alerts[key] = now
+
+            local title = alert[1]
+            if type(payload.session) == 'string' and payload.session ~= '' then
+              title = title .. ' · ' .. payload.session
+            end
+            window:toast_notification(title, alert[2], nil, 5000)
+
+            local alerts = read_alerts()
+            local record = {
+              alert = payload.alert,
+              session = type(payload.session) == 'string' and payload.session or '',
+              updated = os.time(),
+            }
+            if type(payload.pid) == 'number' then
+              record.pid = payload.pid
+            end
+            alerts[pane_id] = record
+            write_alerts(alerts)
+
+            wezterm.background_child_process({
+              wezterm.home_dir .. '/.nix-profile/bin/paplay',
+              alert_sound,
+            })
+          end
+        end
+      end
     end
-    alerts[tostring(pane:pane_id())] = record
-    write_alerts(alerts)
   end
+end
 
-  local title = alert[1]
-  if type(session) == 'string' and session ~= '' then
-    title = title .. ' · ' .. session
+local function poll_pending()
+  local ok, err = pcall(deliver_pending)
+  if not ok then
+    wezterm.log_error('wezterm agent alert: ' .. tostring(err))
   end
-  window:toast_notification(title, alert[2], nil, 5000)
-  wezterm.background_child_process({
-    wezterm.home_dir .. '/.nix-profile/bin/paplay',
-    alert_sound,
-  })
+  wezterm.time.call_after(0.5, poll_pending)
+end
+
+wezterm.time.call_after(0.5, poll_pending)
+
+-- wezterm-sesh emits this with the selected pane id after the popup closes, so
+-- the next picker run no longer shows that pane as unread.
+wezterm.on('user-var-changed', function(_, _, name, value)
+  if name ~= 'WEZTERM_SESH_CLEAR_ALERT' then
+    return
+  end
+  if value and value ~= '' then
+    clear_alert(value)
+  end
 end)
 
 -- Copy mode is a pane-local key table, so entering it by accident (Ctrl+Shift+X,
@@ -229,21 +282,7 @@ wezterm.on('format-tab-title', function(tab, tabs, panes, config, hover, max_wid
 	end
 end)
 
--- WezTerm has no pane-focus-changed event, so derive it from update-status.
--- An alert is unread until its pane is focused; this also handles switching
--- tabs/workspaces and returning to a background window.
-local focused_panes = {}
 wezterm.on('update-status', function(window, pane)
-	local window_id = tostring(window:window_id())
-	local pane_id = tostring(pane:pane_id())
-	local is_focused = window:is_focused()
-	local previous = focused_panes[window_id]
-
-	if is_focused and (not previous or not previous.focused or previous.pane ~= pane_id) then
-		clear_alert(pane_id)
-	end
-	focused_panes[window_id] = { focused = is_focused, pane = pane_id }
-
 	local active = window:active_key_table()
 	local mode = mode_colors[active or '']
 	if not mode then

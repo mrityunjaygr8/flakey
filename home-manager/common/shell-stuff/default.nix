@@ -61,6 +61,11 @@ in {
     ]
     ++ [pkgs.devenv];
 
+  home.file.".local/bin/wezterm-sesh-preview" = {
+    source = ../../../config/wezterm/wezterm-sesh-preview;
+    executable = true;
+  };
+
   programs = {
     fzf = {
       enable = true;
@@ -677,7 +682,7 @@ for pane in json.load(sys.stdin):
               --reverse \
               --height=100% \
               --prompt='wezterm › ' \
-              --preview='eza --color=always --icons --group-directories-first --long -- {3} 2>/dev/null || ls -la --color=always -- {3}' \
+              --preview='wezterm-sesh-preview {1} {3}' \
               --preview-window='right:45%')
 
             if test -z "$pick"
@@ -692,6 +697,9 @@ for pane in json.load(sys.stdin):
 
             if string match -q 'p:*' -- "$key"
               set target_pane (string sub -s 3 -- "$key")
+              # The picker is about to visit this pane, so clear its bell marker.
+              set -l encoded_pane (printf '%s' "$target_pane" | base64 -w 0)
+              printf '\033]1337;SetUserVar=WEZTERM_SESH_CLEAR_ALERT=%s\033\\' "$encoded_pane"
             else
               set -l dir (string sub -s 3 -- "$key")
               # Use the path as the workspace name to avoid basename collisions.

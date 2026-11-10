@@ -1,15 +1,32 @@
+import fs from "node:fs"
+import os from "node:os"
 import path from "node:path"
+import { randomUUID } from "node:crypto"
 
-function signalWezTerm(session) {
-  if (!process.stdout.isTTY || !process.env.WEZTERM_PANE) return
+const stateDir = process.env.XDG_RUNTIME_DIR || path.join(os.homedir(), ".cache")
+const pendingDir = path.join(stateDir, "wezterm-agent-pending")
 
-  const payload = { alert: "pi_done", pid: process.pid }
-  if (session) {
-    payload.session = session
+function queueAlert(session) {
+  const pane = process.env.WEZTERM_PANE
+  if (!pane) return
+
+  try {
+    fs.mkdirSync(pendingDir, { recursive: true, mode: 0o700 })
+    const payload = {
+      alert: "pi_done",
+      pane,
+      pid: process.pid,
+      session,
+      updated: Date.now(),
+    }
+    const name = `${pane}-${Date.now()}-${randomUUID()}.json`
+    const tmp = path.join(pendingDir, `.${name}.tmp`)
+    const file = path.join(pendingDir, name)
+    fs.writeFileSync(tmp, JSON.stringify(payload))
+    fs.renameSync(tmp, file)
+  } catch {
+    // Alert delivery is best-effort; never break the agent over it.
   }
-
-  const encoded = Buffer.from(JSON.stringify(payload), "utf8").toString("base64")
-  process.stdout.write(`\x1b]1337;SetUserVar=WEZTERM_AGENT_ALERT=${encoded}\x1b\\`)
 }
 
 export default function (pi) {
@@ -18,6 +35,6 @@ export default function (pi) {
     const cwd = path.basename(process.cwd())
     const id = ctx?.sessionManager?.getSessionId?.()
     const fallback = cwd || (id ? String(id).slice(0, 8) : "Pi")
-    signalWezTerm(named || fallback)
+    queueAlert(named || fallback)
   })
 }
