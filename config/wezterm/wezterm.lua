@@ -87,7 +87,8 @@ wezterm.on('user-var-changed', function(window, pane, name, value)
 end)
 
 -- OpenCode's TUI plugin and the Pi extension send this pane-local user var
--- when they are ready for input or need a permission decision.
+-- when they are ready for input or need a permission decision. The value is
+-- base64-encoded JSON: { alert, session?, pid? }.
 local agent_alerts = {
   opencode_done = { 'OpenCode', 'Ready for input' },
   opencode_permission = { 'OpenCode', 'Waiting for permission' },
@@ -95,15 +96,88 @@ local agent_alerts = {
 }
 
 local alert_sound = wezterm.home_dir .. '/.local/share/sounds/wezterm-agent-alert.wav'
+
+-- $XDG_RUNTIME_DIR is per-login and cleared automatically, so unread markers
+-- don't survive a reboot. wezterm-sesh reads this same file.
+local alert_state_file = (runtime_dir or (wezterm.home_dir .. '/.cache'))
+  .. '/wezterm-agent-alerts.json'
+
+local function read_alerts()
+  local file = io.open(alert_state_file, 'r')
+  if not file then
+    return {}
+  end
+  local content = file:read('*a')
+  file:close()
+  local ok, decoded = pcall(wezterm.json_parse, content)
+  if ok and type(decoded) == 'table' then
+    return decoded
+  end
+  return {}
+end
+
+local function write_alerts(alerts)
+  local tmp = alert_state_file .. '.tmp'
+  local file = io.open(tmp, 'w')
+  if not file then
+    return
+  end
+  file:write(wezterm.json_encode(alerts))
+  file:close()
+  os.rename(tmp, alert_state_file)
+end
+
+local function clear_alert(pane_id)
+  local alerts = read_alerts()
+  if alerts[pane_id] ~= nil then
+    alerts[pane_id] = nil
+    write_alerts(alerts)
+  end
+end
+
+local function decode_alert(value)
+  local ok, parsed = pcall(wezterm.json_parse, value)
+  if ok and type(parsed) == 'table' then
+    return parsed.alert, parsed.session, parsed.pid
+  end
+  return value, nil, nil
+end
+
 wezterm.on('user-var-changed', function(window, pane, name, value)
   if name ~= 'WEZTERM_AGENT_ALERT' then
     return
   end
-  local alert = agent_alerts[value]
+  local kind, session, pid = decode_alert(value)
+  local alert = agent_alerts[kind]
   if not alert then
     return
   end
-  window:toast_notification(alert[1], alert[2], nil, 5000)
+
+  -- Only record an unread marker when the user isn't already looking at the
+  -- pane. The toast and sound still fire either way.
+  local active_pane = window:active_pane()
+  local focused = window:is_focused()
+    and active_pane ~= nil
+    and active_pane:pane_id() == pane:pane_id()
+  if not focused then
+    local alerts = read_alerts()
+    local record = {
+      alert = kind,
+      session = type(session) == 'string' and session or '',
+      updated = os.time(),
+    }
+    if type(pid) == 'number' then
+      record.pid = pid
+    end
+    alerts[tostring(pane:pane_id())] = record
+    write_alerts(alerts)
+  end
+
+  local title = alert[1]
+  if type(session) == 'string' and session ~= '' then
+    title = title .. ' · ' .. session
+  end
+  window:toast_notification(title, alert[2], nil, 5000)
   wezterm.background_child_process({
     wezterm.home_dir .. '/.nix-profile/bin/paplay',
     alert_sound,
@@ -155,7 +229,21 @@ wezterm.on('format-tab-title', function(tab, tabs, panes, config, hover, max_wid
 	end
 end)
 
+-- WezTerm has no pane-focus-changed event, so derive it from update-status.
+-- An alert is unread until its pane is focused; this also handles switching
+-- tabs/workspaces and returning to a background window.
+local focused_panes = {}
 wezterm.on('update-status', function(window, pane)
+	local window_id = tostring(window:window_id())
+	local pane_id = tostring(pane:pane_id())
+	local is_focused = window:is_focused()
+	local previous = focused_panes[window_id]
+
+	if is_focused and (not previous or not previous.focused or previous.pane ~= pane_id) then
+		clear_alert(pane_id)
+	end
+	focused_panes[window_id] = { focused = is_focused, pane = pane_id }
+
 	local active = window:active_key_table()
 	local mode = mode_colors[active or '']
 	if not mode then

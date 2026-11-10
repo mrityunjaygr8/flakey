@@ -56,6 +56,11 @@
 in {
   home.packages = [pi-wrapped];
 
+  # Local extension that forwards agent completion events to WezTerm through
+  # OSC 1337 SetUserVar.
+  home.file.".pi/agent/extensions/wezterm-alert.js".source =
+    ../../config/pi/extensions/wezterm-alert.js;
+
   # Same encrypted dotenv as omp/opencode/dsh, sourced by the pi wrapper.
   sops.secrets."harness-api-keys-pi" = {
     format = "dotenv";

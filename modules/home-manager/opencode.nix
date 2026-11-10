@@ -33,6 +33,13 @@
       '';
     };
   };
+  # Local TUI plugin that forwards agent completion/permission events to
+  # WezTerm through OSC 1337 SetUserVar.
+  xdg.configFile."opencode/plugins/wezterm-agent-alert" = {
+    source = ./opencode/plugins/wezterm-agent-alert;
+    recursive = true;
+  };
+
   programs.mcp = {
     enable = true;
     servers = {

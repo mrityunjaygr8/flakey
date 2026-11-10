@@ -533,6 +533,7 @@ import json, os, re, subprocess, sys
 from urllib.parse import unquote, urlparse
 
 ACCENT = "\x1b[38;2;255;180;84m"  # Ayu Mirage amber, matches window_frame
+ALERT = "\x1b[38;2;242;135;121m"  # Ayu Mirage red, for unread agent alerts
 RESET = "\x1b[0m"
 
 # Agent binaries are nix wrappers, so argv[0] looks like .opencode2-wrapped_ or
@@ -564,6 +565,37 @@ def agents_by_tty():
 agents = agents_by_tty()
 picker = os.environ.get("WEZTERM_PANE", "")
 home = os.path.expanduser("~")
+
+ALERT_AGENTS = {
+    "opencode_done": "opencode",
+    "opencode_permission": "opencode",
+    "pi_done": "pi",
+}
+ALERT_LABELS = {
+    "opencode_done": "ready",
+    "opencode_permission": "permission",
+    "pi_done": "ready",
+}
+
+def load_alerts():
+    runtime = os.environ.get("XDG_RUNTIME_DIR")
+    path = (os.path.join(runtime, "wezterm-agent-alerts.json")
+            if runtime else os.path.join(home, ".cache", "wezterm-agent-alerts.json"))
+    try:
+        with open(path) as f:
+            data = json.load(f)
+    except Exception:
+        return {}
+    return data if isinstance(data, dict) else {}
+
+def pid_alive(pid):
+    try:
+        return int(pid) > 0 and os.path.isdir("/proc/" + str(int(pid)))
+    except Exception:
+        return False
+
+alerts = load_alerts()
+rows = []
 for pane in json.load(sys.stdin):
     if str(pane.get("pane_id")) == picker:
         continue
@@ -574,10 +606,31 @@ for pane in json.load(sys.stdin):
     tab = pane.get("tab_title") or "tab " + str(pane.get("tab_id", "?"))
     tty = (pane.get("tty_name") or "").replace("/dev/", "", 1)
     agent = agents.get(tty, "")
-    # Colour just the glyph and agent name; the rest keeps fzf normal colours.
-    tag = "{}◆ {}{} · ".format(ACCENT, agent, RESET) if agent else ""
+    alert = alerts.get(str(pane.get("pane_id")))
+    unread = False
+    if isinstance(alert, dict) and alert.get("alert") in ALERT_AGENTS:
+        pid = alert.get("pid")
+        # PID filters out alerts left behind by an agent that has since exited.
+        if pid is None or pid_alive(pid):
+            unread = bool(agent)
+    if unread:
+        alert_agent = ALERT_AGENTS[alert.get("alert")]
+        status = ALERT_LABELS[alert.get("alert")]
+        tag = "{}● {}{} · {}".format(ALERT, alert_agent, RESET, status)
+        session = (alert.get("session") or "").replace("\t", " ").replace("\r", " ").replace("\n", " ")
+        if session:
+            tag += " · " + session
+        tag += " · "
+    else:
+        # Colour just the glyph and agent name; the rest keeps fzf normal colours.
+        tag = "{}◆ {}{} · ".format(ACCENT, agent, RESET) if agent else ""
     label = "{} › {} › {} — {}".format(pane.get("workspace", "default"), tab, pane.get("title", "pane"), shown_cwd)
-    print("p:{}\t{}{}\t{}\t{}".format(pane.get("pane_id"), tag, label, cwd, pane.get("workspace", "default")))
+    line = "p:{}\t{}{}\t{}\t{}".format(pane.get("pane_id"), tag, label, cwd, pane.get("workspace", "default"))
+    rows.append((0 if unread else 1, len(rows), line))
+
+# Unread agent alerts sort before everything else; preserve pane order otherwise.
+for _, _, line in sorted(rows):
+    print(line)
 '
             )
 
@@ -649,7 +702,7 @@ for pane in json.load(sys.stdin):
             # Ask the GUI to switch workspaces first; cli activate-pane alone only
             # activates within the currently visible workspace/window.
             set -l encoded_workspace (printf '%s' "$target_workspace" | base64 -w 0)
-            printf '\033]1337;SetUserVar=WEZTERM_SESH_WORKSPACE=%s\007' "$encoded_workspace"
+            printf '\033]1337;SetUserVar=WEZTERM_SESH_WORKSPACE=%s\033\\' "$encoded_workspace"
             sleep 0.15
 
             if test -n "$target_pane"
