@@ -63,7 +63,7 @@ in {
   # ];
   programs.kitty.enable = true; # required for the default Hyprland config
   home.packages = with pkgs; [
-    inputs.hyprquickframe.packages.${pkgs.system}.default
+    inputs.hyprquickframe.packages.${pkgs.stdenv.hostPlatform.system}.default
     wallpaperScript
     brightnessctl
     walker
@@ -254,7 +254,7 @@ in {
     extraLuaFiles = {
       "hyprsplit/init" = {
         autoLoad = false;
-        content = builtins.readFile "${inputs.hyprsplit.packages.${pkgs.system}.hyprsplitlua}/share/hyprsplit/init.lua";
+        content = builtins.readFile "${inputs.hyprsplit.packages.${pkgs.stdenv.hostPlatform.system}.hyprsplitlua}/share/hyprsplit/init.lua";
       };
       "hyprload" = {
         autoLoad = true;
