@@ -29,6 +29,15 @@
     # this override.
     wayle = inputs.nixpkgs-master.legacyPackages.${prev.stdenv.hostPlatform.system}.wayle;
 
+    # yaak 2026.8.1 in the pinned nixpkgs omits libgit2 and sqlite from
+    # buildInputs, while cargoSetupHook sets LIBGIT2_NO_VENDOR=1 and
+    # LIBSQLITE3_SYS_USE_PKG_CONFIG=1, so libgit2-sys aborts the build
+    # (NixOS/nixpkgs#585106). Drop this override once the fix lands in
+    # nixos-unstable.
+    yaak = prev.yaak.overrideAttrs (old: {
+      buildInputs = (old.buildInputs or []) ++ [prev.libgit2 prev.sqlite];
+    });
+
     # wf-recorder doesn't compile against FFmpeg 9 (removed AVCodec fields).
     # Patch from Arch Linux to use avcodec_get_supported_config().
     wf-recorder = prev.wf-recorder.overrideAttrs (old: {

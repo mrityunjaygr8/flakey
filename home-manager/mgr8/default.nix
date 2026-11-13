@@ -81,6 +81,7 @@ in {
   home.stateVersion = "23.05";
 
   home.packages = with pkgs; [
+    yaak
     amazon-ecr-credential-helper
     iloader
     # inputs.iloader.packages.${pkgs.system}.default
