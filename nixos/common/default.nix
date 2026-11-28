@@ -38,13 +38,21 @@
     };
   };
 
+  # Expose each flake registry entry as a NIX_PATH entry (/etc/nix/path/<name>).
+  # Entries registered by NixOS itself (e.g. 'nixpkgs') have no 'flake'
+  # attribute, so fall back to the registry's path.
   environment.etc =
     lib.mapAttrs'
     (name: value: {
       name = "nix/path/${name}";
-      value.source = value.flake;
+      value.source =
+        if value.flake != null
+        then value.flake
+        else value.to.path;
     })
-    config.nix.registry;
+    (lib.filterAttrs
+      (_: value: value.flake != null || (value.to.path or null) != null)
+      config.nix.registry);
 
   # nix.package = pkgs.nixVersions.nix_2_23;
 

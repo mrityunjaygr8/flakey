@@ -6,7 +6,14 @@
   nix = {
     # This will add each flake input as a registry
     # To make nix3 commands consistent with your flake
-    registry = (lib.mapAttrs (_: flake: {inherit flake;})) ((lib.filterAttrs (_: lib.isType "flake")) inputs);
+    # 'nixpkgs' itself is already registered by the nixpkgs module, and points
+    # at the nixpkgs this system is built from (not necessarily the flake's
+    # unstable 'nixpkgs' input), so it is skipped here.
+    registry =
+      lib.mapAttrs (_: flake: {inherit flake;})
+      (lib.filterAttrs
+        (name: value: name != "nixpkgs" && lib.isType "flake" value)
+        inputs);
     # This will additionally add your inputs to the system's legacy channels
     # Making legacy nix commands consistent as well, awesome!
     nixPath = ["/etc/nix/path"];

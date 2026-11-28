@@ -16,6 +16,9 @@
 
     nixpkgs-master.url = "github:NixOS/nixpkgs/master";
 
+    # Stable release, used by servers that should not track unstable.
+    nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-26.11";
+
     llm-agents.url = "github:numtide/llm-agents.nix";
     llm-agents.inputs.nixpkgs.follows = "nixpkgs";
     # bun-unstable.url = "github:arch-fan/nixpkgs/bun-1.3.10";
@@ -108,7 +111,17 @@
           disko.nixosModules.disko
         ];
       };
-      arr = nixpkgs.lib.nixosSystem {
+      arr = inputs.nixpkgs-stable.lib.nixosSystem {
+        specialArgs = {inherit inputs outputs;};
+        modules = [
+          # > Our main nixos configuration file <
+          ./nixos/arr
+          ./modules/nixos/sops.nix
+        ];
+      };
+      # Temporary escape hatch while arr is being moved to nixos-stable.
+      # Same configuration, built against nixpkgs-unstable.
+      arr-unstable = nixpkgs.lib.nixosSystem {
         specialArgs = {inherit inputs outputs;};
         modules = [
           # > Our main nixos configuration file <
