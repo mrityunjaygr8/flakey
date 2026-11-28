@@ -368,6 +368,16 @@ in {
           ServerAliveInterval = 30;
           StrictHostKeyChecking = "accept-new";
         };
+        # Same box, but with a dedicated key so tools that shell out to ssh
+        # (rex) work without the desktop agent. The key is only offered here.
+        arr-rex = {
+          HostName = "192.168.1.193";
+          User = "arr";
+          IdentityFile = "~/.ssh/id_ed25519_rex";
+          IdentitiesOnly = true;
+          ServerAliveInterval = 30;
+          StrictHostKeyChecking = "accept-new";
+        };
       };
     };
 
