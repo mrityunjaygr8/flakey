@@ -110,6 +110,7 @@ in {
     after = ["docker.service" "arr-compose.service"];
     environment = {
       ARR_WATCHDOG = "${media-watchdog}";
+      ARR_COMPOSE = "${arr-compose}/bin/arr-compose";
       ARR_HOOK_TOKEN_HASH = hookTokenHash;
     };
     path = [

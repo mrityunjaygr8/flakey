@@ -74,8 +74,16 @@ probe_log() {
 install -d -m 0755 "$STATE_DIR" "$CAPTURE_DIR"
 
 # "service<TAB>host-source<TAB>container-target" for every media bind mount.
+if ! command -v "$COMPOSE" >/dev/null 2>&1; then
+  log "compose command '$COMPOSE' not found (PATH=$PATH)"
+  exit 1
+fi
+if ! compose_config=$("$COMPOSE" config --format json 2>/dev/null); then
+  log "'$COMPOSE config' failed; cannot determine which services use $HOST_PATH"
+  exit 1
+fi
 mounts=$(
-  "$COMPOSE" config --format json 2>/dev/null |
+  printf '%s' "$compose_config" |
     jq -r --arg root "$HOST_PATH" '
       .services | to_entries[]
       | .key as $svc

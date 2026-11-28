@@ -80,7 +80,11 @@ case "$scope" in
 esac
 
 log "accepted: scope=$scope note=$note"
-dir=$("$WATCHDOG" --action capture --note "$note")
+if ! dir=$("$WATCHDOG" --action capture --note "$note") || [ -z "$dir" ]; then
+  log "capture failed"
+  respond "500 Internal Server Error" "$(page "Capture failed" "<p>Nothing was restarted. See <code>journalctl -u 'arr-hook@*'</code>.</p>")"
+  exit 0
+fi
 log "captured: $dir"
 
 respond "200 OK" "$(page "arr: capture saved, restart in progress" "<p>Evidence was captured <strong>before</strong> the restart:</p>
