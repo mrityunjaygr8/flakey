@@ -1,0 +1,192 @@
+{
+  config,
+  inputs,
+  pkgs,
+  ...
+}: let
+  mangoPackage = pkgs.callPackage ../../pkgs/mango-dms-compat.nix {
+    mango = inputs.mangowm.packages.${pkgs.stdenv.hostPlatform.system}.mango;
+  };
+  mangoDefaultConfig = pkgs.runCommand "mango-default-config.conf" {} ''
+    cp ${mangoPackage}/etc/mango/config.conf "$out"
+    substituteInPlace "$out" \
+      --replace-fail 'bind=SUPER,o,toggleoverlay,' 'bind=SUPER+CTRL,o,toggleoverlay,' \
+      --replace-fail 'bind=SUPER,m,quit' 'bind=SUPER,m,togglemaximizescreen'
+    sed -i '/^bind=.*[Aa][Ll][Tt]/d' "$out"
+    sed -i '/^mousebind=NONE,btn_middle,togglemaximizescreen,0$/d' "$out"
+    sed -i \
+      -e '/^bind=CTRL+SHIFT,Left,movewin,-50,+0$/d' \
+      -e '/^bind=CTRL+SHIFT,Right,movewin,+50,+0$/d' \
+      -e '/^bind=CTRL,Left,viewtoleft_have_client,0$/d' \
+      -e '/^bind=CTRL,Right,viewtoright_have_client,0$/d' \
+      "$out"
+  '';
+  monitorPower = pkgs.writeShellScriptBin "mango-monitor-power" ''
+    set -euo pipefail
+    action="''${1:?expected sleep_monitor or wakeup_monitor}"
+    case "$action" in
+      sleep_monitor|wakeup_monitor) ;;
+      *) echo "unsupported monitor action: $action" >&2; exit 2 ;;
+    esac
+
+    ${mangoPackage}/bin/mmsg get all-monitors \
+      | ${pkgs.jq}/bin/jq -r 'if type == "array" then .[] | .name else .monitors[]? | .name end' \
+      | while IFS= read -r monitor; do
+          [ -n "$monitor" ] || continue
+          ${mangoPackage}/bin/mmsg dispatch "$action,$monitor"
+        done
+  '';
+  dmsPackage = config.programs.dank-material-shell.package;
+  screenshotPickerQml = pkgs.writeText "mango-screenshot-picker.qml" (
+    builtins.replaceStrings
+    ["@DMS_EXECUTABLE@"]
+    ["${dmsPackage}/bin/dms"]
+    (builtins.readFile ../../config/quickshell/screenshot-picker.qml)
+  );
+  screenshotPicker = pkgs.writeShellScriptBin "mango-screenshot-picker" ''
+    exec ${pkgs.quickshell}/bin/quickshell -p ${screenshotPickerQml}
+  '';
+  lockCommand = "${dmsPackage}/bin/dms ipc call lock lock";
+  clipboardHistoryLaunch = "${pkgs.wl-clipboard}/bin/wl-paste --type text --watch ${pkgs.cliphist}/bin/cliphist store &";
+  shellLaunch = "${dmsPackage}/bin/dms run";
+in {
+  imports = [
+    inputs.mangowm.hmModules.mango
+  ];
+
+  wayland.windowManager.mango = {
+    enable = true;
+    package = mangoPackage;
+    topPrefixes = ["source" "source_optional"];
+    systemd.variables = [
+      "DISPLAY"
+      "WAYLAND_DISPLAY"
+      "XDG_CURRENT_DESKTOP"
+      "XDG_SESSION_TYPE"
+      "NIXOS_OZONE_WL"
+      "XCURSOR_THEME"
+      "XCURSOR_SIZE"
+      "MANGO_INSTANCE_SIGNATURE"
+    ];
+    settings = {
+      source = "${mangoDefaultConfig}";
+      source_optional = [
+        "~/.config/mango/dms/colors.conf"
+        "~/.config/mango/dms/layout.conf"
+      ];
+      env = [
+        "QT_QPA_PLATFORM,wayland"
+        "ELECTRON_OZONE_PLATFORM_HINT,auto"
+        "QT_QPA_PLATFORMTHEME,gtk3"
+      ];
+      auto_reload_config = 1;
+      cursor_theme = "BreezeX-RosePine-Linux";
+      cursor_size = 32;
+      monitor_rule = [
+        "name:^DP-1$,x:0,y:0,scale:1"
+        "name:^DP-2$,x:2560,y:0,scale:1,rr:1"
+      ];
+      bind = [
+        "CTRL,space,spawn,dms ipc call spotlight toggle"
+        "SUPER,q,killclient"
+        "SUPER,v,togglefloating"
+        # Keyboard route to the overview; Mango otherwise only exposes it via
+        # four-finger touchpad swipes. `grave` is the key left of 1.
+        "SUPER,grave,toggleoverview,"
+        "SUPER,return,spawn,wezterm start --always-new-process"
+        "SUPER,b,spawn,firefox"
+        "SUPER,c,spawn,chromium"
+        "SUPER+SHIFT,l,spawn,${lockCommand}"
+        "NONE,Print,spawn,${screenshotPicker}/bin/mango-screenshot-picker"
+        "SUPER+SHIFT,v,spawn,ghostty --class=window.clipse.output -e clipse"
+        "SUPER+SHIFT,w,spawn,dms ipc call wallpaper next"
+        "SUPER,h,focusdir,left"
+        "SUPER,l,focusdir,right"
+        "SUPER,j,focusdir,down"
+        "SUPER,k,focusdir,up"
+        "SUPER,a,view,1"
+        "SUPER+SHIFT,a,tagsilent,1"
+        "SUPER+CTRL,a,toggleview,1"
+        "SUPER,s,view,2"
+        "SUPER+SHIFT,s,tagsilent,2"
+        "SUPER+CTRL,s,toggleview,2"
+        "SUPER,d,view,3"
+        "SUPER+SHIFT,d,tagsilent,3"
+        "SUPER+CTRL,d,toggleview,3"
+        "SUPER,f,view,4"
+        "SUPER+SHIFT,f,tagsilent,4"
+        "SUPER+CTRL,f,toggleview,4"
+        "SUPER,o,focusmon,next"
+        "SUPER+SHIFT,o,tagmon,next,1"
+        "SUPER,1,view,1"
+        "SUPER+SHIFT,1,tagsilent,1"
+        "SUPER,2,view,2"
+        "SUPER+SHIFT,2,tagsilent,2"
+        "SUPER,3,view,3"
+        "SUPER+SHIFT,3,tagsilent,3"
+        "SUPER,4,view,4"
+        "SUPER+SHIFT,4,tagsilent,4"
+        "NONE,XF86AudioRaiseVolume,spawn,wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%+"
+        "NONE,XF86AudioLowerVolume,spawn,wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"
+        "NONE,XF86AudioMute,spawn,wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
+        "NONE,XF86AudioMicMute,spawn,wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"
+        "NONE,XF86MonBrightnessUp,spawn,brightnessctl -e4 -n2 set 5%+"
+        "NONE,XF86MonBrightnessDown,spawn,brightnessctl -e4 -n2 set 5%-"
+      ];
+      window_rule = [
+        "is_floating:1,app_id:window.clipse.output"
+      ];
+      # The screenshot picker hides itself and then captures. Mango's default
+      # close animation is 800ms (animation_duration_close), which would still
+      # be fading the overlay out when dms screenshot grabs the frame, so the
+      # picker would appear in its own screenshot. Drop the animations for this
+      # layer only; the surface disappears immediately.
+      layer_rule = [
+        "animation_type_open:none,layer_name:mango-screenshot-picker"
+        "animation_type_close:none,layer_name:mango-screenshot-picker"
+      ];
+    };
+    autostart_sh = ''
+      ${clipboardHistoryLaunch}
+      ${shellLaunch} &
+    '';
+  };
+
+  services.swayidle = {
+    enable = true;
+    systemdTargets = ["mango-session.target"];
+    timeouts = [
+      {
+        timeout = 900;
+        command = lockCommand;
+      }
+      {
+        timeout = 1200;
+        command = "${monitorPower}/bin/mango-monitor-power sleep_monitor";
+        resumeCommand = "${monitorPower}/bin/mango-monitor-power wakeup_monitor";
+      }
+    ];
+    events = {
+      "before-sleep" = lockCommand;
+      lock = lockCommand;
+    };
+  };
+
+  services.wlsunset = {
+    enable = true;
+    sunrise = "07:30";
+    sunset = "20:00";
+    systemdTarget = "mango-session.target";
+    temperature = {
+      day = 6500;
+      night = 4500;
+    };
+  };
+
+  home.packages = with pkgs; [
+    cliphist
+    quickshell
+    rose-pine-cursor
+    wl-clipboard
+  ];
+}

@@ -1,5 +1,6 @@
 {
   inputs,
+  lib,
   pkgs,
   config,
   ...
@@ -62,7 +63,8 @@ in {
   # ];
   programs.kitty.enable = true; # required for the default Hyprland config
   home.packages = with pkgs; [
-    inputs.hyprquickframe.packages.${pkgs.system}.default
+    inputs.hyprquickframe.packages.${pkgs.stdenv.hostPlatform.system}.default
+    wallpaperScript
     brightnessctl
     walker
     pipewire
@@ -96,6 +98,7 @@ in {
   systemd.user.services.wallpaper-changer = {
     Unit = {
       Description = "Change wallpaper periodically";
+      PartOf = ["hyprland-session.target"];
     };
     Service = {
       Type = "oneshot";
@@ -106,6 +109,7 @@ in {
   systemd.user.timers.wallpaper-changer = {
     Unit = {
       Description = "Timer for changing wallpaper";
+      PartOf = ["hyprland-session.target"];
     };
     Timer = {
       # Run 1 second after boot/login
@@ -115,11 +119,12 @@ in {
       Unit = "wallpaper-changer.service";
     };
     Install = {
-      WantedBy = ["timers.target"];
+      WantedBy = ["hyprland-session.target"];
     };
   };
   services.hypridle = {
     enable = true;
+    systemdTarget = "hyprland-session.target";
     settings = {
       general = {
         after_sleep_cmd = "hyprctl dispatch dpms on";
@@ -176,6 +181,7 @@ in {
       };
     };
   };
+  systemd.user.services.wayle.Install.WantedBy = lib.mkForce ["hyprland-session.target"];
   # programs.hyprpanel = {
   #   enable = true;
   #   # Configure and theme almost all options from the GUI.
@@ -248,7 +254,7 @@ in {
     extraLuaFiles = {
       "hyprsplit/init" = {
         autoLoad = false;
-        content = builtins.readFile "${inputs.hyprsplit.packages.${pkgs.system}.hyprsplitlua}/share/hyprsplit/init.lua";
+        content = builtins.readFile "${inputs.hyprsplit.packages.${pkgs.stdenv.hostPlatform.system}.hyprsplitlua}/share/hyprsplit/init.lua";
       };
       "hyprload" = {
         autoLoad = true;

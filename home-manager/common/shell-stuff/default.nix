@@ -6,7 +6,6 @@
   lib,
   config,
   pkgs,
-  nixpkgs-master,
   ...
 }: let
   catppuccin-fish = pkgs.fetchFromGitHub {
@@ -14,10 +13,6 @@
     repo = "fish";
     rev = "a3b9eb5eaf2171ba1359fe98f20d226c016568cf";
     hash = "sha256-shQxlyoauXJACoZWtRUbRMxmm10R8vOigXwjxBhG8ng=";
-  };
-  pkgs-master = import nixpkgs-master {
-    system = pkgs.stdenv.hostPlatform.system;
-    config.allowUnfree = true;
   };
   lspPackages = import ../lsp-packages.nix pkgs;
 in {
@@ -60,6 +55,11 @@ in {
       zip
     ]
     ++ [pkgs.devenv];
+
+  home.file.".local/bin/wezterm-sesh-preview" = {
+    source = ../../../config/wezterm/wezterm-sesh-preview;
+    executable = true;
+  };
 
   programs = {
     fzf = {
@@ -529,11 +529,73 @@ in {
             # for exact comparison with zoxide's filesystem paths.
             set -l rows (
               printf '%s' "$state" | python3 -c '
-import json, os, sys
+import json, os, re, subprocess, sys
 from urllib.parse import unquote, urlparse
 
+ACCENT = "\x1b[38;2;255;180;84m"  # Ayu Mirage amber, matches window_frame
+ALERT = "\x1b[38;2;242;135;121m"  # Ayu Mirage red, for unread agent alerts
+RESET = "\x1b[0m"
+
+# Agent binaries are nix wrappers, so argv[0] looks like .opencode2-wrapped_ or
+# .pi-wrapped rather than the plain command name.
+AGENT_RE = re.compile(r"^\.?(opencode\d*|pi|omp|dsh)([-_.][A-Za-z0-9_]*)?$")
+
+def agents_by_tty():
+    """pane tty (e.g. pts/8) -> agent name, from the processes on that tty."""
+    found = {}
+    try:
+        out = subprocess.run(
+            ["ps", "-eo", "tty=,comm=,args="],
+            capture_output=True, text=True, timeout=2,
+        ).stdout
+    except Exception:
+        return found
+    for line in out.splitlines():
+        parts = line.split(None, 2)
+        if len(parts) < 2:
+            continue
+        tty, comm = parts[0], parts[1]
+        argv0 = parts[2].split(None, 1)[0] if len(parts) > 2 else comm
+        for cand in (os.path.basename(argv0) or comm, comm):
+            match = AGENT_RE.match(cand)
+            if match:
+                found.setdefault(tty, match.group(1))
+    return found
+
+agents = agents_by_tty()
 picker = os.environ.get("WEZTERM_PANE", "")
 home = os.path.expanduser("~")
+
+ALERT_AGENTS = {
+    "opencode_done": "opencode",
+    "opencode_permission": "opencode",
+    "pi_done": "pi",
+}
+ALERT_LABELS = {
+    "opencode_done": "ready",
+    "opencode_permission": "permission",
+    "pi_done": "ready",
+}
+
+def load_alerts():
+    runtime = os.environ.get("XDG_RUNTIME_DIR")
+    path = (os.path.join(runtime, "wezterm-agent-alerts.json")
+            if runtime else os.path.join(home, ".cache", "wezterm-agent-alerts.json"))
+    try:
+        with open(path) as f:
+            data = json.load(f)
+    except Exception:
+        return {}
+    return data if isinstance(data, dict) else {}
+
+def pid_alive(pid):
+    try:
+        return int(pid) > 0 and os.path.isdir("/proc/" + str(int(pid)))
+    except Exception:
+        return False
+
+alerts = load_alerts()
+rows = []
 for pane in json.load(sys.stdin):
     if str(pane.get("pane_id")) == picker:
         continue
@@ -542,8 +604,33 @@ for pane in json.load(sys.stdin):
     cwd = unquote(parsed.path) if parsed.scheme == "file" else raw
     shown_cwd = "~" + cwd[len(home):] if cwd == home or cwd.startswith(home + "/") else cwd
     tab = pane.get("tab_title") or "tab " + str(pane.get("tab_id", "?"))
+    tty = (pane.get("tty_name") or "").replace("/dev/", "", 1)
+    agent = agents.get(tty, "")
+    alert = alerts.get(str(pane.get("pane_id")))
+    unread = False
+    if isinstance(alert, dict) and alert.get("alert") in ALERT_AGENTS:
+        pid = alert.get("pid")
+        # PID filters out alerts left behind by an agent that has since exited.
+        if pid is None or pid_alive(pid):
+            unread = bool(agent)
+    if unread:
+        alert_agent = ALERT_AGENTS[alert.get("alert")]
+        status = ALERT_LABELS[alert.get("alert")]
+        tag = "{}● {}{} · {}".format(ALERT, alert_agent, RESET, status)
+        session = (alert.get("session") or "").replace("\t", " ").replace("\r", " ").replace("\n", " ")
+        if session:
+            tag += " · " + session
+        tag += " · "
+    else:
+        # Colour just the glyph and agent name; the rest keeps fzf normal colours.
+        tag = "{}◆ {}{} · ".format(ACCENT, agent, RESET) if agent else ""
     label = "{} › {} › {} — {}".format(pane.get("workspace", "default"), tab, pane.get("title", "pane"), shown_cwd)
-    print("p:{}\t{}\t{}\t{}".format(pane.get("pane_id"), label, cwd, pane.get("workspace", "default")))
+    line = "p:{}\t{}{}\t{}\t{}".format(pane.get("pane_id"), tag, label, cwd, pane.get("workspace", "default"))
+    rows.append((0 if unread else 1, len(rows), line))
+
+# Unread agent alerts sort before everything else; preserve pane order otherwise.
+for _, _, line in sorted(rows):
+    print(line)
 '
             )
 
@@ -579,14 +666,18 @@ for pane in json.load(sys.stdin):
               return 0
             end
 
+            # Sort by fzf match score so a contiguous/closer match outranks a
+            # scattered one; --tiebreak=index keeps the pane-first, zoxide-rank
+            # order (and the untouched order on an empty query) for equal scores.
             set -l pick (printf '%s\n' $rows | fzf \
+              --ansi \
               --delimiter='\t' \
               --with-nth=2 \
-              --no-sort \
+              --tiebreak=index \
               --reverse \
               --height=100% \
               --prompt='wezterm › ' \
-              --preview='eza --color=always --icons --group-directories-first --long -- {3} 2>/dev/null || ls -la --color=always -- {3}' \
+              --preview='wezterm-sesh-preview {1} {3}' \
               --preview-window='right:45%')
 
             if test -z "$pick"
@@ -601,6 +692,9 @@ for pane in json.load(sys.stdin):
 
             if string match -q 'p:*' -- "$key"
               set target_pane (string sub -s 3 -- "$key")
+              # The picker is about to visit this pane, so clear its bell marker.
+              set -l encoded_pane (printf '%s' "$target_pane" | base64 -w 0)
+              printf '\033]1337;SetUserVar=WEZTERM_SESH_CLEAR_ALERT=%s\033\\' "$encoded_pane"
             else
               set -l dir (string sub -s 3 -- "$key")
               # Use the path as the workspace name to avoid basename collisions.
@@ -611,7 +705,7 @@ for pane in json.load(sys.stdin):
             # Ask the GUI to switch workspaces first; cli activate-pane alone only
             # activates within the currently visible workspace/window.
             set -l encoded_workspace (printf '%s' "$target_workspace" | base64 -w 0)
-            printf '\033]1337;SetUserVar=WEZTERM_SESH_WORKSPACE=%s\007' "$encoded_workspace"
+            printf '\033]1337;SetUserVar=WEZTERM_SESH_WORKSPACE=%s\033\\' "$encoded_workspace"
             sleep 0.15
 
             if test -n "$target_pane"

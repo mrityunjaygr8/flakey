@@ -8,7 +8,7 @@
 }: {
   # Enable the X11 windowing system.
   services.xserver.enable = true;
-  services.displayManager.gdm.enable = true;
+  services.displayManager.gdm.enable = false;
   services.desktopManager.gnome.enable = true;
   # SSH agent and GNOME GCR-agent conflict
   # so disabling ssh agent starting where gnome is active

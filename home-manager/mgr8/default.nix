@@ -29,8 +29,12 @@ in {
     # You can also split up your configuration and import pieces of it here:
     # ./nvim.nix
     ../common
-    ../../modules/home-manager/hyprland.nix
+    ../../modules/home-manager/dank-material-shell.nix
+    ../../modules/home-manager/dsh.nix
+    # ../../modules/home-manager/hyprland.nix
+    ../../modules/home-manager/mango.nix
     ../../modules/home-manager/opencode.nix
+    ../../modules/home-manager/pi.nix
     ../../modules/home-manager/sops.nix
   ];
 
@@ -77,11 +81,14 @@ in {
   home.stateVersion = "23.05";
 
   home.packages = with pkgs; [
+    yaak
     amazon-ecr-credential-helper
     iloader
     # inputs.iloader.packages.${pkgs.system}.default
     # jetbrains.idea-community-bin
     typst
+    inputs.rex-rune.packages.${pkgs.stdenv.hostPlatform.system}.rex-rune
+    inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.claude-desktop
     beamMinimal28Packages.elixir
     bottom
     calibre
@@ -118,7 +125,7 @@ in {
     kubectl
     ibmcloud-cli
     kubernetes-helm
-    azure-cli
+    # azure-cli
     # beekeeper-studio
     opentofu
     # httpie-desktop
@@ -333,6 +340,37 @@ in {
   # };
 
   programs = {
+    ssh = {
+      enable = true;
+      enableDefaultConfig = false;
+      settings = {
+        # AceCloud Mumbai bastion (public entry point)
+        bastion = {
+          HostName = "103.189.172.248";
+          User = "ubuntu";
+          IdentityFile = "~/.ssh/vlcm-acecloud.pem";
+          ServerAliveInterval = 30;
+          StrictHostKeyChecking = "accept-new";
+        };
+        # VLCM GPU spot instance (private; reached through the bastion)
+        spot = {
+          HostName = "10.20.1.150";
+          User = "ubuntu";
+          IdentityFile = "~/.ssh/vlcm-acecloud.pem";
+          ProxyJump = "bastion";
+          ServerAliveInterval = 30;
+          StrictHostKeyChecking = "accept-new";
+        };
+        # NixOS LAN box (k3s control-plane node)
+        arr = {
+          HostName = "192.168.1.193";
+          User = "arr";
+          ServerAliveInterval = 30;
+          StrictHostKeyChecking = "accept-new";
+        };
+      };
+    };
+
     home-manager = {
       enable = true;
     };

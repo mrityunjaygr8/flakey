@@ -7,6 +7,9 @@
     # at the same time. Here's an working example:
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
+    rex.url = "https://pkgs.superlogical.com/rex/nix/snapshot.tar.gz";
+    rex-rune.url = "github:shuv1337/rex-rune/v0.14.0";
+
     # Home manager
     home-manager.url = "github:nix-community/home-manager/master";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
@@ -22,13 +25,26 @@
     sops-nix.url = "github:Mic92/sops-nix";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
 
-    hyprland.url = "github:hyprwm/Hyprland";
-    hyprsplit.url = "github:shezdy/hyprsplit";
-    hyprsplit.inputs.hyprland.follows = "hyprland";
+    # hyprland.url = "github:hyprwm/Hyprland";
+    # hyprsplit.url = "github:shezdy/hyprsplit";
+    # hyprsplit.inputs.hyprland.follows = "hyprland";
+    #
+    # # Quickshell-based screenshot overlay for Hyprland
+    # hyprquickframe.url = "github:Ronin-CK/HyprQuickFrame";
+    # hyprquickframe.inputs.nixpkgs.follows = "nixpkgs";
 
-    # Quickshell-based screenshot overlay for Hyprland
-    hyprquickframe.url = "github:Ronin-CK/HyprQuickFrame";
-    hyprquickframe.inputs.nixpkgs.follows = "nixpkgs";
+    mangowm.url = "github:mangowm/mango";
+    mangowm.inputs.nixpkgs.follows = "nixpkgs";
+
+    dms = {
+      url = "github:AvengeMedia/DankMaterialShell/stable";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    dank-greeter = {
+      url = "github:AvengeMedia/dank-greeter";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     iloader.url = "github:nab138/iloader";
     iloader.inputs.nixpkgs.follows = "nixpkgs";

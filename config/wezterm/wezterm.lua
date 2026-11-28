@@ -3,6 +3,13 @@ local act = wezterm.action
 
 local config = wezterm.config_builder()
 
+-- Use the GCR agent from the graphical session as WezTerm's mux agent source.
+-- Without this, panes can inherit a WezTerm agent socket with no backing agent.
+local runtime_dir = os.getenv("XDG_RUNTIME_DIR")
+if runtime_dir then
+	config.default_ssh_auth_sock = runtime_dir .. "/gcr/ssh"
+end
+
 -- Explicitly use Fish as the login shell for new WezTerm panes/tabs.
 config.default_prog = { 'fish', '-l' }
 
@@ -14,8 +21,25 @@ config.scrollback_lines = 10000
 
 -- Keep the tab bar visible: tabs are the tmux-window-like layer, panes are splits.
 config.enable_tab_bar = true
-config.use_fancy_tab_bar = false
+config.use_fancy_tab_bar = true
 config.hide_tab_bar_if_only_one_tab = false
+
+-- The fancy tab bar draws its own chrome from the window frame colours, so tint
+-- it to match Ayu Mirage instead of falling back to WezTerm's default purple.
+config.window_frame = {
+	font = wezterm.font({ family = "Lilex Nerd Font Mono", weight = "Bold" }),
+	font_size = 12.0,
+	active_titlebar_bg = "#1f2430",
+	inactive_titlebar_bg = "#1f2430",
+	active_titlebar_fg = "#cbccc6",
+	inactive_titlebar_fg = "#707a8c",
+	active_titlebar_border_bottom = "#2a3040",
+	inactive_titlebar_border_bottom = "#1f2430",
+	button_fg = "#707a8c",
+	button_bg = "#1f2430",
+	button_hover_fg = "#cbccc6",
+	button_hover_bg = "#2a3040",
+}
 
 local smart_splits = wezterm.plugin.require("https://github.com/smart-splits-nvim/backend-wezterm")
 
@@ -32,7 +56,10 @@ smart_splits.apply_to_config(config, {
 
 	modifiers = {
 		move = "CTRL", -- e.g. CTRL+h to move left
-		resize = "META", -- e.g. META+h to resize left
+		-- Not META/SUPER: Mango consumes SUPER+hjkl globally for focusdir, so
+		-- resize chords never reached WezTerm. CTRL|SHIFT is otherwise free
+		-- (the other CTRL|SHIFT binds use s/t/w/Tab/Enter/arrows).
+		resize = "CTRL|SHIFT", -- e.g. CTRL+SHIFT+h to resize left
 	},
 
 	-- what happens when there's no WezTerm pane in that direction: both a *direct* keypress in a
@@ -60,7 +87,8 @@ wezterm.on('user-var-changed', function(window, pane, name, value)
 end)
 
 -- OpenCode's TUI plugin and the Pi extension send this pane-local user var
--- when they are ready for input or need a permission decision.
+-- when they are ready for input or need a permission decision. The value is
+-- base64-encoded JSON: { alert, session?, pid? }.
 local agent_alerts = {
   opencode_done = { 'OpenCode', 'Ready for input' },
   opencode_permission = { 'OpenCode', 'Waiting for permission' },
@@ -68,19 +96,206 @@ local agent_alerts = {
 }
 
 local alert_sound = wezterm.home_dir .. '/.local/share/sounds/wezterm-agent-alert.wav'
-wezterm.on('user-var-changed', function(window, pane, name, value)
-  if name ~= 'WEZTERM_AGENT_ALERT' then
+
+-- $XDG_RUNTIME_DIR is per-login and cleared automatically, so these markers
+-- don't survive a reboot. wezterm-sesh reads the alert file.
+local state_dir = runtime_dir or (wezterm.home_dir .. '/.cache')
+local alert_state_file = state_dir .. '/wezterm-agent-alerts.json'
+local pending_dir = state_dir .. '/wezterm-agent-pending'
+
+local function read_json(path)
+  local file = io.open(path, 'r')
+  if not file then
+    return {}
+  end
+  local content = file:read('*a')
+  file:close()
+  local ok, decoded = pcall(wezterm.json_parse, content)
+  if ok and type(decoded) == 'table' then
+    return decoded
+  end
+  return {}
+end
+
+local function write_json(path, value)
+  local tmp = path .. '.tmp'
+  local file = io.open(tmp, 'w')
+  if not file then
     return
   end
-  local alert = agent_alerts[value]
-  if not alert then
+  file:write(wezterm.json_encode(value))
+  file:close()
+  os.rename(tmp, path)
+end
+
+local function read_alerts()
+  return read_json(alert_state_file)
+end
+
+local function write_alerts(alerts)
+  write_json(alert_state_file, alerts)
+end
+
+local function clear_alert(pane_id)
+  local alerts = read_alerts()
+  if alerts[pane_id] ~= nil then
+    alerts[pane_id] = nil
+    write_alerts(alerts)
+  end
+end
+
+local function any_gui_window()
+  local windows = wezterm.gui.gui_windows()
+  if not windows then
+    return nil
+  end
+  for _, window in ipairs(windows) do
+    if window:is_focused() then
+      return window
+    end
+  end
+  return windows[1]
+end
+
+-- Agent plugins append files here instead of emitting OSC user vars. WezTerm
+-- only delivers user-var-changed for panes in the focused window, so a bell
+-- from another workspace would otherwise be lost.
+local recent_alerts = {}
+
+local function deliver_pending()
+  local names = wezterm.read_dir(pending_dir)
+  if not names then
     return
   end
-  window:toast_notification(alert[1], alert[2], nil, 5000)
-  wezterm.background_child_process({
-    wezterm.home_dir .. '/.nix-profile/bin/paplay',
-    alert_sound,
-  })
+  table.sort(names)
+  for _, file in ipairs(names) do
+    if file:match('%.json$') then
+      local payload = read_json(file)
+      os.remove(file)
+
+      local alert = agent_alerts[payload.alert]
+      local pane_id = payload.pane
+      if alert and type(pane_id) == 'string' and pane_id ~= '' then
+        local key = pane_id
+          .. '|'
+          .. tostring(payload.owner or payload.session or '')
+          .. '|'
+          .. tostring(payload.alert or '')
+        local now = os.time()
+        if not recent_alerts[key] or now - recent_alerts[key] >= 5 then
+          local window = any_gui_window()
+          if window then
+            recent_alerts[key] = now
+
+            local title = alert[1]
+            if type(payload.session) == 'string' and payload.session ~= '' then
+              title = title .. ' · ' .. payload.session
+            end
+            window:toast_notification(title, alert[2], nil, 5000)
+
+            local alerts = read_alerts()
+            local record = {
+              alert = payload.alert,
+              session = type(payload.session) == 'string' and payload.session or '',
+              updated = os.time(),
+            }
+            if type(payload.pid) == 'number' then
+              record.pid = payload.pid
+            end
+            alerts[pane_id] = record
+            write_alerts(alerts)
+
+            wezterm.background_child_process({
+              wezterm.home_dir .. '/.nix-profile/bin/paplay',
+              alert_sound,
+            })
+          end
+        end
+      end
+    end
+  end
+end
+
+local function poll_pending()
+  local ok, err = pcall(deliver_pending)
+  if not ok then
+    wezterm.log_error('wezterm agent alert: ' .. tostring(err))
+  end
+  wezterm.time.call_after(0.5, poll_pending)
+end
+
+wezterm.time.call_after(0.5, poll_pending)
+
+-- wezterm-sesh emits this with the selected pane id after the popup closes, so
+-- the next picker run no longer shows that pane as unread.
+wezterm.on('user-var-changed', function(_, _, name, value)
+  if name ~= 'WEZTERM_SESH_CLEAR_ALERT' then
+    return
+  end
+  if value and value ~= '' then
+    clear_alert(value)
+  end
+end)
+
+-- Copy mode is a pane-local key table, so entering it by accident (Ctrl+Shift+X,
+-- or the plain Ctrl+X alias) leaves the terminal looking normal while typing no
+-- longer reaches Fish. Flag it in two places, since either can be missed:
+--   1. the tab itself turns amber (works with the fancy tab bar),
+--   2. a badge on the right of the tab bar.
+-- The fancy tab bar ignores color-scheme tab_bar colors but does honour
+-- format-tab-title styling, hence the amber tab below.
+config.status_update_interval = 500
+
+local mode_colors = {
+	copy_mode = { bg = "#ffb454", fg = "#1b1f27", label = " COPY " },
+	search_mode = { bg = "#95e6cb", fg = "#1b1f27", label = " SEARCH " },
+}
+
+-- Fancy tab bar calls this twice per tab, so keep it cheap and side-effect free.
+wezterm.on('format-tab-title', function(tab, tabs, panes, config, hover, max_width)
+	local title = tab.tab_title
+	if not title or #title == 0 then
+		title = tab.active_pane.title
+	end
+	-- Copy mode prefixes the pane title with "Copy mode: "; strip it so the
+	-- badge below carries that meaning instead of duplicating it.
+	title = title:gsub('^Copy mode: ', '')
+
+	local mode = nil
+	for _, pane in ipairs(tab.panes) do
+		local pane_title = pane.title or ''
+		if pane_title:match('^Copy mode: ') then
+			mode = mode_colors.copy_mode
+			break
+		elseif pane_title:match('^Search: ') then
+			mode = mode_colors.search_mode
+		end
+	end
+
+	if mode then
+		return {
+			{ Background = { Color = mode.bg } },
+			{ Foreground = { Color = mode.fg } },
+			{ Attribute = { Intensity = 'Bold' } },
+			{ Text = ' ' .. title .. ' ' },
+		}
+	end
+end)
+
+wezterm.on('update-status', function(window, pane)
+	local active = window:active_key_table()
+	local mode = mode_colors[active or '']
+	if not mode then
+		window:set_right_status('')
+		return
+	end
+
+	window:set_right_status(wezterm.format({
+		{ Background = { Color = mode.bg } },
+		{ Foreground = { Color = mode.fg } },
+		{ Attribute = { Intensity = 'Bold' } },
+		{ Text = mode.label },
+	}))
 end)
 
 local extra_keys = {
@@ -101,6 +316,7 @@ local extra_keys = {
 	{ key = "Tab", mods = "CTRL|SHIFT", action = act.ActivateTabRelative(-1) },
 	{ key = "RightArrow", mods = "CTRL|SHIFT", action = act.ActivateTabRelative(1) },
 	{ key = "LeftArrow", mods = "CTRL|SHIFT", action = act.ActivateTabRelative(-1) },
+	{ key = "Backspace", mods = "CTRL", action = act.SendString("\x17") },
 
 	{ key = "Enter", mods = "CTRL|SHIFT", action = act.SplitVertical({ domain = "CurrentPaneDomain" }) },
 	{ key = "Enter", mods = "CTRL|ALT", action = act.SplitHorizontal({ domain = "CurrentPaneDomain" }) },

@@ -1,0 +1,15 @@
+#!/bin/sh
+# fzf preview for wezterm-sesh: pane rows show the pane's visible screen,
+# directory rows keep the old eza/ls listing.
+key=$1
+path=$2
+
+case "$key" in
+  p:*)
+    wezterm cli get-text --pane-id "${key#p:}" --escapes 2>/dev/null || echo "pane unavailable"
+    ;;
+  *)
+    eza --color=always --icons --group-directories-first --long -- "$path" 2>/dev/null ||
+      ls -la --color=always -- "$path"
+    ;;
+esac

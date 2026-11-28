@@ -1,0 +1,8 @@
+{
+  "name": "wezterm-agent-alert",
+  "type": "module",
+  "exports": {
+    ".": "./index.ts",
+    "./tui": "./tui.ts"
+  }
+}
