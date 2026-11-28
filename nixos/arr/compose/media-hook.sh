@@ -3,11 +3,12 @@
 #
 # Socket-activated HTTP hook (see arr-hook.socket). Opening
 #   http://<arr>:9199/hook?token=...&note=...&scope=media|all
-# captures a full snapshot of the stack, then restarts the media services
-# (scope=media, default) or every service (scope=all) and re-runs the probes.
+# captures a full snapshot, answers immediately with the capture directory, and
+# then restarts the media services (scope=media, default) or every service
+# (scope=all) in the background.
 #
 # Nothing is listening between requests: systemd owns the socket and starts
-# this script per connection.
+# this script per connection. stdout is the HTTP connection only.
 
 set -uo pipefail
 
@@ -15,6 +16,7 @@ TOKEN_HASH=${ARR_HOOK_TOKEN_HASH:?}
 WATCHDOG=${ARR_WATCHDOG:?}
 DEFAULT_SCOPE=media
 
+log() { printf '%s %s\n' "$(date '+%Y-%m-%dT%H:%M:%S%z')" "$*" >&2; }
 respond() {
   # $1 = status, $2 = body
   printf 'HTTP/1.1 %s\r\nContent-Type: text/plain; charset=utf-8\r\nContent-Length: %s\r\nConnection: close\r\n\r\n%s' \
@@ -25,8 +27,11 @@ IFS= read -r request_line || true
 method=${request_line%% *}
 target=${request_line#* }
 target=${target%% *}
+path=${target%%\?*}
 query=${target#*\?}
 [ "$query" = "$target" ] && query=""
+
+log "request: ${method:-?} ${path:-?}"
 
 token=""
 note="hook"
@@ -49,6 +54,7 @@ fi
 case "$method" in
   GET | POST) ;;
   *)
+    log "rejected: method ${method:-none}"
     respond "405 Method Not Allowed" "use GET
 "
     exit 0
@@ -56,6 +62,7 @@ case "$method" in
 esac
 
 if [ -z "$token" ] || [ "$(printf '%s' "$token" | sha256sum | cut -d' ' -f1)" != "$TOKEN_HASH" ]; then
+  log "rejected: bad or missing token (length ${#token})"
   respond "403 Forbidden" "bad or missing token
 "
   exit 0
@@ -66,10 +73,21 @@ case "$scope" in
   *) scope="$DEFAULT_SCOPE" ;;
 esac
 
-dir=$("$WATCHDOG" --force --scope "$scope" --note "$note")
+log "accepted: scope=$scope note=$note"
+dir=$("$WATCHDOG" --action capture --note "$note")
+log "captured: $dir"
 
 respond "200 OK" "captured: $dir
-restarted: $scope
 report: $dir/report.txt
-journal: journalctl -u 'arr-hook@*' -u arr-media-watchdog
+restarting: $scope
+journal: journalctl -t arr-media-hook -t arr-media-watchdog
 "
+
+# The client has its answer; stop talking to the socket and do the slow part.
+exec 1>/dev/null
+log "restarting ($scope)"
+if "$WATCHDOG" --action restart --scope "$scope"; then
+  log "restart finished, probes clean"
+else
+  log "restart finished, probes NOT clean - see the capture above"
+fi

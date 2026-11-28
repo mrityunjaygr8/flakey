@@ -2,8 +2,7 @@
 # arr-media-watchdog
 #
 # Watches arr containers that use the media disk and recovers them when they
-# cannot read it. Also the worker behind the manual HTTP hook
-# (`--force`), which captures evidence on demand and restarts the services.
+# cannot read it. Also the worker behind the manual HTTP hook.
 #
 # Two independent probes, because they catch different failures:
 #   mount - the device behind each container's media bind mount must be the
@@ -16,9 +15,15 @@
 # Every run appends one line to $STATE_DIR/probe.log so the timeline of a slow
 # degradation (e.g. "works for 12 hours, then fails") is visible afterwards.
 #
-# Usage: arr-media-watchdog [--force] [--scope media|all] [--note TEXT]
-#   --force   skip the probes: capture evidence and restart immediately. Prints
-#             the capture directory as the last line on stdout.
+# Usage: arr-media-watchdog [--action watch|capture|restart|force]
+#                           [--scope media|all] [--note TEXT]
+#   watch (default) probe, capture and restart when the probes fail
+#   capture         only capture evidence, print the directory on stdout
+#   restart         only restart (media services, or everything with scope=all)
+#   force           capture then restart
+#
+# stdout is reserved for machine-readable output (the capture directory); all
+# logging and command output goes to stderr so an HTTP caller can parse it.
 
 set -uo pipefail
 
@@ -31,12 +36,16 @@ RATE_LIMIT=900   # seconds between restart attempts
 READ_BYTES=4096
 COMPOSE=${ARR_COMPOSE:-arr-compose}
 
-FORCE=0
+ACTION=watch
 SCOPE=media
 NOTE=none
 while [ "$#" -gt 0 ]; do
   case "$1" in
-    --force) FORCE=1 ;;
+    --force) ACTION=force ;;
+    --action)
+      shift
+      ACTION=${1:-watch}
+      ;;
     --scope)
       shift
       SCOPE=${1:-media}
@@ -79,6 +88,8 @@ if [ -z "$mounts" ]; then
   exit 0
 fi
 
+media_dev=$(findmnt -n -o MAJ:MIN --target "$HOST_PATH" 2>/dev/null | tr -d '[:space:]')
+
 containers=$("$COMPOSE" ps --format json 2>/dev/null | jq -rs 'flatten[] | "\(.Service)\t\(.Name)"' || true)
 
 container_of() {
@@ -90,8 +101,8 @@ container_pid() {
 
 # service  container  container-path  device-or-error
 probe_mount() {
-  local svc source target name pid mp dev
-  while IFS=$'\t' read -r svc target; do
+  local svc target name pid mp dev
+  while IFS=$'\t' read -r svc _target_ignored target; do
     [ -n "${svc:-}" ] || continue
     name=$(container_of "$svc")
     [ -n "$name" ] || continue
@@ -100,7 +111,7 @@ probe_mount() {
     mp=${target%/}
     dev=$(awk -v p="$mp" '$5 == p { d = $3 } END { print d }' "/proc/$pid/mountinfo" 2>/dev/null)
     printf '%s\t%s\t%s\t%s\n' "$svc" "$name" "$target" "${dev:-unmounted}"
-  done < <(printf '%s\n' "$mounts" | cut -f1,3)
+  done < <(printf '%s\n' "$mounts")
 }
 
 # service  container  container-path  bytes-read
@@ -114,7 +125,7 @@ probe_read() {
     file=$(find "$source" -maxdepth 5 -type f \( -name '*.mkv' -o -name '*.mp4' -o -name '*.m4b' -o -name '*.mp3' \) -print -quit 2>/dev/null)
     [ -n "$file" ] || continue
     rel=${file#"$source"}
-    cpath=${target%/}$rel
+    cpath="${target%/}/${rel#/}"
     bytes=$(docker exec "$name" head -c "$READ_BYTES" "$cpath" 2>/dev/null | wc -c)
     printf '%s\t%s\t%s\t%s\n' "$svc" "$name" "$cpath" "${bytes:-0}"
   done < <(printf '%s\n' "$mounts")
@@ -182,33 +193,44 @@ capture() {
   printf '%s' "$dir"
 }
 
-# --- manual trigger -----------------------------------------------------------
-# Capture first (that is the whole point), restart second, then verify.
-if [ "$FORCE" -eq 1 ]; then
-  media_dev=$(findmnt -n -o MAJ:MIN --target "$HOST_PATH" 2>/dev/null | tr -d '[:space:]')
-  probe_log "manual scope=$SCOPE note=$NOTE"
-  dir=$(capture)
-  log "manual trigger ($NOTE): evidence at $dir/report.txt"
-
+do_restart() {
+  local still
   if [ "$SCOPE" = all ]; then
     log "restarting the whole stack"
-    "$COMPOSE" restart || log "restart failed"
+    "$COMPOSE" restart >&2 || log "restart failed"
   else
     mapfile -t media_services < <(printf '%s\n' "$mounts" | cut -f1 | sort -u)
     log "restarting: ${media_services[*]}"
-    "$COMPOSE" restart "${media_services[@]}" || log "restart failed"
+    "$COMPOSE" restart "${media_services[@]}" >&2 || log "restart failed"
   fi
-
   sleep 10
   state_set failures 0
   still=$(bad_services)
   if [ -n "$still" ]; then
-    log "manual restart left the stack unhappy: $(oneline "$still")"
-    printf '%s\n' "$dir"
+    log "restart left the stack unhappy: $(oneline "$still")"
+    return 1
+  fi
+  log "restart done, probes clean"
+  return 0
+}
+
+# --- manual entry points ------------------------------------------------------
+if [ "$ACTION" = capture ] || [ "$ACTION" = force ]; then
+  probe_log "manual action=$ACTION scope=$SCOPE note=$NOTE"
+  dir=$(capture)
+  log "capture ($NOTE): $dir/report.txt"
+  printf '%s\n' "$dir"
+fi
+
+if [ "$ACTION" = restart ] || [ "$ACTION" = force ]; then
+  if do_restart; then
+    exit 0
+  else
     exit 1
   fi
-  log "manual restart done, probes clean"
-  printf '%s\n' "$dir"
+fi
+
+if [ "$ACTION" = capture ]; then
   exit 0
 fi
 # -----------------------------------------------------------------------------
@@ -220,7 +242,6 @@ if ! mountpoint -q "$HOST_PATH"; then
   exit 0
 fi
 
-media_dev=$(findmnt -n -o MAJ:MIN --target "$HOST_PATH" 2>/dev/null | tr -d '[:space:]')
 if [ -z "$media_dev" ]; then
   log "cannot determine the device of $HOST_PATH"
   exit 0
@@ -274,7 +295,7 @@ log "evidence: $capture_dir/report.txt"
 
 state_set last-restart "$now"
 log "restarting: ${services[*]}"
-"$COMPOSE" restart "${services[@]}" || log "restart failed"
+"$COMPOSE" restart "${services[@]}" >&2 || log "restart failed"
 sleep 10
 
 still=$(bad_services)
@@ -282,7 +303,7 @@ state_set failures 0
 if [ -n "$still" ]; then
   log "still bad after restart: $(oneline "$still"), force recreating"
   mapfile -t still_services < <(printf '%s\n' "$still" | cut -d: -f2 | sort -u)
-  "$COMPOSE" up -d --force-recreate "${still_services[@]}" || log "force-recreate failed"
+  "$COMPOSE" up -d --force-recreate "${still_services[@]}" >&2 || log "force-recreate failed"
   exit 1
 fi
 
