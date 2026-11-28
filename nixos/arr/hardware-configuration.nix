@@ -29,12 +29,12 @@
   fileSystems."/mnt/media" = {
     device = "/dev/disk/by-uuid/63FC-6250";
     fsType = "exfat";
-    options = ["defaults" "nofail" "uid=1000" "gid=100" "umask=000" "users"];
+    options = ["defaults" "nofail" "uid=1000" "gid=100" "umask=000" "users" "x-systemd.device-timeout=30s"];
   };
   fileSystems."/mnt/second" = {
     device = "/dev/sdc1";
     fsType = "ntfs-3g";
-    options = ["rw" "defaults" "nofail" "uid=1000" "gid=100" "umask=000" "users"];
+    options = ["rw" "defaults" "nofail" "uid=1000" "gid=100" "umask=000" "users" "x-systemd.device-timeout=30s"];
   };
 
   swapDevices = [

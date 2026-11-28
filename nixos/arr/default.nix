@@ -15,15 +15,24 @@
 
     ../../modules/nixos/nix-conf.nix
     ../../modules/nixos/k3s.nix
+    ./compose.nix
   ];
 
+  # Expose each flake registry entry as a NIX_PATH entry (/etc/nix/path/<name>).
+  # Entries registered by NixOS itself (e.g. 'nixpkgs') have no 'flake'
+  # attribute, so fall back to the registry's path.
   environment.etc =
     lib.mapAttrs'
     (name: value: {
       name = "nix/path/${name}";
-      value.source = value.flake;
+      value.source =
+        if value.flake != null
+        then value.flake
+        else value.to.path;
     })
-    config.nix.registry;
+    (lib.filterAttrs
+      (_: value: value.flake != null || (value.to.path or null) != null)
+      config.nix.registry);
 
   # FIXME: Add the rest of your current configuration
 
@@ -121,6 +130,19 @@
     fixed-cidr-v6 = "fd00::/80";
     ipv6 = true;
     live-restore = true;
+  };
+
+  # dockerd starts containers with `restart: unless-stopped` as soon as it is
+  # up. If that happens before /mnt/media is mounted, those containers bind the
+  # empty directory underneath the mount and never see the media disk until
+  # they are recreated (library lists fine, playback fails). Wait for the mount
+  # attempt to finish, without making docker depend on it: if the disk is
+  # missing, docker still starts and arr-media-watchdog reports it.
+  # NB: these must be the typed options -- `unitConfig.after` is emitted
+  # verbatim and systemd ignores lowercase directives.
+  systemd.services.docker = {
+    wants = ["mnt-media.mount"];
+    after = ["mnt-media.mount"];
   };
   # virtualisation.containers.enable = true;
   # virtualisation = {

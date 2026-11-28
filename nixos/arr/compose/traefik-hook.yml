@@ -1,0 +1,23 @@
+# Traefik dynamic configuration for the arr media hook (arr-hook.local.imparham.in).
+#
+# The hook itself is a systemd socket on the host (arr-hook.socket, port 9199),
+# not a container, so traefik reaches it through the docker host gateway.
+# Mounted at /etc/traefik/hook.yml and loaded via --providers.file.filename.
+# The gateway is the pinned compose bridge address (see the networks block in
+# docker-compose.yml); docker's "host-gateway" would resolve to the down
+# default bridge (172.17.0.1) instead.
+http:
+  routers:
+    arr-hook:
+      rule: Host(`arr-hook.local.imparham.in`)
+      entryPoints:
+        - websecure
+      service: arr-hook
+      tls:
+        certResolver: myresolver
+
+  services:
+    arr-hook:
+      loadBalancer:
+        servers:
+          - url: http://172.19.0.1:9199

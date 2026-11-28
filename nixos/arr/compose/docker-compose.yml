@@ -1,0 +1,425 @@
+# Managed by nixos/arr/compose.nix (arr-compose.service).
+# Host data/config paths stay under /home/arr/arr via
+# `docker compose --project-directory /home/arr/arr`.
+services:
+  jellyfin:
+    image: lscr.io/linuxserver/jellyfin:latest
+    container_name: jellyfin
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Asia/Kolkata
+      # - DISABLE_IPV6=true
+      - JELLYFIN_PublishedServerUrl=https://jellyfin.local.imparham.in #optional
+    volumes:
+      - ./config/jellyfin/:/config
+      - ./cache/jellyfin:/cache
+      - /mnt/media/data/media/:/data/media
+    ports:
+      - 8096:8096
+    #   - 8920:8920 #optional
+    #   - 7359:7359/udp #optional
+    #   - 1900:1900/udp #optional
+    devices:
+      - /dev/dri:/dev/dri # Intel UHD 630 (VAAPI)
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.jellyfin.rule=Host(`jellyfin.local.imparham.in`)" # Your desired subdomain
+      - "traefik.http.routers.jellyfin.entrypoints=websecure"
+      - "traefik.http.routers.jellyfin.tls=true"
+      - "traefik.http.routers.jellyfin.tls.certresolver=myresolver"
+      - "traefik.http.services.jellyfin.loadbalancer.server.port=8096" # Jellyfin's internal HTTP port
+      - homepage.group=Media
+      - homepage.name=Jellyfin
+      - homepage.icon=jellyfin.png
+      - homepage.href=https://jellyfin.local.imparham.in
+      - homepage.description=Media server
+  traefik:
+    image: traefik:latest
+    security_opt:
+      - no-new-privileges:true
+    command:
+      - "--log.level=INFO"
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedByDefault=false"
+      - "--entryPoints.websecure.address=:7443"
+      - "--entryPoints.websecure.http.tls={}"
+      - "--certificatesresolvers.myresolver.acme.dnschallenge=true"
+      - "--certificatesresolvers.myresolver.acme.dnschallenge.provider=cloudflare"
+      - "--certificatesresolvers.myresolver.acme.dnschallenge.delaybeforecheck=0"
+      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+      - "--certificatesresolvers.myresolver.acme.email=msyt1969@gmail.com"
+      - "--providers.file.filename=/etc/traefik/hook.yml"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.traefik-dashboard.rule=Host(`traefik.local.imparham.in`)"
+      - "traefik.http.routers.traefik-dashboard.entrypoints=websecure"
+      - "traefik.http.routers.traefik-dashboard.tls=true"
+      - "traefik.http.routers.traefik-dashboard.tls.certresolver=myresolver" # Use our Cloudflare resolver
+      - "traefik.http.routers.traefik-dashboard.service=api@internal"
+      - homepage.group=Reverse Proxy
+      - homepage.name=Traefik
+      - homepage.icon=traefik.png
+      - homepage.href=https://traefik.local.imparham.in
+      - homepage.description=Reverse Proxy
+    env_file:
+      - .env
+    environment:
+      - DISABLE_IPV6=true
+    ports:
+      - "7443:7443"
+      - "8080:8080"
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./config/traefik/letsencrypt:/letsencrypt
+      - /etc/arr/traefik-dynamic/hook.yml:/etc/traefik/hook.yml:ro
+  whoami:
+    image: "traefik/whoami"
+    container_name: "simple-service"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.whoami.rule=Host(`whoami.local.imparham.in`)"
+      - "traefik.http.routers.whoami.entrypoints=websecure"
+      # - "traefik.http.routers.whoami.entrypoints=web"
+      - "traefik.http.routers.whoami.tls.certresolver=myresolver"
+  pihole:
+    container_name: pihole
+    image: pihole/pihole:latest
+    ports:
+      # DNS Ports
+      - "53:53/tcp"
+      - "53:53/udp"
+      # - "8443:443"
+      # Uncomment the line below if you are using Pi-hole as your DHCP server
+      #- "67:67/udp"
+      # Uncomment the line below if you are using Pi-hole as your NTP server
+      #- "123:123/udp"
+    environment:
+      # Set the appropriate timezone for your location (https://en.wikipedia.org/wiki/List_of_tz_database_time_zones), e.g:
+      TZ: "Asia/Kolkata"
+      # Set a password to access the web interface. Not setting one will result in a random password being assigned
+      FTLCONF_webserver_api_password: "correct horse battery staple"
+      # If using Docker's default `bridge` network setting the dns listening mode should be set to 'all'
+      FTLCONF_dns_listeningMode: "all"
+    # Volumes store your data between container upgrades
+    volumes:
+      # For persisting Pi-hole's databases and common configuration file
+      - "./config/pihole:/etc/pihole"
+      # Uncomment the below if you have custom dnsmasq config files that you want to persist. Not needed for most starting fresh with Pi-hole v6. If you're upgrading from v5 you and have used this directory before, you should keep it enabled for the first v6 container start to allow for a complete migration. It can be removed afterwards. Needs environment variable FTLCONF_misc_etc_dnsmasq_d: 'true'
+      #- './etc-dnsmasq.d:/etc/dnsmasq.d'
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.pihole-web.rule=Host(`pihole.local.imparham.in`)" # Your desired subdomain
+      - "traefik.http.routers.pihole-web.entrypoints=websecure"
+      - "traefik.http.routers.pihole-web.tls=true"
+      - "traefik.http.routers.pihole-web.tls.certresolver=myresolver"
+      - "traefik.http.services.pihole-web.loadbalancer.server.port=80" # Pi-hole's web interface runs on port 80 internally
+      # Optional: Add a middleware to redirect / to /admin if Pi-hole requires it
+      - "traefik.http.routers.pihole-web.middlewares=pihole-redirect"
+      - "traefik.http.middlewares.pihole-redirect.redirectRegex.regex=^https://pihole.local.imparham.in/$"
+      - "traefik.http.middlewares.pihole-redirect.redirectRegex.replacement=https://pihole.local.imparham.in/admin"
+      - homepage.group=Pi-Hole
+      - homepage.name=Pi-Hole
+      - homepage.icon=pi-hole.png
+      - homepage.href=https://pihole.local.imparham.in
+      - homepage.description=Pi-Hole
+    cap_add:
+      # See https://github.com/pi-hole/docker-pi-hole#note-on-capabilities
+      # Required if you are using Pi-hole as your DHCP server, else not needed
+      - NET_ADMIN
+      # Required if you are using Pi-hole as your NTP client to be able to set the host's system time
+      - SYS_TIME
+      # Optional, if Pi-hole should get some more processing time
+      - SYS_NICE
+    restart: unless-stopped
+  radarr:
+    image: lscr.io/linuxserver/radarr:latest
+    container_name: radarr
+    environment:
+      - DISABLE_IPV6=true
+      - PUID=1000
+      - PGID=1000
+      - TZ=Asia/Kolkata
+    volumes:
+      - ./config/radarr:/config
+      - /mnt/media/data/:/data #optional
+      # - /path/to/download-client-downloads:/downloads #optional
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.radarr.rule=Host(`radarr.local.imparham.in`)" # Your desired subdomain
+      - "traefik.http.routers.radarr.entrypoints=websecure"
+      - "traefik.http.routers.radarr.tls=true"
+      - "traefik.http.routers.radarr.tls.certresolver=myresolver"
+      - "traefik.http.services.radarr.loadbalancer.server.port=7878" # Pi-hole's web interface runs on port 80 internally
+      - homepage.group=Media Finders
+      - homepage.name=Radarr
+      - homepage.icon=radarr.png
+      - homepage.href=https://radarr.local.imparham.in
+      - homepage.description=For Movies
+    # ports:
+    #   - 7878:7878
+    restart: unless-stopped
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:latest
+    container_name: sonarr
+    environment:
+      - DISABLE_IPV6=true
+      - PUID=1000
+      - PGID=1000
+      - TZ=Asia/Kolkata
+    volumes:
+      - ./config/sonarr/:/config
+      - /mnt/media/data/:/data #optional
+      # - /path/to/downloadclient-downloads:/downloads #optional
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.sonarr.rule=Host(`sonarr.local.imparham.in`)" # Your desired subdomain
+      - "traefik.http.routers.sonarr.entrypoints=websecure"
+      - "traefik.http.routers.sonarr.tls=true"
+      - "traefik.http.routers.sonarr.tls.certresolver=myresolver"
+      - "traefik.http.services.sonarr.loadbalancer.server.port=8989" # Pi-hole's web interface runs on port 80 internally
+      - homepage.group=Media Finders
+      - homepage.name=Sonarr
+      - homepage.icon=sonarr.png
+      - homepage.href=https://sonarr.local.imparham.in
+      - homepage.description=For Shows
+    restart: unless-stopped
+  bazarr:
+    image: lscr.io/linuxserver/bazarr:latest
+    container_name: bazarr
+    environment:
+      - DISABLE_IPV6=true
+      - PUID=1000
+      - PGID=1000
+      - TZ=Asia/Kolkata
+    volumes:
+      - ./config/bazarr/:/config
+      - /mnt/media/data/:/data #optional
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.bazarr.rule=Host(`bazarr.local.imparham.in`)" # Your desired subdomain
+      - "traefik.http.routers.bazarr.entrypoints=websecure"
+      - "traefik.http.routers.bazarr.tls=true"
+      - "traefik.http.routers.bazarr.tls.certresolver=myresolver"
+      - "traefik.http.services.bazarr.loadbalancer.server.port=6767" # Pi-hole's web interface runs on port 80 internally
+      - homepage.group=Media Finders
+      - homepage.name=Bazarr
+      - homepage.icon=bazarr.png
+      - homepage.href=https://bazarr.local.imparham.in
+      - homepage.description=For Subtitles
+    restart: unless-stopped
+  listenarr:
+    image: ghcr.io/listenarrs/listenarr:canary
+    # ports:
+    #   - "4545:4545"
+    environment:
+      - DISABLE_IPV6=true
+      - TZ=Asia/Kolkata
+      - PUID=1000
+      - PGID=1000
+      - UMASK=022
+      - LISTENARR_LOG_LEVEL=Information
+      - LISTENARR_PUBLIC_URL=https://listenarr.local.imparham.in
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.listenarr.rule=Host(`listenarr.local.imparham.in`)" # Your desired subdomain
+      - "traefik.http.routers.listenarr.entrypoints=websecure"
+      - "traefik.http.routers.listenarr.tls=true"
+      - "traefik.http.routers.listenarr.tls.certresolver=myresolver"
+      - "traefik.http.services.listenarr.loadbalancer.server.port=4545" # Pi-hole's web interface runs on port 80 internally
+      - homepage.group=Media Finders
+      - homepage.name=Listenarr
+      - homepage.icon=listenarr.png
+      - homepage.href=https://listenarr.local.imparham.in
+      - homepage.description=For Audiobooks
+    volumes:
+      - ./config/listenarr:/app/config
+      - /mnt/media/data/media/audiobooks:/audiobooks
+      - /mnt/media/data/torrent:/downloads
+    restart: unless-stopped
+  audiobookshelf:
+    image: ghcr.io/advplyr/audiobookshelf:latest
+    # ABS runs on port 13378 by default. If you want to change
+    # the port, only change the external port
+    # ports:
+    #   - 13378:80
+    volumes:
+      # These volumes are needed to keep your library persistent
+      # and allow media to be accessed by the ABS server.
+      - ./config/audiobookshelf:/config
+      - ./data/audiobookshelf:/metadata
+      # The path to the left of the colon is the path on your computer,
+      # and the path to the right of the colon is where the data is
+      # available to ABS in Docker. You can change these lines freely
+      # or add additional mounts for additional libraries.
+      - /mnt/media/data/media/audiobooks:/audiobooks
+      # - </path/to/podcasts>:/podcasts
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.abs.rule=Host(`abs.local.imparham.in`)" # Your desired subdomain
+      - "traefik.http.routers.abs.entrypoints=websecure"
+      - "traefik.http.routers.abs.tls=true"
+      - "traefik.http.routers.abs.tls.certresolver=myresolver"
+      - "traefik.http.services.abs.loadbalancer.server.port=80" # Pi-hole's web interface runs on port 80 internally
+      - homepage.group=Media Finders
+      - homepage.name=AudioBookShelf
+      - homepage.icon=abs.png
+      - homepage.href=https://abs.local.imparham.in
+      - homepage.description=For Audiobooks
+    environment:
+      - TZ=Asia/Kolkata
+      # Add other environment variables here
+    restart: unless-stopped
+    # Audiobookshelf does not use PUID or GUID environment variables.
+    # To run as a different user, use the following directive.
+    #user: 1000:1000
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:latest
+    container_name: prowlarr
+    environment:
+      # - DISABLE_IPV6=true
+      - PUID=1000
+      - PGID=1000
+      - TZ=Asia/Kolkata
+    dns:
+      - 192.168.29.193
+      - 1.1.1.1
+    volumes:
+      - ./config/prowlarr/:/config
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.prowlarr.rule=Host(`prowlarr.local.imparham.in`)" # Your desired subdomain
+      - "traefik.http.routers.prowlarr.entrypoints=websecure"
+      - "traefik.http.routers.prowlarr.tls=true"
+      - "traefik.http.routers.prowlarr.tls.certresolver=myresolver"
+      - "traefik.http.services.prowlarr.loadbalancer.server.port=9696" # Pi-hole's web interface runs on port 80 internally
+      - homepage.group=Media Finders
+      - homepage.name=Prowlarr
+      - homepage.icon=prowlarr.png
+      - homepage.href=https://prowlarr.local.imparham.in
+      - homepage.description=For Media Search
+    restart: unless-stopped
+  qbittorrent:
+    image: lscr.io/linuxserver/qbittorrent:latest
+    container_name: qbittorrent
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Asia/Kolkata
+      - WEBUI_PORT=8080
+      - TORRENTING_PORT=10913
+      - DOCKER_MODS=ghcr.io/vuetorrent/vuetorrent-lsio-mod:latest
+    volumes:
+      - ./config/qbittorrent/:/config
+      - /mnt/media/data/:/data #optional
+    ports:
+      - 10913:10913
+      - 10913:10913/udp
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.qbt.rule=Host(`qbt.local.imparham.in`)" # Your desired subdomain
+      - "traefik.http.routers.qbt.entrypoints=websecure"
+      - "traefik.http.routers.qbt.tls=true"
+      - "traefik.http.routers.qbt.tls.certresolver=myresolver"
+      - "traefik.http.services.qbt.loadbalancer.server.port=8080" # Pi-hole's web interface runs on port 80 internally
+      - homepage.group=Downloaders
+      - homepage.name=qBittorrent
+      - homepage.icon=qbittorrent.png
+      - homepage.href=https://qbt.local.imparham.in
+      - homepage.description=Torrent Downloader
+  flaresolverr:
+    # DockerHub mirror flaresolverr/flaresolverr:latest
+    image: ghcr.io/flaresolverr/flaresolverr:latest
+    container_name: flaresolverr
+    environment:
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+      - LOG_HTML=${LOG_HTML:-false}
+      - CAPTCHA_SOLVER=${CAPTCHA_SOLVER:-none}
+      - TZ=Asia/Kolkata
+    restart: unless-stopped
+  dockerproxy:
+    image: ghcr.io/tecnativa/docker-socket-proxy:latest
+    container_name: dockerproxy
+    environment:
+      - CONTAINERS=1 # Allow access to viewing containers
+      - SERVICES=1 # Allow access to viewing services (necessary when using Docker Swarm)
+      - TASKS=1 # Allow access to viewing tasks (necessary when using Docker Swarm)
+      - POST=0 # Disallow any POST operations (effectively read-only)
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro # Mounted as read-only
+    restart: unless-stopped
+  jellyseerr:
+    image: fallenbagel/jellyseerr:latest
+    container_name: jellyseerr
+    environment:
+      - TZ=Asia/Kolkata
+      - PORT=5055 #optional
+    user: "1000"
+    volumes:
+      - ./config/jellyseer:/app/config
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.jellyseer.rule=Host(`jellyseer.local.imparham.in`)" # Your desired subdomain
+      - "traefik.http.routers.jellyseer.entrypoints=websecure"
+      - "traefik.http.routers.jellyseer.tls=true"
+      - "traefik.http.routers.jellyseer.tls.certresolver=myresolver"
+      - "traefik.http.services.jellyseerr.loadbalancer.server.port=5055" # Pi-hole's web interface runs on port 80 internally
+      - homepage.group=Media Finders
+      - homepage.name=JellySeer
+      - homepage.icon=jellyseerr.png
+      - homepage.href=https://jellyseer.local.imparham.in
+      - homepage.description=For Easy media requests
+  homepage:
+    image: ghcr.io/gethomepage/homepage:latest
+    container_name: homepage
+    volumes:
+      - ./config/homepage:/app/config # Make sure your local config directory exists
+    environment:
+      HOMEPAGE_ALLOWED_HOSTS: local.imparham.in # required, may need port. See gethomepage.dev/installation/#homepage_allowed_hosts
+      PUID: 1000
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.homepage.rule=Host(`local.imparham.in`)" # Your desired subdomain
+      - "traefik.http.routers.homepage.entrypoints=websecure"
+      - "traefik.http.routers.homepage.tls=true"
+      - "traefik.http.routers.homepage.tls.certresolver=myresolver"
+      - "traefik.http.services.homepage.loadbalancer.server.port=3000" # Pi-hole's web interface runs on port 80 internally
+    restart: unless-stopped
+  filebrowser:
+    image: filebrowser/filebrowser
+    container_name: filebrowser
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.filebrowser.rule=Host(`files.local.imparham.in`)" # Your desired subdomain
+      - "traefik.http.routers.filebrowser.entrypoints=websecure"
+      - "traefik.http.routers.filebrowser.tls=true"
+      - "traefik.http.routers.filebrowser.tls.certresolver=myresolver"
+      - "traefik.http.services.filebrowser.loadbalancer.server.port=80" # Pi-hole's web interface runs on port 80 internally
+      - homepage.group=Files
+      - homepage.name=Filebrowser
+      - homepage.icon=filebrowser.png
+      - homepage.href=https://files.local.imparham.in
+      - homepage.description=Files
+    restart: unless-stopped
+    volumes:
+      - /mnt/media/data/:/srv
+      - ./config/filebrowser/database:/database
+      - ./config/filebrowser/config:/config
+
+    # networks:
+    #   default:
+    # enable_ipv6: true
+
+# Pinned so arr-hook.socket can listen on 172.19.0.1 only: reachable by traefik,
+# not from the LAN.
+networks:
+  default:
+    ipam:
+      config:
+        - subnet: 172.19.0.0/16
+          gateway: 172.19.0.1
