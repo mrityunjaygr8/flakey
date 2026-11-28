@@ -31,7 +31,7 @@ in {
     ../common
     ../../modules/home-manager/dank-material-shell.nix
     ../../modules/home-manager/dsh.nix
-    ../../modules/home-manager/hyprland.nix
+    # ../../modules/home-manager/hyprland.nix
     ../../modules/home-manager/mango.nix
     ../../modules/home-manager/opencode.nix
     ../../modules/home-manager/pi.nix
