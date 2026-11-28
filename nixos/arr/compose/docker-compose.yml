@@ -68,8 +68,6 @@ services:
       - .env
     environment:
       - DISABLE_IPV6=true
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
     ports:
       - "7443:7443"
       - "8080:8080"

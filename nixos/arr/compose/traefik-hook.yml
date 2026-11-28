@@ -3,6 +3,9 @@
 # The hook itself is a systemd socket on the host (arr-hook.socket, port 9199),
 # not a container, so traefik reaches it through the docker host gateway.
 # Mounted at /etc/traefik/hook.yml and loaded via --providers.file.filename.
+# The gateway is the pinned compose bridge address (see the networks block in
+# docker-compose.yml); docker's "host-gateway" would resolve to the down
+# default bridge (172.17.0.1) instead.
 http:
   routers:
     arr-hook:
@@ -17,4 +20,4 @@ http:
     arr-hook:
       loadBalancer:
         servers:
-          - url: http://host.docker.internal:9199
+          - url: http://172.19.0.1:9199
