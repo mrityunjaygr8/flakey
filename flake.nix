@@ -7,6 +7,8 @@
     # at the same time. Here's an working example:
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
+    rex.url = "https://pkgs.superlogical.com/rex/nix/snapshot.tar.gz";
+
     # Home manager
     home-manager.url = "github:nix-community/home-manager/master";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
