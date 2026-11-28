@@ -138,7 +138,9 @@
   # they are recreated (library lists fine, playback fails). Wait for the mount
   # attempt to finish, without making docker depend on it: if the disk is
   # missing, docker still starts and arr-media-watchdog reports it.
-  systemd.services.docker.unitConfig = {
+  # NB: these must be the typed options -- `unitConfig.after` is emitted
+  # verbatim and systemd ignores lowercase directives.
+  systemd.services.docker = {
     wants = ["mnt-media.mount"];
     after = ["mnt-media.mount"];
   };

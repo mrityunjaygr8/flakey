@@ -103,8 +103,10 @@ fi
 boot_id=$(cat /proc/sys/kernel/random/boot_id)
 marker=$STATE_DIR/boot-$boot_id
 threshold=$FAIL_THRESHOLD
+first_check=0
 if [ ! -f "$marker" ]; then
   threshold=1
+  first_check=1
   : > "$marker"
   find "$STATE_DIR" -maxdepth 1 -name 'boot-*' ! -name "boot-$boot_id" -delete 2>/dev/null
 fi
@@ -116,7 +118,9 @@ log "media bind mismatch in: $(oneline "$bad") (check $failures/$threshold)"
 
 now=$(date +%s)
 last=$(state_get last-restart)
-if [ $(( now - last )) -lt "$RATE_LIMIT" ]; then
+# The first check after a boot is always allowed to act, even if a restart from
+# before the reboot is still inside the rate-limit window.
+if [ "$first_check" -eq 0 ] && [ $(( now - last )) -lt "$RATE_LIMIT" ]; then
   log "rate limited: $(( now - last ))s since the last restart"
   exit 0
 fi
