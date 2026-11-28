@@ -87,6 +87,7 @@ in {
     # inputs.iloader.packages.${pkgs.system}.default
     # jetbrains.idea-community-bin
     typst
+    inputs.rex-rune.packages.${pkgs.stdenv.hostPlatform.system}.rex-rune
     inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.claude-desktop
     beamMinimal28Packages.elixir
     bottom

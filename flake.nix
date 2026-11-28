@@ -8,6 +8,7 @@
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
     rex.url = "https://pkgs.superlogical.com/rex/nix/snapshot.tar.gz";
+    rex-rune.url = "github:shuv1337/rex-rune/v0.14.0";
 
     # Home manager
     home-manager.url = "github:nix-community/home-manager/master";
