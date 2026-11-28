@@ -15,6 +15,7 @@
 
     ../../modules/nixos/nix-conf.nix
     ../../modules/nixos/k3s.nix
+    ./compose.nix
   ];
 
   # Expose each flake registry entry as a NIX_PATH entry (/etc/nix/path/<name>).
