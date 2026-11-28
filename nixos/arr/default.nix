@@ -15,8 +15,15 @@
 
     ../../modules/nixos/nix-conf.nix
     ../../modules/nixos/k3s.nix
+    ../../modules/nixos/rex.nix
     ./compose.nix
   ];
+
+  # rex server: 8080 is taken by traefik's api (published port), so move it.
+  # Localhost-only, like kharkanas; expose it (listenAddress/openFirewall) only
+  # if a remote rex client is ever meant to reach it.
+  services.rex.port = 8091;
+  users.groups.rex.members = ["arr"];
 
   # Expose each flake registry entry as a NIX_PATH entry (/etc/nix/path/<name>).
   # Entries registered by NixOS itself (e.g. 'nixpkgs') have no 'flake'

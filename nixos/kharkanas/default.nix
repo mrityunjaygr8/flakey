@@ -32,4 +32,7 @@
   ];
 
   networking.hostName = "kharkanas";
+
+  # rex server group membership (see modules/nixos/rex.nix)
+  users.groups.rex.members = ["mgr8"];
 }
