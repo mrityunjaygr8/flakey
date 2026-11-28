@@ -19,10 +19,15 @@
     ./compose.nix
   ];
 
-  # rex server: 8080 is taken by traefik's api (published port), so move it.
-  # Localhost-only, like kharkanas; expose it (listenAddress/openFirewall) only
-  # if a remote rex client is ever meant to reach it.
-  services.rex.port = 8091;
+  # rex server: unix socket only (/run/rex/server.sock), like kharkanas. A TCP
+  # listener would require allowAnonymous = true, i.e. full unauthenticated
+  # access for anyone who can reach the port, so remote access goes through an
+  # SSH-forwarded socket instead:
+  #   ssh -N -L 8091:/run/rex/server.sock arr
+  #   rex-rune --endpoint http://127.0.0.1:8091
+  # (arr must be in the rex group to open the remote socket.)
+  # When Tailscale is added, use `extraListen = [ "tailnet://arr:8091" ]` for
+  # identified access instead of anonymous TCP.
   users.groups.rex.members = ["arr"];
 
   # Expose each flake registry entry as a NIX_PATH entry (/etc/nix/path/<name>).
