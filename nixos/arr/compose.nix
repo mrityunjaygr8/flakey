@@ -5,9 +5,23 @@
 # /home/arr/arr. `--project-directory` anchors the compose file's relative
 # paths there and keeps the compose project name "arr", so existing containers
 # are reconciled instead of a second stack being created.
-{pkgs, ...}: let
+{
+  pkgs,
+  lib,
+  ...
+}: let
   projectDir = "/home/arr/arr";
-  composeFile = ./compose/docker-compose.yml;
+
+  # The compose file is generated so the traefik dynamic config can be referenced
+  # by its store path: a change to that file then changes the compose config and
+  # `up -d` recreates traefik (a bind mount of /etc/... would keep the old
+  # inode and silently serve the previous file).
+  composeFile = pkgs.writeText "arr-docker-compose.yml" (
+    lib.replaceStrings
+    ["/etc/arr/traefik-dynamic/hook.yml"]
+    ["${./compose/traefik-hook.yml}"]
+    (builtins.readFile ./compose/docker-compose.yml)
+  );
 
   # Convenience wrapper: bakes in the store path of the compose file and the
   # project directory, so `arr-compose <cmd>` behaves like the full
@@ -139,8 +153,4 @@ in {
       TimeoutStartSec = "180s";
     };
   };
-
-  # Traefik's dynamic config for the hook route (arr-hook.local.imparham.in),
-  # mounted into the traefik container by the compose file.
-  environment.etc."arr/traefik-dynamic/hook.yml".source = ./compose/traefik-hook.yml;
 }
