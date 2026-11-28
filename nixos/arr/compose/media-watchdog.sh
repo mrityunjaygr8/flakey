@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 # arr-media-watchdog
 #
-# Detects arr containers that cannot actually read the media disk, captures a
-# snapshot of the system, then restarts the affected services.
+# Watches arr containers that use the media disk and recovers them when they
+# cannot read it. Also the worker behind the manual HTTP hook
+# (`--force`), which captures evidence on demand and restarts the services.
 #
 # Two independent probes, because they catch different failures:
 #   mount - the device behind each container's media bind mount must be the
@@ -14,6 +15,10 @@
 #
 # Every run appends one line to $STATE_DIR/probe.log so the timeline of a slow
 # degradation (e.g. "works for 12 hours, then fails") is visible afterwards.
+#
+# Usage: arr-media-watchdog [--force] [--scope media|all] [--note TEXT]
+#   --force   skip the probes: capture evidence and restart immediately. Prints
+#             the capture directory as the last line on stdout.
 
 set -uo pipefail
 
@@ -26,7 +31,25 @@ RATE_LIMIT=900   # seconds between restart attempts
 READ_BYTES=4096
 COMPOSE=${ARR_COMPOSE:-arr-compose}
 
-log() { printf '%s %s\n' "$(date '+%Y-%m-%dT%H:%M:%S%z')" "$*"; }
+FORCE=0
+SCOPE=media
+NOTE=none
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    --force) FORCE=1 ;;
+    --scope)
+      shift
+      SCOPE=${1:-media}
+      ;;
+    --note)
+      shift
+      NOTE=${1:-none}
+      ;;
+  esac
+  shift
+done
+
+log() { printf '%s %s\n' "$(date '+%Y-%m-%dT%H:%M:%S%z')" "$*" >&2; }
 state_get() {
   local v
   v=$(cat "$STATE_DIR/$1" 2>/dev/null)
@@ -40,19 +63,6 @@ probe_log() {
 }
 
 install -d -m 0755 "$STATE_DIR" "$CAPTURE_DIR"
-
-if ! mountpoint -q "$HOST_PATH"; then
-  log "$HOST_PATH is not mounted; nothing this watchdog can fix"
-  probe_log "host-unmounted"
-  state_set failures 0
-  exit 0
-fi
-
-media_dev=$(findmnt -n -o MAJ:MIN --target "$HOST_PATH" 2>/dev/null | tr -d '[:space:]')
-if [ -z "$media_dev" ]; then
-  log "cannot determine the device of $HOST_PATH"
-  exit 0
-fi
 
 # "service<TAB>host-source<TAB>container-target" for every media bind mount.
 mounts=$(
@@ -125,11 +135,12 @@ capture() {
     echo "== when"
     date
     echo "uptime: $(cut -d. -f1 /proc/uptime)s"
+    echo "note: $NOTE"
     echo
     echo "== $HOST_PATH on the host"
     findmnt -T "$HOST_PATH"
     df -h "$HOST_PATH" 2>/dev/null
-    echo "expected device: $media_dev"
+    echo "expected device: ${media_dev:-unknown}"
     echo
     echo "== mount probe (service container container-path device)"
     probe_mount
@@ -171,6 +182,50 @@ capture() {
   printf '%s' "$dir"
 }
 
+# --- manual trigger -----------------------------------------------------------
+# Capture first (that is the whole point), restart second, then verify.
+if [ "$FORCE" -eq 1 ]; then
+  media_dev=$(findmnt -n -o MAJ:MIN --target "$HOST_PATH" 2>/dev/null | tr -d '[:space:]')
+  probe_log "manual scope=$SCOPE note=$NOTE"
+  dir=$(capture)
+  log "manual trigger ($NOTE): evidence at $dir/report.txt"
+
+  if [ "$SCOPE" = all ]; then
+    log "restarting the whole stack"
+    "$COMPOSE" restart || log "restart failed"
+  else
+    mapfile -t media_services < <(printf '%s\n' "$mounts" | cut -f1 | sort -u)
+    log "restarting: ${media_services[*]}"
+    "$COMPOSE" restart "${media_services[@]}" || log "restart failed"
+  fi
+
+  sleep 10
+  state_set failures 0
+  still=$(bad_services)
+  if [ -n "$still" ]; then
+    log "manual restart left the stack unhappy: $(oneline "$still")"
+    printf '%s\n' "$dir"
+    exit 1
+  fi
+  log "manual restart done, probes clean"
+  printf '%s\n' "$dir"
+  exit 0
+fi
+# -----------------------------------------------------------------------------
+
+if ! mountpoint -q "$HOST_PATH"; then
+  log "$HOST_PATH is not mounted; nothing this watchdog can fix"
+  probe_log "host-unmounted"
+  state_set failures 0
+  exit 0
+fi
+
+media_dev=$(findmnt -n -o MAJ:MIN --target "$HOST_PATH" 2>/dev/null | tr -d '[:space:]')
+if [ -z "$media_dev" ]; then
+  log "cannot determine the device of $HOST_PATH"
+  exit 0
+fi
+
 probed=$(probe_mount)
 if [ -z "$probed" ]; then
   log "no running container mounts $HOST_PATH, nothing to check"
@@ -206,6 +261,8 @@ probe_log "BAD $(oneline "$bad") (check $failures/$threshold)"
 
 now=$(date +%s)
 last=$(state_get last-restart)
+# The first check after a boot is always allowed to act, even if a restart from
+# before the reboot is still inside the rate-limit window.
 if [ "$first_check" -eq 0 ] && [ $(( now - last )) -lt "$RATE_LIMIT" ]; then
   log "rate limited: $(( now - last ))s since the last restart"
   exit 0
