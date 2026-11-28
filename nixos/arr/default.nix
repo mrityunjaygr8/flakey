@@ -19,18 +19,12 @@
     ./compose.nix
   ];
 
-  # rex server: TEMPORARY TCP listener on the LAN address until Tailscale is
-  # set up (2026-11-29). A plain TCP listener forces allowAnonymous = true,
-  # i.e. unauthenticated full access to the rex user for anyone who can reach
-  # the port, so it is bound to 192.168.1.193 rather than 0.0.0.0.
-  # TODO: revert to the unix socket and use extraListen = [ "tailnet://arr:8091" ]
-  # once tailscale is configured.
-  services.rex = {
-    socketPath = null;
-    listenAddress = "192.168.1.193";
-    port = 8091;
-    allowAnonymous = true;
-  };
+  # rex server: unix socket only (/run/rex/server.sock), like kharkanas. Access
+  # from another machine uses rex's own ssh transport, which needs no TCP
+  # listener and no anonymous access:
+  #   rex hosts add arr ssh://arr
+  #   rex -S arr whoami          # or: rex-rune --endpoint arr
+  # `arr` must be able to open the socket, hence the rex group membership.
   users.groups.rex.members = ["arr"];
 
   # Expose each flake registry entry as a NIX_PATH entry (/etc/nix/path/<name>).
