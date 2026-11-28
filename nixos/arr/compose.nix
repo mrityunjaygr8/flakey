@@ -100,8 +100,14 @@ in {
   #   ...&scope=all  restarts every service instead of only the media ones.
   systemd.sockets.arr-hook = {
     wantedBy = ["sockets.target"];
-    listenStreams = ["0.0.0.0:9199"];
-    socketConfig.Accept = true;
+    # Bind to the docker bridge gateway only: traefik (via host.docker.internal)
+    # can reach it, the LAN cannot. FreeBind because the bridge may not exist
+    # yet when the socket starts at boot.
+    listenStreams = ["172.19.0.1:9199"];
+    socketConfig = {
+      Accept = true;
+      FreeBind = true;
+    };
   };
 
   systemd.services."arr-hook@" = {

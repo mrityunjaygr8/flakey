@@ -20,6 +20,8 @@ services:
     #   - 8920:8920 #optional
     #   - 7359:7359/udp #optional
     #   - 1900:1900/udp #optional
+    devices:
+      - /dev/dri:/dev/dri # Intel UHD 630 (VAAPI)
     restart: unless-stopped
     labels:
       - "traefik.enable=true"
@@ -414,3 +416,12 @@ services:
     # networks:
     #   default:
     # enable_ipv6: true
+
+# Pinned so arr-hook.socket can listen on 172.19.0.1 only: reachable by traefik,
+# not from the LAN.
+networks:
+  default:
+    ipam:
+      config:
+        - subnet: 172.19.0.0/16
+          gateway: 172.19.0.1
