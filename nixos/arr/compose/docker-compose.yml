@@ -49,6 +49,7 @@ services:
       - "--certificatesresolvers.myresolver.acme.dnschallenge.delaybeforecheck=0"
       - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
       - "--certificatesresolvers.myresolver.acme.email=msyt1969@gmail.com"
+      - "--providers.file.filename=/etc/traefik/hook.yml"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.traefik-dashboard.rule=Host(`traefik.local.imparham.in`)"
@@ -65,6 +66,8 @@ services:
       - .env
     environment:
       - DISABLE_IPV6=true
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     ports:
       - "7443:7443"
       - "8080:8080"
@@ -72,6 +75,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./config/traefik/letsencrypt:/letsencrypt
+      - /etc/arr/traefik-dynamic/hook.yml:/etc/traefik/hook.yml:ro
   whoami:
     image: "traefik/whoami"
     container_name: "simple-service"

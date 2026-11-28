@@ -125,8 +125,15 @@ in {
       Type = "oneshot";
       StandardInput = "socket";
       StandardOutput = "socket";
+      # stderr must NOT inherit stdout, otherwise log lines end up in the HTTP
+      # connection and the client sees "HTTP/0.9".
+      StandardError = "journal";
       ExecStart = "${media-hook}";
       TimeoutStartSec = "180s";
     };
   };
+
+  # Traefik's dynamic config for the hook route (arr-hook.local.imparham.in),
+  # mounted into the traefik container by the compose file.
+  environment.etc."arr/traefik-dynamic/hook.yml".source = ./compose/traefik-hook.yml;
 }
