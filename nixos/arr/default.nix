@@ -131,6 +131,17 @@
     ipv6 = true;
     live-restore = true;
   };
+
+  # dockerd starts containers with `restart: unless-stopped` as soon as it is
+  # up. If that happens before /mnt/media is mounted, those containers bind the
+  # empty directory underneath the mount and never see the media disk until
+  # they are recreated (library lists fine, playback fails). Wait for the mount
+  # attempt to finish, without making docker depend on it: if the disk is
+  # missing, docker still starts and arr-media-watchdog reports it.
+  systemd.services.docker.unitConfig = {
+    wants = ["mnt-media.mount"];
+    after = ["mnt-media.mount"];
+  };
   # virtualisation.containers.enable = true;
   # virtualisation = {
   #   podman = {

@@ -22,6 +22,8 @@
       exec docker-compose -f ${composeFile} --project-directory ${projectDir} "$@"
     '';
   };
+
+  media-watchdog = pkgs.writeShellScript "arr-media-watchdog" (builtins.readFile ./compose/media-watchdog.sh);
 in {
   environment.systemPackages = [arr-compose];
 
@@ -49,6 +51,40 @@ in {
       TimeoutStartSec = "5min";
       ExecStart = "${arr-compose}/bin/arr-compose up -d --remove-orphans";
       ExecReload = "${arr-compose}/bin/arr-compose up -d --remove-orphans";
+    };
+  };
+
+  # Safety net for the case where dockerd wins the race and containers come up
+  # against the directory *under* /mnt/media: detect it, capture evidence,
+  # restart the affected services.
+  systemd.services.arr-media-watchdog = {
+    description = "arr: recover containers that lost /mnt/media";
+    after = ["docker.service" "arr-compose.service"];
+    requires = ["docker.service"];
+    environment.ARR_COMPOSE = "${arr-compose}/bin/arr-compose";
+    path = [
+      pkgs.coreutils
+      pkgs.docker
+      pkgs.findutils
+      pkgs.gawk
+      pkgs.gnugrep
+      pkgs.jq
+      pkgs.util-linux
+    ];
+    serviceConfig = {
+      Type = "oneshot";
+      StateDirectory = "arr-watchdog";
+      ExecStart = "${media-watchdog}";
+    };
+  };
+
+  systemd.timers.arr-media-watchdog = {
+    wantedBy = ["timers.target"];
+    timerConfig = {
+      Unit = "arr-media-watchdog.service";
+      OnBootSec = "90s";
+      OnUnitActiveSec = "2min";
+      AccuracySec = "15s";
     };
   };
 }
